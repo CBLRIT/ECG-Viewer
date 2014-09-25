@@ -13,6 +13,69 @@ public class Mesh {
 	private ArrayList<double[]> verts;
 	private ArrayList<double[]> faces;
 	
+	private enum Type {
+		INT32,
+		INT64,
+		FLOAT,
+		DOUBLE,
+		NULL
+	}
+
+	/**
+	 * getTypeOfByteArray - determines the correct primitive type of an array of bytes
+	 *
+	 * @param arr the array of bytes to determine
+	 * @return the enum that represents a type
+	 */
+	private static Type getTypeOfByteArray(byte[] arr) {
+		if(arr.length < 4 || (arr.length > 4 && arr.length < 8) || arr.length > 8) {
+			return Type.NULL;
+		} else if (arr.length == 4) {
+			float f = ByteBuffer.wrap(arr).getFloat();
+			if(f < 1.0e4f) {
+				return Type.INT32;
+			} else {
+				return Type.FLOAT;
+			}
+		} else { //arr.length == 8
+			double f = ByteBuffer.wrap(arr).getFloat();
+			if(f < 1.0e4f) {
+				return Type.INT64;
+			} else {
+				return Type.DOUBLE;
+			}
+		}
+	}
+
+	/**
+	 * castFromByteArray - turns arr into the type it should be
+	 *
+	 * @param <T> the type to store the value into
+	 * @param arr the array of bytes
+	 * @returns a value of type T
+	 */
+	private static <T extends java.lang.Number> T castFromByteArray(byte[] arr) {
+		Type t = getTypeOfByteArray(arr);
+		T out;
+		switch(t) {
+			case INT32:
+				out = (T)Integer.valueOf(ByteBuffer.wrap(arr).getInt());
+				break;
+			case INT64:
+				out = (T)Long.valueOf(ByteBuffer.wrap(arr).getLong());
+				break;
+			case FLOAT:
+				out = (T)Float.valueOf(ByteBuffer.wrap(arr).getFloat());
+				break;
+			case DOUBLE:
+				out = (T)Double.valueOf(ByteBuffer.wrap(arr).getDouble());
+				break;
+			default:
+				out = null;
+		}
+		return out;
+	}
+
 	/**
 	 * Constructor - opens files that contain the data for the mesh
 	 * 
@@ -54,7 +117,7 @@ public class Mesh {
 					}
 				}
 				//converts the bytes read in to double
-				coord[i] = ByteBuffer.wrap(buf).getDouble();
+				coord[i] = (Double)castFromByteArray(buf);
 			}
 
 			if(ret == -1) {
