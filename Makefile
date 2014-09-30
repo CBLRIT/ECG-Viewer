@@ -1,5 +1,5 @@
 
-LIBPATH=ImageJ/ij.jar
+LIBPATH="ImageJ/ij.jar:jfreechart-1.0.19/lib/jfreechart-1.0.19.jar:jfreechart-1.0.19/lib/jcommon-1.0.23.jar"
 
 default:
 	javac -cp $(LIBPATH) *.java
