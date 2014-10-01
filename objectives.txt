@@ -1,0 +1,8 @@
+objectives of program:
+
+1. BSP processing
+  a. filtering
+  b. bad leads
+  c. beat annotation
+
+2. electrode position
