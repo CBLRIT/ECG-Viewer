@@ -8,14 +8,16 @@ import java.nio.MappedByteBuffer;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 //import org.jfree.data.xy.DefaultXYDataset;
 
 public class ECGModel {
 	//private DefaultXYDataset points; //x is time, y is value
-	private ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Integer>>> points; //time<values>
-	private final long tupleStart = 0x00046860;
-	private final long tupleDiff  = 0x00000468;
+	private ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points; //time<values>
 	private final int tupleLength = 154;
+	private final int actualSize = 129;
+/*	private final long tupleStart = 0x00046860;
+	private final long tupleDiff  = 0x00000468;
 	private final double timeStep = 1000.0/2048.0; //0.48828125
 
 	private int fixBytes(int raw) {
@@ -38,17 +40,17 @@ public class ECGModel {
 		}
 		return val;
 	}
-
+*/
 	public ECGModel() {
-		points = new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Integer>>>();
+		points = new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>>();
 	}
 
 	public void readData(String filename) 
 			throws IOException, FileNotFoundException {
-		RandomAccessFile file = new RandomAccessFile(filename, "r");
+/*		RandomAccessFile file = new RandomAccessFile(filename, "r");
 
 		//read in values
-		for(long i = 0; /*TODO: fill this in*/; i++) { // loop over tuples in file
+		for(long i = 0; /*TODO: fill this in; i++) { // loop over tuples in file
 			points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Integer>>
 							(i*timeStep, new ArrayList<Integer>()));
 			file.seek(tupleStart+i*tupleDiff);
@@ -60,15 +62,48 @@ public class ECGModel {
 				break;
 			}
 		}
+*/
+		ECGFile file = new ECGFile();
+		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Integer>>> raw
+			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Integer>>>();
+		int retval = file.read(filename, tupleLength, raw);
+		if(retval < 0) {
+			return;
+		}
 
-		//System.out.println(points.get(0).getValue().toString());
+		for(int i = 0; i < raw.size(); i++) {
+			points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
+				raw.get(i).getKey(),
+				new ArrayList<Double>()));
+				
+			ArrayList<Integer> rawclone = (ArrayList<Integer>)raw.get(i).getValue().clone();
+			rawclone = rawclone.subList(0, actualSize);
+
+			for(int j = 0; j < rawclone.size(); j++) {
+				rawclone.set(j, rawclone.get(j)*0.125);
+			}
+			
+			Collections.sort(rawclone);
+			double median = 0;
+			if(rawclone.size() % 2 == 0) { //is even
+				median = ((double)rawclone.get(rawclone.size()/2-1)) /
+						 ((double)rawclone.get(rawclone.size()/2));
+			} else { //is odd
+				median = (double)rawclone.get(rawclone.size() / 2);
+			}
+
+			for(int j = 0; j < actualSize; j++) {
+				points.get(i).getValue().add(raw.get(i).getValue().get(j)*0.125 - median);
+			}
+		}
+
+		System.out.println(points.get(0).getValue().toString());
 	}
 
 	public double[][][] getDataset() {
 		double[][][] ret = new double[points.get(0).getValue().size()][2][points.size()];
 		for(int i = 0; i < points.size(); i++) {
 			for(int k = 0; k < points.get(i).getValue().size(); k++) {
-		//	ret[i] = (Double[])points.get(i).getValue().toArray();
 				ret[k][0][i] = (double)points.get(i).getKey();
 				ret[k][1][i] = (double)points.get(i).getValue().get(k);
 			}

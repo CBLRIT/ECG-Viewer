@@ -29,13 +29,8 @@ public class Main {
 		main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		main.setVisible(true);
 */
-/*		ECGModel model = new ECGModel();
-
+		ECGModel model = new ECGModel();
 		model.readData("data/4916739e.dat");
-*/
-
-		ECGFile file = new ECGFile();
-		file.read("data/4916739e.dat", 154);
 	}
 }
 
