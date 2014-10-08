@@ -7,8 +7,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 public class Main {
-	public static void main(String args[]) {
-		JFrame main = new JFrame("This");
+	public static void main(String args[])
+			throws Exception {
+	/*	JFrame main = new JFrame("This");
 		main.setBounds(20, 20, 500, 500);
 
 		JMenuBar menubar = new JMenuBar();
@@ -21,12 +22,20 @@ public class Main {
 
 		main.setJMenuBar(menubar);
 
-		JPanel mainPanel = new JPanel(true);
-
-		// add things here
+		ECGModel model = new ECGModel();
+		model.readData("data/4916739e.dat");
+		ECGView graph = new ECGView(main, model.getDataset());
 
 		main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		main.setVisible(true);
+*/
+/*		ECGModel model = new ECGModel();
+
+		model.readData("data/4916739e.dat");
+*/
+
+		ECGFile file = new ECGFile();
+		file.read("data/4916739e.dat", 154);
 	}
 }
 
