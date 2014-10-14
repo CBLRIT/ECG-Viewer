@@ -1,6 +1,10 @@
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.GridLayout;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -9,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class Main {
-	static final int dataSetPlacement[][] =  {
+	private static final int dataSetPlacement[][] =  {
 		{-1, -1}, //
 		{-1, -1}, // 0-3 unhelpful
 		{-1, -1}, //
@@ -40,40 +44,65 @@ public class Main {
 	private static int ynum = 8;
 	private static int xnum = 18;
 
+	private static final JFrame main = new JFrame("This");
+	private static final JPanel[] subPanels = new JPanel[xnum*ynum];
+
+	private static void loadFile(String filename) {
+		ECGModel model = new ECGModel();
+		try {
+			model.readData(filename);
+		} catch (IOException e) {
+			System.err.println("Could not open: " + filename);
+			return;
+		}
+		
+		for(int i = 4; i < 124; i++) {
+		//	System.out.println(i);
+			ECGView graph = new ECGView(model.getDataset(i));
+			int index = dataSetPlacement[i][0]*xnum + dataSetPlacement[i][1];
+			subPanels[index].removeAll();
+			subPanels[index].add(graph.getPanel());
+		}
+	}
+
 	public static void main(String args[])
 			throws Exception {
-		JFrame main = new JFrame("This");
 		main.setBounds(20, 20, 1400, 750);
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu menu = new JMenu("File");
 		menubar.add(menu);
 		JMenuItem open = new JMenuItem("Open...");
+		open.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int ret = fc.showOpenDialog(main);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					loadFile(fc.getSelectedFile().getAbsolutePath());
+					main.revalidate();
+				}
+			}
+		});
 		JMenuItem exit = new JMenuItem("Exit");
+		exit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				main.setVisible(false);
+				main.dispose();
+			}
+		});
 		menu.add(open);
 		menu.add(exit);
 
 		main.setJMenuBar(menubar);
 
-		JPanel[] subPanels = new JPanel[xnum*ynum];
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new GridLayout(ynum, xnum));
 
-		ECGModel model = new ECGModel();
-		model.readData("data/4916739e.dat");
-		
 		for(int i = 0; i < xnum*ynum; i++) {
 			subPanels[i] = new JPanel();
 			mainPanel.add(subPanels[i]);
 		}
-	
-		for(int i = 4; i < 124; i++) {
-		//	System.out.println(i);
-			ECGView graph = new ECGView(model.getDataset(i));
-			int index = dataSetPlacement[i][0]*xnum + dataSetPlacement[i][1];
-			subPanels[index].add(graph.getPanel());
-		}
-
+		
 		JScrollPane scrollMain = new JScrollPane(mainPanel);
 		main.add(scrollMain);
 		//main.add(mainPanel);

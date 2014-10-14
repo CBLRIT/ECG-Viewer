@@ -25,10 +25,13 @@ public class ECGView {
 		dataset.addSeries(1, data);
 		
 		this.xaxis = new NumberAxis("x");
+		this.xaxis.setVisible(false);
 		this.yaxis = new NumberAxis("y");
+		this.yaxis.setVisible(false);
 		this.renderer = new XYLineAndShapeRenderer(true, false);
 		this.plot = new XYPlot(dataset, xaxis, yaxis, renderer);
 		this.chart = new JFreeChart(plot);
+		this.chart.removeLegend();
 		this.panel = new ChartPanel(
 			chart,
 			defaultWidth,
