@@ -7,6 +7,9 @@ default:
 run:
 	java -cp $(LIBPATH) Main
 
+debug:
+	jdb -classpath $(LIBPATH) Main
+
 #Main.class: MoldTorso.class Main.java
 #	javac -cp $(LIBPATH) Main.java
 #

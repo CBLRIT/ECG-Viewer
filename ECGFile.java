@@ -91,6 +91,7 @@ public class ECGFile {
 		int numMSecs;
 		try {
 			numMSecs = (int)((double)finfo.fh.length()/(double)1024/1.115);
+			//System.out.println(finfo.fh.length());
 		} catch (IOException e) {
 			System.out.println("Length error\n" + e.getMessage());
 			return -3;
@@ -334,6 +335,8 @@ public class ECGFile {
 
 	private int readBspmRecord(fileinfo finfo, int recordNum, int[] samps) {
 		try {
+		//	System.out.println("("+finfo.ifnhdr+"+"+recordNum+"-1)*"+finfo.frecsz+"="
+		//						+(finfo.ifnhdr+recordNum-1)*finfo.frecsz);
 			finfo.fh.seek((finfo.ifnhdr+recordNum-1)*finfo.frecsz);
 		} catch (IOException e) {
 			System.err.println("Seek error (readBspmRecord)\n" + e.getMessage());
@@ -345,7 +348,7 @@ public class ECGFile {
 				samps[bytes] = Integer.reverseBytes(finfo.fh.readInt());
 			}
 		} catch (EOFException e) {
-		/*	System.err.println("EOF\n" + e.getMessage()); */
+		//	System.err.println("EOF");
 			return -1;
 		} catch (IOException e) {
 			System.err.println("Read error (readBspmRecord)\n" + e.getMessage());

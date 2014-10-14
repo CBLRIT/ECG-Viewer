@@ -1,7 +1,7 @@
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -17,18 +17,23 @@ public class ECGView {
 	private NumberAxis yaxis;
 	private XYLineAndShapeRenderer renderer;
 
-	public ECGView(JFrame frame, double[][][] data) {
-		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries(1, data[12]);
-		
-		xaxis = new NumberAxis("x");
-		yaxis = new NumberAxis("y");
-		renderer = new XYLineAndShapeRenderer(true, false);
-		plot = new XYPlot(dataset, xaxis, yaxis, renderer);
-		chart = new JFreeChart(plot);
-		panel = new ChartPanel(chart);
+	private final defaultWidth = 200;
+	private final defaultHeight = 200;
 
-		frame.add(panel);
+	public ECGView(double[][] data) {
+		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset.addSeries(1, data);
+		
+		this.xaxis = new NumberAxis("x");
+		this.yaxis = new NumberAxis("y");
+		this.renderer = new XYLineAndShapeRenderer(true, false);
+		this.plot = new XYPlot(dataset, xaxis, yaxis, renderer);
+		this.chart = new JFreeChart(plot);
+		this.panel = new ChartPanel(chart);
+	}
+
+	public JPanel getPanel() {
+		return this.panel;
 	}
 }
 
