@@ -17,8 +17,8 @@ public class ECGView {
 	private NumberAxis yaxis;
 	private XYLineAndShapeRenderer renderer;
 
-	private final int defaultWidth = 200;
-	private final int defaultHeight = 200;
+	private final int defaultWidth = 100;
+	private final int defaultHeight = 100;
 
 	public ECGView(double[][] data) {
 		DefaultXYDataset dataset = new DefaultXYDataset();
