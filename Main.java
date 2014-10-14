@@ -6,6 +6,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class Main {
 	static final int dataSetPlacement[][] =  {
@@ -36,10 +37,15 @@ public class Main {
 		{6, 56},	{10, 56},	{14, 56},	{18, 56},	{22, 56},	{26, 56},	{30, 56},//117-123
 	};
 
+	private static int xscale = 2;
+	private static int yscale = 4;
+	private static int ynum = 31/yscale+1;
+	private static int xnum = 57/xscale+1;
+
 	public static void main(String args[])
 			throws Exception {
 		JFrame main = new JFrame("This");
-		main.setBounds(20, 20, 750, 1400);
+		main.setBounds(20, 20, 1400, 750);
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu menu = new JMenu("File");
@@ -51,24 +57,28 @@ public class Main {
 
 		main.setJMenuBar(menubar);
 
-		JPanel[] subPanels = new JPanel[30*56];
-		JPanel mainPanel = new JPanel(new GridLayout(30, 56));
+		JPanel[] subPanels = new JPanel[xnum*ynum];
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new GridLayout(ynum, xnum));
 
 		ECGModel model = new ECGModel();
 		model.readData("data/4916739e.dat");
-	
-		for(int i = 0; i < 124; i++) {
-			System.out.println(i);
-			if(i < 4) {
-				subPanels[i] = new JPanel();
-			} else {  
-				ECGView graph = new ECGView(model.getDataset(i));
-				subPanels[i] = graph.getPanel();
-			}
+		
+		for(int i = 0; i < xnum*ynum; i++) {
+			subPanels[i] = new JPanel();
 			mainPanel.add(subPanels[i]);
 		}
+	
+		for(int i = 4; i < 124; i++) {
+		//	System.out.println(i);
+			ECGView graph = new ECGView(model.getDataset(i));
+			int index = dataSetPlacement[i][0]/yscale*xnum + dataSetPlacement[i][1]/xscale;
+			subPanels[index].add(graph.getPanel());
+		}
 
-		main.add(mainPanel);
+		JScrollPane scrollMain = new JScrollPane(mainPanel);
+		main.add(scrollMain);
+		//main.add(mainPanel);
 
 		main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		main.setVisible(true);

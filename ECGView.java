@@ -17,8 +17,8 @@ public class ECGView {
 	private NumberAxis yaxis;
 	private XYLineAndShapeRenderer renderer;
 
-	private final defaultWidth = 200;
-	private final defaultHeight = 200;
+	private final int defaultWidth = 200;
+	private final int defaultHeight = 200;
 
 	public ECGView(double[][] data) {
 		DefaultXYDataset dataset = new DefaultXYDataset();
@@ -29,7 +29,22 @@ public class ECGView {
 		this.renderer = new XYLineAndShapeRenderer(true, false);
 		this.plot = new XYPlot(dataset, xaxis, yaxis, renderer);
 		this.chart = new JFreeChart(plot);
-		this.panel = new ChartPanel(chart);
+		this.panel = new ChartPanel(
+			chart,
+			defaultWidth,
+			defaultHeight,
+			100,
+			100,
+			300,
+			300,
+			true, //buffer
+			false,//properties
+			false,//copy
+			false,//save
+			false,//print
+			true, //zoom
+			false //tooltip
+		);
 	}
 
 	public JPanel getPanel() {

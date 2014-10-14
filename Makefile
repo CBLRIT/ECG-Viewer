@@ -5,7 +5,7 @@ default:
 	javac -cp $(LIBPATH) *.java
 
 run:
-	java -cp $(LIBPATH) Main
+	java -cp $(LIBPATH) Main &
 
 debug:
 	jdb -classpath $(LIBPATH) Main
