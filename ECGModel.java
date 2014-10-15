@@ -78,7 +78,7 @@ public class ECGModel {
 				points.get(i).get(j)[1] -= median;
 			}
 		}
-
+		
 	//	printArrayList(points.get(4));
 	//	System.out.println(Arrays.toString(points.get(4).get(0)));
 	}

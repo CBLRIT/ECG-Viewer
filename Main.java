@@ -1,6 +1,8 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.GridLayout;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -58,10 +60,23 @@ public class Main {
 		
 		for(int i = 4; i < 124; i++) {
 		//	System.out.println(i);
-			ECGView graph = new ECGView(model.getDataset(i));
+			final ECGView graph = new ECGView(model.getDataset(i), ""+i, false);
 			int index = dataSetPlacement[i][0]*xnum + dataSetPlacement[i][1];
+			graph.getPanel().setPopupMenu(null); //turn off context menu for chart
 			subPanels[index].removeAll();
 			subPanels[index].add(graph.getPanel());
+			final int count = i;
+			graph.getPanel().addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					ChartFrame cf = new ChartFrame((ECGView)graph.clone(true), ""+count);
+				}
+
+				//don't care
+				public void mouseEntered(MouseEvent e) {}
+				public void mouseExited(MouseEvent e) {}
+				public void mousePressed(MouseEvent e) {}
+				public void mouseReleased(MouseEvent e) {}
+			});
 		}
 	}
 

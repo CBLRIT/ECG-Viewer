@@ -154,6 +154,8 @@ public class ECGFile {
 			System.err.println("Error on close");
 		}
 
+	//	System.out.println(Arrays.toString(finfo.header_badleads));
+
 		return 0;
 	}
 

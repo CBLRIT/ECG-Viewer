@@ -20,17 +20,30 @@ public class ECGView {
 	private final int defaultWidth = 100;
 	private final int defaultHeight = 100;
 
-	public ECGView(double[][] data) {
+	private double[][] origData;
+	private String title;
+
+	private int modelIndex;
+
+	public ECGView(double[][] data, String title, int index, boolean withLabels) {
+		origData = data;
+		this.title = title;
+		modelIndex = index;
+
 		DefaultXYDataset dataset = new DefaultXYDataset();
 		dataset.addSeries(1, data);
 		
-		this.xaxis = new NumberAxis("x");
-		this.xaxis.setVisible(false);
-		this.yaxis = new NumberAxis("y");
-		this.yaxis.setVisible(false);
+		this.xaxis = new NumberAxis("Time (msec)");
+		if(!withLabels) {
+			this.xaxis.setVisible(false);
+		}
+		this.yaxis = new NumberAxis("Potential (mV)");
+		if(!withLabels) {
+			this.yaxis.setVisible(false);
+		}
 		this.renderer = new XYLineAndShapeRenderer(true, false);
 		this.plot = new XYPlot(dataset, xaxis, yaxis, renderer);
-		this.chart = new JFreeChart(plot);
+		this.chart = new JFreeChart(title, plot);
 		this.chart.removeLegend();
 		this.panel = new ChartPanel(
 			chart,
@@ -50,8 +63,20 @@ public class ECGView {
 		);
 	}
 
-	public JPanel getPanel() {
+	public ChartPanel getPanel() {
 		return this.panel;
+	}
+
+	public void setBadLead(boolean b) {
+		this.bad = b;
+	}
+
+	public boolean isBadLead() {
+		return this.bad;
+	}
+
+	public Object clone(boolean withLabels) {
+		return new ECGView(origData, title, modelIndex, withLabels);
 	}
 }
 
