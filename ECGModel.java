@@ -82,8 +82,8 @@ public class ECGModel {
 	//	System.out.println(Arrays.toString(points.get(4).get(0)));
 	}
 
-	public double[][] getDataset(int i) {
-		return points.get(i).toArray();
+	public ECGDataSet getDataset(int i) {
+		return points.get(i);
 	}
 
 	public void setBad(int i, boolean isBad) {

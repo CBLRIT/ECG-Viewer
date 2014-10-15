@@ -20,18 +20,15 @@ public class ECGView {
 	private final int defaultWidth = 100;
 	private final int defaultHeight = 100;
 
-	private double[][] origData;
+	private ECGDataSet origData;
 	private String title;
 
-	private int modelIndex;
-
-	public ECGView(double[][] data, String title, int index, boolean withLabels) {
+	public ECGView(ECGDataSet data, String title, boolean withLabels) {
 		origData = data;
 		this.title = title;
-		modelIndex = index;
 
 		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries(1, data);
+		dataset.addSeries(1, data.toArray());
 		
 		this.xaxis = new NumberAxis("Time (msec)");
 		if(!withLabels) {
@@ -63,12 +60,20 @@ public class ECGView {
 		);
 	}
 
+	public void setBad(boolean b) {
+		origData.setBad(b);
+	}
+
+	public boolean isBad() {
+		return origData.isBad();
+	}
+
 	public ChartPanel getPanel() {
 		return this.panel;
 	}
 
 	public Object clone(boolean withLabels) {
-		return new ECGView(origData, title, modelIndex, withLabels);
+		return new ECGView(origData, title, withLabels);
 	}
 }
 
