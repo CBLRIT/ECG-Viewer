@@ -67,14 +67,6 @@ public class ECGView {
 		return this.panel;
 	}
 
-	public void setBadLead(boolean b) {
-		this.bad = b;
-	}
-
-	public boolean isBadLead() {
-		return this.bad;
-	}
-
 	public Object clone(boolean withLabels) {
 		return new ECGView(origData, title, modelIndex, withLabels);
 	}

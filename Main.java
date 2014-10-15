@@ -60,7 +60,7 @@ public class Main {
 		
 		for(int i = 4; i < 124; i++) {
 		//	System.out.println(i);
-			final ECGView graph = new ECGView(model.getDataset(i), ""+i, false);
+			final ECGView graph = new ECGView(model.getDataset(i), ""+i, i, false);
 			int index = dataSetPlacement[i][0]*xnum + dataSetPlacement[i][1];
 			graph.getPanel().setPopupMenu(null); //turn off context menu for chart
 			subPanels[index].removeAll();

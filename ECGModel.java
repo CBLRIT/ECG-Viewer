@@ -13,7 +13,7 @@ import java.util.Collections;
 
 public class ECGModel {
 	//private DefaultXYDataset points; //x is time, y is value
-	private ArrayList<ArrayList<Double[]>> points; //<channel<at time<time, value>>
+	private ArrayList<ECGDataSet> points; //<channel<at time<time, value>>
 	private final int tupleLength = 154;
 	private final int actualSize = 129;
 
@@ -24,7 +24,7 @@ public class ECGModel {
 	}
 
 	public ECGModel() {
-		points = new ArrayList<ArrayList<Double[]>>();
+		points = new ArrayList<ECGDataSet>();
 	}
 
 	public void readData(String filename) 
@@ -43,18 +43,17 @@ public class ECGModel {
 		for(int i = 0; i < raw.size(); i++) {
 			for(int j = 0; j < actualSize; j++) {
 				if(i == 0) {
-					points.add(new ArrayList<Double[]>());
+					points.add(new ECGDataSet());
 				}
-				points.get(j).add(new Double[2]);
-				points.get(j).get(i)[0] = raw.get(i).getKey();
-				points.get(j).get(i)[1] = (double)raw.get(i).getValue().get(j)*0.125;
+				points.get(j).addTuple(raw.get(i).getKey(), 
+									   (double)raw.get(i).getValue().get(j)*0.125);
 			}
 		}
 
 		for(int i = 0; i < actualSize; i++) {
 			ArrayList<Double> values = new ArrayList<Double>();
 			for(int j = 0; j < points.get(i).size(); j++) {
-				values.add(new Double(points.get(i).get(j)[1]));
+				values.add(new Double(points.get(i).getAt(j)[1]));
 			}
 
 			Collections.sort(values);
@@ -75,7 +74,7 @@ public class ECGModel {
 
 
 			for(int j = 0; j < points.get(i).size(); j++) {
-				points.get(i).get(j)[1] -= median;
+				points.get(i).getAt(j)[1] -= median;
 			}
 		}
 		
@@ -84,16 +83,15 @@ public class ECGModel {
 	}
 
 	public double[][] getDataset(int i) {
-		double[][] ret = new double[2][points.get(i).size()];
+		return points.get(i).toArray();
+	}
 
-		for(int j = 0; j < points.get(i).size(); j++) {
-			//do a transpose
-			ret[0][j] = points.get(i).get(j)[0];
-			ret[1][j] = points.get(i).get(j)[1];
-		}
-/*		System.out.println(Arrays.toString(ret[0][0]));
-		System.out.println(Arrays.toString(ret[0][1]));*/
-		return ret;
+	public void setBad(int i, boolean isBad) {
+		points.get(i).setBad(isBad);
+	}
+
+	public boolean isBad(int i) {
+		return points.get(i).isBad();
 	}
 }
 
