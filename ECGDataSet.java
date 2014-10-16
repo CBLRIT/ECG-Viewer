@@ -1,12 +1,15 @@
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ECGDataSet {
 	private ArrayList<Double[]> set;
 	private boolean bad;
+	private HashSet<Integer> annotations; //indicies into set
 
 	public ECGDataSet() {
 		set = new ArrayList<Double[]>();
+		annotations = new HashSet<Integer>();
 	}
 
 	public boolean isBad() {return bad;}
@@ -34,5 +37,17 @@ public class ECGDataSet {
 		}
 		return ret;
 	}
-}
 
+	public void toggleAnnotation(int i) {
+		if(annotations.contains(i)) {
+			annotations.remove(i);
+		} else {
+			annotations.add(i);
+		}
+		System.out.println(i);
+	}
+
+	public boolean isAnnotated(int i) {
+		return annotations.contains(i);
+	}
+}

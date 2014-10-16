@@ -4,6 +4,10 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
+import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -20,7 +24,7 @@ public class ECGView {
 	private final int defaultWidth = 100;
 	private final int defaultHeight = 100;
 
-	private ECGDataSet origData;
+	private final ECGDataSet origData;
 	private String title;
 
 	public ECGView(ECGDataSet data, String title, boolean withLabels) {
@@ -38,7 +42,11 @@ public class ECGView {
 		if(!withLabels) {
 			this.yaxis.setVisible(false);
 		}
-		this.renderer = new XYLineAndShapeRenderer(true, false);
+		if(withLabels) {
+			this.renderer = new ECGRenderer(origData);
+		} else {
+			this.renderer = new XYLineAndShapeRenderer(true, false);
+		}
 		this.plot = new XYPlot(dataset, xaxis, yaxis, renderer);
 		this.chart = new JFreeChart(title, plot);
 		this.chart.removeLegend();
@@ -48,8 +56,8 @@ public class ECGView {
 			defaultHeight,
 			100,
 			100,
-			300,
-			300,
+			500,
+			500,
 			true, //buffer
 			false,//properties
 			false,//copy
@@ -58,6 +66,19 @@ public class ECGView {
 			true, //zoom
 			false //tooltip
 		);
+		if(withLabels) {
+			panel.addChartMouseListener(new ChartMouseListener() {
+				public void chartMouseClicked(ChartMouseEvent event) {
+					ChartEntity ce = event.getEntity();
+					if(ce == null)
+						return;
+
+					origData.toggleAnnotation(((XYItemEntity)ce).getItem());
+				}
+
+				public void chartMouseMoved(ChartMouseEvent event) {}
+			});
+		}
 	}
 
 	public void setBad(boolean b) {
