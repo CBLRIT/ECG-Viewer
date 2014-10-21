@@ -1,4 +1,6 @@
 
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
@@ -42,11 +44,7 @@ public class ECGView {
 		if(!withLabels) {
 			this.yaxis.setVisible(false);
 		}
-		if(withLabels) {
-			this.renderer = new ECGRenderer(origData);
-		} else {
-			this.renderer = new XYLineAndShapeRenderer(true, false);
-		}
+		this.renderer = new XYLineAndShapeRenderer(true, false);
 		this.plot = new XYPlot(dataset, xaxis, yaxis, renderer);
 		this.chart = new JFreeChart(title, plot);
 		this.chart.removeLegend();
@@ -69,11 +67,19 @@ public class ECGView {
 		if(withLabels) {
 			panel.addChartMouseListener(new ChartMouseListener() {
 				public void chartMouseClicked(ChartMouseEvent event) {
-					ChartEntity ce = event.getEntity();
-					if(ce == null)
-						return;
+//					ChartEntity ce = event.getEntity();
+//					if(ce == null)
+//						return;
+					Point2D p = panel.translateScreenToJava2D(event.getTrigger().getPoint());
+					double x = plot.getDomainAxis().java2DToValue(p.getX(),
+																  panel.getScreenDataArea(),
+																  plot.getDomainAxisEdge());
+//					double y = plot.getRangeAxis().java2DToValue(p.getY(),
+//																 panel.getScreenDataArea(),
+//																 plot.getRangeAxisEdge());
 
-					origData.toggleAnnotation(((XYItemEntity)ce).getItem());
+					//origData.toggleAnnotation(((XYItemEntity)ce).getItem());
+
 				}
 
 				public void chartMouseMoved(ChartMouseEvent event) {}
@@ -108,6 +114,12 @@ public class ECGView {
 		switch(which) {
 			case 0:
 				origData.sgolayfilt();
+				break;
+			case 1:
+				origData.highpassfilt();
+				break;
+			case 2:
+				origData.lowpassfilt();
 				break;
 			default:
 				return;

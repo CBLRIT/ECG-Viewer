@@ -53,8 +53,24 @@ public class ChartFrame extends JFrame {
 				thisFrame.revalidate();
 			}
 		});
+		JMenuItem filter_high = new JMenuItem("High Pass");
+		filter_high.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				view.applyFilter(1);
+				thisFrame.revalidate();
+			}
+		});
+		JMenuItem filter_low = new JMenuItem("Low Pass");
+		filter_low.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				view.applyFilter(2);
+				thisFrame.revalidate();
+			}
+		});
 		filter.add(filter_detrend);
 		filter.add(filter_savitzky);
+		filter.add(filter_high);
+		filter.add(filter_low);
 		
 		menu.add(filter);
 

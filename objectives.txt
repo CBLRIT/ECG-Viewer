@@ -6,5 +6,6 @@ objectives of program:
 	ii. savitzky-golay filter
   b. bad leads
   c. beat annotation
+  	i. note: use just time slices, not actual data points
 
 2. electrode position

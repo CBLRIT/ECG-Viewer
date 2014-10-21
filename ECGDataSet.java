@@ -50,7 +50,7 @@ public class ECGDataSet {
 		} else {
 			annotations.add(i);
 		}
-		System.out.println(i);
+	//	System.out.println(i);
 	}
 
 	public boolean isAnnotated(int i) {
@@ -83,6 +83,37 @@ public class ECGDataSet {
 		data[1] = sgFilter.smooth(data[1], coeffs);
 		for(int i = 0; i < set.size(); i++) {
 			set.set(i, new Double[]{set.get(i)[0], data[1][i]});
+		}
+	}
+
+	public void lowpassfilt() {
+		Double freq = 40.0;
+		Double RC = 1/(2*Math.PI)/freq;
+		Double dt = set.get(1)[0] - set.get(0)[0];
+		Double a = dt / (RC + dt);
+
+		Double lasty = set.get(0)[1];
+		for(int i = 1; i < set.size(); i++) {
+			Double x = set.get(i)[1];
+
+			lasty = lasty + a * (x - lasty);
+			set.set(i, new Double[]{set.get(i)[0], lasty});
+		}
+	}
+
+	public void highpassfilt() {
+		Double freq = 1.0;
+		Double RC = 1/(2*Math.PI)/freq;
+		Double dt = set.get(1)[0] - set.get(0)[0];
+		Double a = RC / (RC + dt);
+
+		Double lasty = set.get(0)[1];
+		for(int i = 1; i < set.size(); i++) {
+			Double x = set.get(i)[1];
+			Double lastx = set.get(i-1)[1];
+
+			lasty = a * (lasty + x - lastx);
+			set.set(i, new Double[]{set.get(i)[0], lasty});
 		}
 	}
 }
