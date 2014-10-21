@@ -39,6 +39,23 @@ public class ChartFrame extends JFrame {
 		menu.add(file);
 
 		JMenu filter = new JMenu("Filter");
+		JMenuItem filter_detrend = new JMenuItem("Detrend");
+		filter_detrend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				view.detrend();
+				thisFrame.revalidate();
+			}
+		});
+		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
+		filter_savitzky.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				view.applyFilter(0);
+				thisFrame.revalidate();
+			}
+		});
+		filter.add(filter_detrend);
+		filter.add(filter_savitzky);
+		
 		menu.add(filter);
 
 		setJMenuBar(menu);

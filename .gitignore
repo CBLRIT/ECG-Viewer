@@ -2,3 +2,5 @@ RnD/*
 *.swp
 *.class
 data/*
+commons-math3-3.3/*
+sgfilter/*

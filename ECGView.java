@@ -96,5 +96,25 @@ public class ECGView {
 	public Object clone(boolean withLabels) {
 		return new ECGView(origData, title, withLabels);
 	}
+
+	public void detrend() {
+		origData.detrend();
+		DefaultXYDataset dxyd = new DefaultXYDataset();
+		dxyd.addSeries(1, origData.toArray());
+		this.chart.getXYPlot().setDataset(dxyd);
+	}
+
+	public void applyFilter(int which) {
+		switch(which) {
+			case 0:
+				origData.sgolayfilt();
+				break;
+			default:
+				return;
+		}
+		DefaultXYDataset dxyd = new DefaultXYDataset();
+		dxyd.addSeries(1, origData.toArray());
+		this.chart.getXYPlot().setDataset(dxyd);
+	}
 }
 

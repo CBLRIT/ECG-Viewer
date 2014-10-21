@@ -1,8 +1,8 @@
 
-LIBPATH=".:ImageJ/ij.jar:jfreechart-1.0.19/lib/jfreechart-1.0.19.jar:jfreechart-1.0.19/lib/jcommon-1.0.23.jar"
+LIBPATH=".:ImageJ/ij.jar:jfreechart-1.0.19/lib/jfreechart-1.0.19.jar:jfreechart-1.0.19/lib/jcommon-1.0.23.jar:commons-math3-3.3/commons-math3-3.3.jar:sgfilter/sgfilter_v1_2.jar"
 
 default:
-	javac -cp $(LIBPATH) *.java
+	javac -g -cp $(LIBPATH) *.java
 
 run:
 	java -cp $(LIBPATH) Main &

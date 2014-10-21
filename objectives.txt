@@ -2,6 +2,8 @@ objectives of program:
 
 1. BSP processing
   a. filtering
+  	i. low-order polynomial fit
+	ii. savitzky-golay filter
   b. bad leads
   c. beat annotation
 

@@ -1,8 +1,14 @@
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import mr.go.sgfilter.ContinuousPadder;
+import mr.go.sgfilter.SGFilter;
+import org.apache.commons.math3.fitting.PolynomialCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoints;
 
 public class ECGDataSet {
+	private final int detrendPolynomial = 6;
+
 	private ArrayList<Double[]> set;
 	private boolean bad;
 	private HashSet<Integer> annotations; //indicies into set
@@ -49,5 +55,34 @@ public class ECGDataSet {
 
 	public boolean isAnnotated(int i) {
 		return annotations.contains(i);
+	}
+
+	public void detrend() {
+		PolynomialCurveFitter p = PolynomialCurveFitter.create(detrendPolynomial);
+		WeightedObservedPoints wop = new WeightedObservedPoints();
+		for(int i = 0; i < set.size(); i++) {
+			wop.add(set.get(i)[0], set.get(i)[1]);
+		}
+		double[] coeff = p.fit(wop.toList());
+		for(int h = 0; h < set.size(); h++) {
+			double val = set.get(h)[0];
+			double off = 0;
+			for(int i = detrendPolynomial; i >= 0; i--) {
+				off += coeff[i] * Math.pow(val, i);
+			}
+			set.set(h, new Double[]{set.get(h)[0], set.get(h)[1]-off});
+		}
+	}
+
+	public void sgolayfilt() {
+		double[][] data = this.toArray();
+		double[] coeffs = SGFilter.computeSGCoefficients(25, 25, 6);
+	//	ContinuousPadder p = new ContinuousPadder();
+		SGFilter sgFilter = new SGFilter(25, 25);
+	//	sgFilter.appendPreprocessor(p);
+		data[1] = sgFilter.smooth(data[1], coeffs);
+		for(int i = 0; i < set.size(); i++) {
+			set.set(i, new Double[]{set.get(i)[0], data[1][i]});
+		}
 	}
 }
