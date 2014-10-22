@@ -3,7 +3,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JButton;
@@ -60,7 +61,24 @@ public class ChartFrame extends JFrame {
 		filter_savitzky.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				final JDialog dialog = new JDialog(thisFrame, "Savitzky-Golay Filter", true);
-				dialog.setLayout(new GridLayout(4,3));
+				dialog.setLayout(new GridBagLayout());
+
+				GridBagConstraints labels = new GridBagConstraints();
+				labels.gridwidth = 6;
+				labels.ipadx = 10;
+				labels.anchor = GridBagConstraints.LINE_END;
+				labels.gridx = 0;
+				labels.gridy = 0;
+
+				GridBagConstraints values = new GridBagConstraints();
+				values.gridx = 6;
+				values.gridy = 0;
+
+				GridBagConstraints slider = new GridBagConstraints();
+				slider.gridwidth = 5;
+				slider.gridx = 7;
+				slider.gridy = 0;
+
 				dialog.setBounds(thisFrame.getX(), thisFrame.getY(), 500, 400);
 				dialog.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent e) {
@@ -68,38 +86,44 @@ public class ChartFrame extends JFrame {
 					}
 				});
 
-				dialog.add(new JLabel("Left Elements to Sample"));
+				dialog.add(new JLabel("Left Elements to Sample"), labels);
 				final JLabel leftNum = new JLabel("25");
-				dialog.add(leftNum);
+				dialog.add(leftNum, values);
 				final JSlider leftSlide = new JSlider(0, 100, 25);
 				leftSlide.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent e) {
 						leftNum.setText("" + leftSlide.getValue());
 					}
 				});
-				dialog.add(leftSlide);
+				dialog.add(leftSlide, slider);
 
-				dialog.add(new JLabel("Right Elements to Sample"));
+				labels.gridy = 1;
+				dialog.add(new JLabel("Right Elements to Sample"), labels);
 				final JLabel rightNum = new JLabel("25");
-				dialog.add(rightNum);
+				values.gridy = 1;
+				dialog.add(rightNum, values);
 				final JSlider rightSlide = new JSlider(0, 100, 25);
 				rightSlide.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent e) {
 						rightNum.setText("" + rightSlide.getValue());
 					}
 				});
-				dialog.add(rightSlide);
+				slider.gridy = 1;
+				dialog.add(rightSlide, slider);
 
-				dialog.add(new JLabel("Degree of Fitting Polynomial"));
+				labels.gridy = 2;
+				dialog.add(new JLabel("Degree of Fitting Polynomial"), labels);
 				final JLabel degreeNum = new JLabel("6");
-				dialog.add(degreeNum);
+				values.gridy = 2;
+				dialog.add(degreeNum, values);
 				final JSlider degreeSlide = new JSlider(0, 10, 6);
 				degreeSlide.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent e) {
 						degreeNum.setText("" + degreeSlide.getValue());
 					}
 				});
-				dialog.add(degreeSlide);
+				slider.gridy = 2;
+				dialog.add(degreeSlide, slider);
 
 				final JButton accept = new JButton("OK");
 				final JButton cancel = new JButton("Cancel");
@@ -120,9 +144,11 @@ public class ChartFrame extends JFrame {
 						dialog.dispose();
 					}
 				});
-				dialog.add(cancel);
-				dialog.add(new JLabel()); //filler
-				dialog.add(accept);
+				labels.gridy = 3;
+				labels.anchor = GridBagConstraints.CENTER;
+				dialog.add(cancel, labels);
+				slider.gridy = 3;
+				dialog.add(accept, slider);
 
 				dialog.setVisible(true);
 			}
