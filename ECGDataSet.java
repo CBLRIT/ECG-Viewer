@@ -74,11 +74,11 @@ public class ECGDataSet {
 		}
 	}
 
-	public void sgolayfilt() {
+	public void sgolayfilt(int left, int right, int degree) {
 		double[][] data = this.toArray();
-		double[] coeffs = SGFilter.computeSGCoefficients(25, 25, 6);
+		double[] coeffs = SGFilter.computeSGCoefficients(left, right, degree);
 	//	ContinuousPadder p = new ContinuousPadder();
-		SGFilter sgFilter = new SGFilter(25, 25);
+		SGFilter sgFilter = new SGFilter(left, right);
 	//	sgFilter.appendPreprocessor(p);
 		data[1] = sgFilter.smooth(data[1], coeffs);
 		for(int i = 0; i < set.size(); i++) {
@@ -86,8 +86,7 @@ public class ECGDataSet {
 		}
 	}
 
-	public void lowpassfilt() {
-		Double freq = 40.0;
+	public void lowpassfilt(double freq) {
 		Double RC = 1/(2*Math.PI)/freq;
 		Double dt = set.get(1)[0] - set.get(0)[0];
 		Double a = dt / (RC + dt);
@@ -101,8 +100,7 @@ public class ECGDataSet {
 		}
 	}
 
-	public void highpassfilt() {
-		Double freq = 1.0;
+	public void highpassfilt(double freq) {
 		Double RC = 1/(2*Math.PI)/freq;
 		Double dt = set.get(1)[0] - set.get(0)[0];
 		Double a = RC / (RC + dt);

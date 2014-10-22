@@ -37,7 +37,7 @@ public class ECGModel {
 			return;
 		}
 
-	//	System.out.println(raw.get(raw.size()-1).getValue().toString());
+//		System.out.println(raw.get(raw.size()-1).getKey().toString() + ", " + raw.get(raw.size()-1).getValue().toString());
 	//	return;
 
 		for(int i = 0; i < raw.size(); i++) {

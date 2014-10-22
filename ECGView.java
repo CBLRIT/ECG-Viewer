@@ -110,16 +110,16 @@ public class ECGView {
 		this.chart.getXYPlot().setDataset(dxyd);
 	}
 
-	public void applyFilter(int which) {
+	public void applyFilter(int which, Number... params) {
 		switch(which) {
 			case 0:
-				origData.sgolayfilt();
+				origData.sgolayfilt((int)params[0], (int)params[1], (int)params[2]);
 				break;
 			case 1:
-				origData.highpassfilt();
+				origData.highpassfilt((double)params[0]);
 				break;
 			case 2:
-				origData.lowpassfilt();
+				origData.lowpassfilt((double)params[0]);
 				break;
 			default:
 				return;
