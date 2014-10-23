@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.event.ChangeEvent;
@@ -15,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 
@@ -61,7 +63,12 @@ public class ChartFrame extends JFrame {
 		filter_savitzky.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				final JDialog dialog = new JDialog(thisFrame, "Savitzky-Golay Filter", true);
-				dialog.setLayout(new GridBagLayout());
+				dialog.setLayout(new BorderLayout());
+
+				final ECGView[] preview = new ECGView[1];
+				preview[0] = (ECGView)view.deepClone(true);
+
+				JPanel controls = new JPanel(new GridBagLayout());
 
 				GridBagConstraints labels = new GridBagConstraints();
 				labels.gridwidth = 6;
@@ -80,50 +87,71 @@ public class ChartFrame extends JFrame {
 				slider.gridy = 0;
 
 				dialog.setBounds(thisFrame.getX(), thisFrame.getY(), 500, 400);
+				dialog.setResizable(false);
 				dialog.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent e) {
 						e.getWindow().dispose();
 					}
 				});
 
-				dialog.add(new JLabel("Left Elements to Sample"), labels);
+				controls.add(new JLabel("Left Elements to Sample"), labels);
 				final JLabel leftNum = new JLabel("25");
-				dialog.add(leftNum, values);
+				controls.add(leftNum, values);
 				final JSlider leftSlide = new JSlider(0, 100, 25);
+				final JSlider rightSlide = new JSlider(0, 100, 25);
+				final JSlider degreeSlide = new JSlider(0, 10, 6);
 				leftSlide.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent e) {
 						leftNum.setText("" + leftSlide.getValue());
+						preview[0] = (ECGView)view.deepClone(true);
+						preview[0].applyFilter(0,
+											leftSlide.getValue(),
+											rightSlide.getValue(),
+											degreeSlide.getValue());
+						dialog.revalidate();
 					}
 				});
-				dialog.add(leftSlide, slider);
+				controls.add(leftSlide, slider);
 
 				labels.gridy = 1;
-				dialog.add(new JLabel("Right Elements to Sample"), labels);
+				controls.add(new JLabel("Right Elements to Sample"), labels);
 				final JLabel rightNum = new JLabel("25");
 				values.gridy = 1;
-				dialog.add(rightNum, values);
-				final JSlider rightSlide = new JSlider(0, 100, 25);
+				controls.add(rightNum, values);
 				rightSlide.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent e) {
 						rightNum.setText("" + rightSlide.getValue());
+						preview[0] = (ECGView)view.deepClone(true);
+						preview[0].applyFilter(0,
+											leftSlide.getValue(),
+											rightSlide.getValue(),
+											degreeSlide.getValue());
+						dialog.revalidate();
 					}
 				});
 				slider.gridy = 1;
-				dialog.add(rightSlide, slider);
+				controls.add(rightSlide, slider);
 
 				labels.gridy = 2;
-				dialog.add(new JLabel("Degree of Fitting Polynomial"), labels);
+				controls.add(new JLabel("Degree of Fitting Polynomial"), labels);
 				final JLabel degreeNum = new JLabel("6");
 				values.gridy = 2;
-				dialog.add(degreeNum, values);
-				final JSlider degreeSlide = new JSlider(0, 10, 6);
+				controls.add(degreeNum, values);
 				degreeSlide.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent e) {
+					//	System.out.println(degreeSlide.getValue());
 						degreeNum.setText("" + degreeSlide.getValue());
+						preview[0] = (ECGView)view.deepClone(true);
+						preview[0].applyFilter(0,
+											leftSlide.getValue(),
+											rightSlide.getValue(),
+											degreeSlide.getValue());
+					//	System.out.println(degreeSlide.getValue());
+						dialog.revalidate();
 					}
 				});
 				slider.gridy = 2;
-				dialog.add(degreeSlide, slider);
+				controls.add(degreeSlide, slider);
 
 				final JButton accept = new JButton("OK");
 				final JButton cancel = new JButton("Cancel");
@@ -146,9 +174,18 @@ public class ChartFrame extends JFrame {
 				});
 				labels.gridy = 3;
 				labels.anchor = GridBagConstraints.CENTER;
-				dialog.add(cancel, labels);
+				controls.add(cancel, labels);
 				slider.gridy = 3;
-				dialog.add(accept, slider);
+				controls.add(accept, slider);
+
+				dialog.add(controls, BorderLayout.NORTH);
+
+				preview[0].applyFilter(0,
+									   leftSlide.getValue(),
+									   rightSlide.getValue(),
+									   degreeSlide.getValue());
+				
+				dialog.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 				dialog.setVisible(true);
 			}

@@ -103,6 +103,10 @@ public class ECGView {
 		return new ECGView(origData, title, withLabels);
 	}
 
+	public Object deepClone(boolean withLabels) {
+		return new ECGView((ECGDataSet)origData.clone(), title, withLabels);
+	}
+
 	public void detrend() {
 		origData.detrend();
 		DefaultXYDataset dxyd = new DefaultXYDataset();

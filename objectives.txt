@@ -1,5 +1,10 @@
 objectives of program:
 
+0. Data input
+  a. Make sure data is correct
+  b. Add support for other formats of data and layout
+  	i. Chinese datasets are ASCII and 64-lead
+
 1. BSP processing
   a. filtering
   	i. low-order polynomial fit

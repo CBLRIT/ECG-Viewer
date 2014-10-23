@@ -37,7 +37,7 @@ public class ECGModel {
 			return;
 		}
 
-//		System.out.println(raw.get(raw.size()-1).getKey().toString() + ", " + raw.get(raw.size()-1).getValue().toString());
+	//	System.out.println(raw.get(raw.size()-1).getKey().toString() + ", " + raw.get(raw.size()-1).getValue().toString());
 	//	return;
 
 		for(int i = 0; i < raw.size(); i++) {
@@ -76,6 +76,8 @@ public class ECGModel {
 			for(int j = 0; j < points.get(i).size(); j++) {
 				points.get(i).getAt(j)[1] -= median;
 			}
+
+	//		System.out.println(Arrays.toString(points.get(4).toArray()[1]));
 		}
 		
 	//	printArrayList(points.get(4));

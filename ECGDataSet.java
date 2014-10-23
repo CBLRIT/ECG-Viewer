@@ -33,6 +33,14 @@ public class ECGDataSet {
 		return set.size();
 	}
 
+	public Object clone() {
+		ECGDataSet eds = new ECGDataSet();
+		eds.set = new ArrayList(this.set);
+		eds.bad = this.bad;
+		eds.annotations = new HashSet(this.annotations);
+		return eds;
+	}
+
 	public double[][] toArray() {
 		double[][] ret = new double[2][set.size()];
 
