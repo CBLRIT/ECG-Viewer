@@ -11,6 +11,7 @@ import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
@@ -79,6 +80,7 @@ public class ECGView {
 //																 plot.getRangeAxisEdge());
 
 					//origData.toggleAnnotation(((XYItemEntity)ce).getItem());
+					plot.addDomainMarker(new ValueMarker(x));
 
 				}
 

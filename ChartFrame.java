@@ -97,18 +97,19 @@ public class ChartFrame extends JFrame {
 				controls.add(new JLabel("Left Elements to Sample"), labels);
 				final JLabel leftNum = new JLabel("25");
 				controls.add(leftNum, values);
-				final JSlider leftSlide = new JSlider(0, 100, 25);
-				final JSlider rightSlide = new JSlider(0, 100, 25);
+				final JSlider leftSlide = new JSlider(1, 100, 25);
+				final JSlider rightSlide = new JSlider(1, 100, 25);
 				final JSlider degreeSlide = new JSlider(0, 10, 6);
 				leftSlide.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent e) {
 						leftNum.setText("" + leftSlide.getValue());
+						dialog.remove(preview[0].getPanel());
 						preview[0] = (ECGView)view.deepClone(true);
 						preview[0].applyFilter(0,
 											leftSlide.getValue(),
 											rightSlide.getValue(),
 											degreeSlide.getValue());
-						dialog.revalidate();
+						dialog.add(preview[0].getPanel());
 					}
 				});
 				controls.add(leftSlide, slider);
@@ -121,12 +122,13 @@ public class ChartFrame extends JFrame {
 				rightSlide.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent e) {
 						rightNum.setText("" + rightSlide.getValue());
+						dialog.remove(preview[0].getPanel());
 						preview[0] = (ECGView)view.deepClone(true);
 						preview[0].applyFilter(0,
 											leftSlide.getValue(),
 											rightSlide.getValue(),
 											degreeSlide.getValue());
-						dialog.revalidate();
+						dialog.add(preview[0].getPanel());
 					}
 				});
 				slider.gridy = 1;
@@ -141,13 +143,14 @@ public class ChartFrame extends JFrame {
 					public void stateChanged(ChangeEvent e) {
 					//	System.out.println(degreeSlide.getValue());
 						degreeNum.setText("" + degreeSlide.getValue());
+						dialog.remove(preview[0].getPanel());
 						preview[0] = (ECGView)view.deepClone(true);
 						preview[0].applyFilter(0,
-											leftSlide.getValue(),
-											rightSlide.getValue(),
-											degreeSlide.getValue());
+											   leftSlide.getValue(),
+											   rightSlide.getValue(),
+											   degreeSlide.getValue());
 					//	System.out.println(degreeSlide.getValue());
-						dialog.revalidate();
+						dialog.add(preview[0].getPanel());
 					}
 				});
 				slider.gridy = 2;
@@ -193,15 +196,163 @@ public class ChartFrame extends JFrame {
 		JMenuItem filter_high = new JMenuItem("High Pass");
 		filter_high.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.applyFilter(1);
-				thisFrame.revalidate();
+				final JDialog dialog = new JDialog(thisFrame, "High Pass Filter", true);
+				dialog.setLayout(new BorderLayout());
+
+				final ECGView[] preview = new ECGView[1];
+				preview[0] = (ECGView)view.deepClone(true);
+
+				JPanel controls = new JPanel(new GridBagLayout());
+
+				GridBagConstraints labels = new GridBagConstraints();
+				labels.gridwidth = 6;
+				labels.ipadx = 10;
+				labels.anchor = GridBagConstraints.LINE_END;
+				labels.gridx = 0;
+				labels.gridy = 0;
+
+				GridBagConstraints values = new GridBagConstraints();
+				values.gridx = 6;
+				values.gridy = 0;
+
+				GridBagConstraints slider = new GridBagConstraints();
+				slider.gridwidth = 5;
+				slider.gridx = 7;
+				slider.gridy = 0;
+
+				dialog.setBounds(thisFrame.getX(), thisFrame.getY(), 500, 400);
+				dialog.setResizable(false);
+				dialog.addWindowListener(new WindowAdapter() {
+					public void windowClosing(WindowEvent e) {
+						e.getWindow().dispose();
+					}
+				});
+
+				controls.add(new JLabel("Frequency Threshold"), labels);
+				final JLabel leftNum = new JLabel(".25");
+				controls.add(leftNum, values);
+				final JSlider leftSlide = new JSlider(1, 400, 25);
+				leftSlide.addChangeListener(new ChangeListener() {
+					public void stateChanged(ChangeEvent e) {
+						leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
+						dialog.remove(preview[0].getPanel());
+						preview[0] = (ECGView)view.deepClone(true);
+						preview[0].applyFilter(1, ((double)(int)leftSlide.getValue())/100.0);
+						dialog.add(preview[0].getPanel());
+					}
+				});
+				controls.add(leftSlide, slider);
+
+				final JButton accept = new JButton("OK");
+				final JButton cancel = new JButton("Cancel");
+				accept.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						accept.setEnabled(false);
+						cancel.setEnabled(false);
+						view.applyFilter(1, ((double)(int)leftSlide.getValue())/100.0);
+						thisFrame.revalidate();
+						dialog.dispose();
+					}
+				});
+				cancel.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dialog.dispose();
+					}
+				});
+				labels.gridy = 1;
+				labels.anchor = GridBagConstraints.CENTER;
+				controls.add(cancel, labels);
+				slider.gridy = 1;
+				controls.add(accept, slider);
+
+				dialog.add(controls, BorderLayout.NORTH);
+
+				preview[0].applyFilter(1, ((double)(int)leftSlide.getValue())/100.0);
+				
+				dialog.add(preview[0].getPanel(), BorderLayout.CENTER);
+
+				dialog.setVisible(true);
 			}
 		});
 		JMenuItem filter_low = new JMenuItem("Low Pass");
 		filter_low.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.applyFilter(2);
-				thisFrame.revalidate();
+				final JDialog dialog = new JDialog(thisFrame, "Low Pass Filter", true);
+				dialog.setLayout(new BorderLayout());
+
+				final ECGView[] preview = new ECGView[1];
+				preview[0] = (ECGView)view.deepClone(true);
+
+				JPanel controls = new JPanel(new GridBagLayout());
+
+				GridBagConstraints labels = new GridBagConstraints();
+				labels.gridwidth = 6;
+				labels.ipadx = 10;
+				labels.anchor = GridBagConstraints.LINE_END;
+				labels.gridx = 0;
+				labels.gridy = 0;
+
+				GridBagConstraints values = new GridBagConstraints();
+				values.gridx = 6;
+				values.gridy = 0;
+
+				GridBagConstraints slider = new GridBagConstraints();
+				slider.gridwidth = 5;
+				slider.gridx = 7;
+				slider.gridy = 0;
+
+				dialog.setBounds(thisFrame.getX(), thisFrame.getY(), 500, 400);
+				dialog.setResizable(false);
+				dialog.addWindowListener(new WindowAdapter() {
+					public void windowClosing(WindowEvent e) {
+						e.getWindow().dispose();
+					}
+				});
+
+				controls.add(new JLabel("Frequency Threshold"), labels);
+				final JLabel leftNum = new JLabel("40.0");
+				controls.add(leftNum, values);
+				final JSlider leftSlide = new JSlider(3000, 7000, 4000);
+				leftSlide.addChangeListener(new ChangeListener() {
+					public void stateChanged(ChangeEvent e) {
+						leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
+						dialog.remove(preview[0].getPanel());
+						preview[0] = (ECGView)view.deepClone(true);
+						preview[0].applyFilter(2, ((double)(int)leftSlide.getValue())/100.0);
+						dialog.add(preview[0].getPanel());
+					}
+				});
+				controls.add(leftSlide, slider);
+
+				final JButton accept = new JButton("OK");
+				final JButton cancel = new JButton("Cancel");
+				accept.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						accept.setEnabled(false);
+						cancel.setEnabled(false);
+						view.applyFilter(2, ((double)(int)leftSlide.getValue())/100.0);
+						thisFrame.revalidate();
+						dialog.dispose();
+					}
+				});
+				cancel.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dialog.dispose();
+					}
+				});
+				labels.gridy = 1;
+				labels.anchor = GridBagConstraints.CENTER;
+				controls.add(cancel, labels);
+				slider.gridy = 1;
+				controls.add(accept, slider);
+
+				dialog.add(controls, BorderLayout.NORTH);
+
+				preview[0].applyFilter(2, ((double)(int)leftSlide.getValue())/100.0);
+				
+				dialog.add(preview[0].getPanel(), BorderLayout.CENTER);
+
+				dialog.setVisible(true);
 			}
 		});
 		filter.add(filter_detrend);
