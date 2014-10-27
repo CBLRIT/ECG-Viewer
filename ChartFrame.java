@@ -443,6 +443,17 @@ public class ChartFrame extends JFrame {
 		
 		menu.add(filter);
 
+		JMenu annotations = new JMenu("Annotation");
+		JMenuItem annotations_clear = new JMenuItem("Clear");
+		annotations_clear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				view.clearAnnotations();
+			}
+		});
+		annotations.add(annotations_clear);
+
+		menu.add(annotations);
+
 		setJMenuBar(menu);
 
 		view = v;

@@ -50,13 +50,16 @@ public class ECGDataSet {
 		return ret;
 	}
 
-	public void toggleAnnotation(double i) {
-		if(annotations.contains(i)) {
-			annotations.remove(i);
-		} else {
-			annotations.add(i);
-		}
-	//	System.out.println(i);
+	public ArrayList<Double> getAnnotations() {
+		return new ArrayList<Double>(annotations);
+	}
+
+	public void addAnnotation(double i) {
+		annotations.add(i);
+	}
+
+	public void clearAnnotations() {
+		annotations.clear();
 	}
 
 	public boolean isAnnotated(double i) {

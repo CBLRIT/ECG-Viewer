@@ -1,4 +1,5 @@
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -67,26 +68,29 @@ public class ECGView {
 			true, //zoom
 			false //tooltip
 		);
+
 		this.setBackground(!this.isBad() ? 
 						   UIManager.getColor("Panel.background") : 
 						   new Color(233, 174, 174));
+
+		for(int i = 0; i < origData.getAnnotations().size(); i++) {
+			plot.addDomainMarker(new ValueMarker(origData.getAnnotations().get(i), 
+												 Color.BLACK, 
+												 new BasicStroke()));
+		}
+
 		if(withLabels) {
 			panel.addChartMouseListener(new ChartMouseListener() {
 				public void chartMouseClicked(ChartMouseEvent event) {
-//					ChartEntity ce = event.getEntity();
-//					if(ce == null)
-//						return;
+					ChartEntity ce = event.getEntity();
+					if(ce == null)
+						return;
 					Point2D p = panel.translateScreenToJava2D(event.getTrigger().getPoint());
 					double x = plot.getDomainAxis().java2DToValue(p.getX(),
 																  panel.getScreenDataArea(),
 																  plot.getDomainAxisEdge());
-//					double y = plot.getRangeAxis().java2DToValue(p.getY(),
-//																 panel.getScreenDataArea(),
-//																 plot.getRangeAxisEdge());
-
-					//origData.toggleAnnotation(((XYItemEntity)ce).getItem());
-					plot.addDomainMarker(new ValueMarker(x));
-
+					origData.addAnnotation(x);
+					plot.addDomainMarker(new ValueMarker(x, Color.BLACK, new BasicStroke()));
 				}
 
 				public void chartMouseMoved(ChartMouseEvent event) {}
@@ -94,6 +98,11 @@ public class ECGView {
 		}
 
 //		System.out.println(origData.toArray()[1][0]);
+	}
+
+	public void clearAnnotations() {
+		plot.clearDomainMarkers();
+		this.origData.clearAnnotations();
 	}
 
 	public void setBackground(Color c) {
