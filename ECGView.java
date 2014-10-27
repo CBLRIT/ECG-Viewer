@@ -1,9 +1,11 @@
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartMouseEvent;
@@ -65,6 +67,9 @@ public class ECGView {
 			true, //zoom
 			false //tooltip
 		);
+		this.setBackground(!this.isBad() ? 
+						   UIManager.getColor("Panel.background") : 
+						   new Color(233, 174, 174));
 		if(withLabels) {
 			panel.addChartMouseListener(new ChartMouseListener() {
 				public void chartMouseClicked(ChartMouseEvent event) {
@@ -91,6 +96,11 @@ public class ECGView {
 //		System.out.println(origData.toArray()[1][0]);
 	}
 
+	public void setBackground(Color c) {
+		this.chart.setBackgroundPaint(c);
+		this.panel.revalidate();
+	}
+
 	public void setBad(boolean b) {
 		origData.setBad(b);
 	}
@@ -111,8 +121,14 @@ public class ECGView {
 		return new ECGView((ECGDataSet)origData.clone(), title, withLabels);
 	}
 
-	public void detrend() {
-		origData.detrend();
+	public void revalidate() {
+		DefaultXYDataset dxyd = new DefaultXYDataset();
+		dxyd.addSeries(1, origData.toArray());
+		this.chart.getXYPlot().setDataset(dxyd);
+	}
+
+	public void detrend(int degree) {
+		origData.detrend(degree);
 		DefaultXYDataset dxyd = new DefaultXYDataset();
 		dxyd.addSeries(1, origData.toArray());
 		this.chart.getXYPlot().setDataset(dxyd);

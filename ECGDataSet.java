@@ -7,8 +7,6 @@ import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
 
 public class ECGDataSet {
-	private final int detrendPolynomial = 6;
-
 	private ArrayList<Double[]> set;
 	private boolean bad;
 	private HashSet<Double> annotations; //indicies into set
@@ -65,7 +63,7 @@ public class ECGDataSet {
 		return annotations.contains(i);
 	}
 
-	public void detrend() {
+	public void detrend(int detrendPolynomial) {
 		PolynomialCurveFitter p = PolynomialCurveFitter.create(detrendPolynomial);
 		WeightedObservedPoints wop = new WeightedObservedPoints();
 		for(int i = 0; i < set.size(); i++) {

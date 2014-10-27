@@ -1,16 +1,28 @@
 objectives of program:
 
-0. Data input
-  a. Make sure data is correct
-  b. Add support for other formats of data and layout
-  	i. Chinese datasets are ASCII and 64-lead
+i| 0. Data input
+d|   a. Make sure data is correct
+ |   b. Add support for other formats of data and layout
+ |     i. Chinese datasets are ASCII and 64-lead
+ |
+i| 1. BSP processing
+d|   a. filtering
+d|     i. low-order polynomial fit
+d|     ii. savitzky-golay filter
+d|   b. bad leads
+i|   c. beat annotation
+d|     i. note: use just time slices, not actual data points
+ |
+h| 2. electrode position
+ |
+ | 3. data output
+ |   a. matlab matrix
+ |   b. own file type?
 
-1. BSP processing
-  a. filtering
-  	i. low-order polynomial fit
-	ii. savitzky-golay filter
-  b. bad leads
-  c. beat annotation
-  	i. note: use just time slices, not actual data points
 
-2. electrode position
+-------KEY------
+d - done
+n - needs revision
+i - in progress
+h - on hold
+  - not started
