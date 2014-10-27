@@ -87,6 +87,8 @@ public class ECGView {
 				public void chartMouseMoved(ChartMouseEvent event) {}
 			});
 		}
+
+//		System.out.println(origData.toArray()[1][0]);
 	}
 
 	public void setBad(boolean b) {

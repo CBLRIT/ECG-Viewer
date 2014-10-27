@@ -15,7 +15,7 @@ public class ECGModel {
 	//private DefaultXYDataset points; //x is time, y is value
 	private ArrayList<ECGDataSet> points; //<channel<at time<time, value>>
 	private final int tupleLength = 154;
-	private final int actualSize = 129;
+	private final int actualSize = 130;
 
 	private <T> void printArrayList(ArrayList<T[]> arr) {
 		for(int i = 0; i < arr.size(); i++) {
@@ -77,7 +77,7 @@ public class ECGModel {
 				points.get(i).getAt(j)[1] -= median;
 			}
 
-	//		System.out.println(Arrays.toString(points.get(4).toArray()[1]));
+	//		System.out.println(i + ": " + points.get(i).toArray()[1][0]);
 		}
 		
 	//	printArrayList(points.get(4));

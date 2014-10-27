@@ -16,8 +16,9 @@ import javax.swing.JScrollPane;
 
 public class Main {
 	private static final int dataSetPlacement[][] =  {
-		{-1, -1}, //
-		{-1, -1}, // 0-3 unhelpful
+		{-1, -1}, // // first two are junk
+		{-1, -1}, // //
+		{-1, -1}, // 1-3 unhelpful (limb leads)
 		{-1, -1}, //
 		{-1, -1}, //
 		{4, 0},		{5, 0}, 	{6, 0}, 	{7, 0}, //4-7
@@ -58,9 +59,9 @@ public class Main {
 			return;
 		}
 		
-		for(int i = 4; i < 124; i++) {
-		//	System.out.println(i);
-			final ECGView graph = new ECGView(model.getDataset(i), ""+i, false);
+		for(int i = 5; i < 125; i++) {
+		//	System.out.print(i + ": ");
+			final ECGView graph = new ECGView(model.getDataset(i), ""+(i-1), false);
 			int index = dataSetPlacement[i][0]*xnum + dataSetPlacement[i][1];
 			graph.getPanel().setPopupMenu(null); //turn off context menu for chart
 			subPanels[index].removeAll();
