@@ -450,7 +450,14 @@ public class ChartFrame extends JFrame {
 				view.clearAnnotations();
 			}
 		});
+		JMenuItem annotations_trim = new JMenuItem("Trim");
+		annotations_trim.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				view.setTrim(true);
+			}
+		});
 		annotations.add(annotations_clear);
+		annotations.add(annotations_trim);
 
 		menu.add(annotations);
 

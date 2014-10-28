@@ -53,9 +53,9 @@ public class Main {
 
 	private static final JFrame main = new JFrame("This");
 	private static final JPanel[] subPanels = new JPanel[xnum*ynum];
+	private static ECGModel model;
 
 	private static void loadFile(String filename) {
-		ECGModel model = new ECGModel();
 		try {
 			model.readData(filename);
 		} catch (IOException e) {
@@ -103,6 +103,8 @@ public class Main {
 
 	public static void main(String args[])
 			throws Exception {
+		model = new ECGModel();
+
 		main.setBounds(20, 20, 1400, 750);
 
 		JMenuBar menubar = new JMenuBar();

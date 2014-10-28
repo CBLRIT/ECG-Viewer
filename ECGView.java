@@ -33,7 +33,12 @@ public class ECGView {
 	private final ECGDataSet origData;
 	private String title;
 
+	private boolean trim;
+	private final ECGView thisView = this;
+
 	public ECGView(ECGDataSet data, String title, boolean withLabels) {
+		trim = false;
+
 		origData = data;
 		this.title = title;
 
@@ -89,8 +94,15 @@ public class ECGView {
 					double x = plot.getDomainAxis().java2DToValue(p.getX(),
 																  panel.getScreenDataArea(),
 																  plot.getDomainAxisEdge());
-					origData.addAnnotation(x);
-					plot.addDomainMarker(new ValueMarker(x, Color.BLACK, new BasicStroke()));
+					if(trim) {
+						thisView.setTrim(false);
+						origData.trimAnnotations(x);
+						thisView.clearAnnotations();
+						thisView.revalidate();
+					} else {
+						origData.addAnnotation(x);
+						plot.addDomainMarker(new ValueMarker(x, Color.BLACK, new BasicStroke()));
+					}
 				}
 
 				public void chartMouseMoved(ChartMouseEvent event) {}
@@ -98,6 +110,10 @@ public class ECGView {
 		}
 
 //		System.out.println(origData.toArray()[1][0]);
+	}
+
+	public void setTrim(boolean b) {
+		trim = b;
 	}
 
 	public void clearAnnotations() {

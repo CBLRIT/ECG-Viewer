@@ -1,13 +1,15 @@
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import mr.go.sgfilter.ContinuousPadder;
 import mr.go.sgfilter.SGFilter;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
 
 public class ECGDataSet {
-	private ArrayList<Double[]> set;
+	private List<Double[]> set;
 	private boolean bad;
 	private HashSet<Double> annotations; //indicies into set
 
@@ -64,6 +66,32 @@ public class ECGDataSet {
 
 	public boolean isAnnotated(double i) {
 		return annotations.contains(i);
+	}
+
+	public void trimAnnotations(double between) {
+		Double[] annos = (Double[])annotations.toArray(new Double[annotations.size()]);
+
+		//find closest lower than between
+		double lower = 0;
+		for(int i = 0; i < annos.length; i++) {
+			if(annos[i] < between && lower < annos[i]) {
+				lower = annos[i];
+			}
+		}
+
+		//find closet higher than between
+		double higher = set.get(set.size()-1)[0];
+		for(int i = 0; i < annos.length; i++) {
+			if(annos[i] > between && higher > annos[i]) {
+				higher = annos[i];
+			}
+		}
+
+		//set should be always sorted, so a binary search shouldn't break
+		int lowerInd = Math.abs(Arrays.binarySearch(this.toArray()[0], lower));
+		int higherInd = Math.abs(Arrays.binarySearch(this.toArray()[0], higher));
+
+		set = set.subList(lowerInd, higherInd);
 	}
 
 	public void detrend(int detrendPolynomial) {
