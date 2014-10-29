@@ -13,9 +13,17 @@ public class MatFile {
 	private FileOutputStream fs;
 	private final int nameSize = 8;
 
+	private static String pad(String s, int totalLen, char padWith) {
+		String ret = new String(s);
+		for(int i = 0; i < totalLen - s.length(); i++) {
+			ret += new String(new char[]{padWith});
+		}
+		return ret;
+	}
+
 	public MatFile(String filename) {
 		try {
-		fs = new FileOutputStream(filename);
+			fs = new FileOutputStream(filename);
 		} catch(FileNotFoundException e) {}
 	}
 
@@ -31,14 +39,17 @@ public class MatFile {
 
 		//descriptive text
 		Date now = new Date();
-		fs.write(("MATLAB 5.0 MAT-file, Created on: " + now.toString()).getBytes(), 0, 116);
+		fs.write(pad("MATLAB 5.0 MAT-file, Created on: " + now.toString(),
+					  116,
+					  ' ').getBytes(), 
+				 0, 
+				 116);
 		//flags? - not important
 		fs.write(new byte[]{0, 0, 0, 0, 0, 0, 0, 0});
 		//version - default
-		fs.write(new byte[]{0, 1, 0, 0});
+		fs.write(new byte[]{0, 1});
 		//endian indicator - little
-		int endian = ((int)'M' << 8) + (int)'I';
-		fs.write(ByteBuffer.allocate(4).putInt(endian).array());
+		fs.write("MI".getBytes());
 
 		//////Start channel arrays (Cell Array)///////////
 		//                                     miMATRIX
@@ -60,7 +71,7 @@ public class MatFile {
 		//name                                 miINT8
 		fs.write(ByteBuffer.allocate(4).putInt(1).array());
 		fs.write(ByteBuffer.allocate(4).putInt(nameSize).array());
-		fs.write("leads".getBytes(), 0, nameSize);
+		fs.write(pad("leads", nameSize, ' ').getBytes(), 0, nameSize);
 		//END HEADER
 
 		for(int i = 0; i < m; i++) {
@@ -84,7 +95,7 @@ public class MatFile {
 			//name                                 miINT8
 			fs.write(ByteBuffer.allocate(4).putInt(1).array());
 			fs.write(ByteBuffer.allocate(4).putInt(nameSize).array());
-			fs.write(("lead_" + i).getBytes(), 0, nameSize);
+			fs.write(pad("lead_" + i, nameSize, ' ').getBytes(), 0, nameSize);
 			//END HEADER
 
 			//                                     miDOUBLE
@@ -96,6 +107,8 @@ public class MatFile {
 			}
 		}
 
+		fs.flush();
+		fs.close();
 		//END
 	}
 }

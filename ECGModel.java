@@ -27,6 +27,24 @@ public class ECGModel {
 		points = new ArrayList<ECGDataSet>();
 	}
 
+	public double[][][] toArray() {
+		double[][][] arr = new double[points.size()][2][points.get(0).size()];
+		
+		for(int i = 0; i < points.size(); i++) {
+			for(int j = 0; j < points.get(0).size(); j++) {
+				arr[i][0][j] = points.get(i).getAt(j)[0];
+				arr[i][1][j] = points.get(i).getAt(j)[1];
+			}
+		}
+
+		return arr;
+	}
+
+	public void writeDataMat(String filename) 
+			throws IOException {
+		(new MatFile(filename)).write(this.toArray());
+	}
+
 	public void readData(String filename) 
 			throws IOException, FileNotFoundException {
 		ECGFile file = new ECGFile();

@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
@@ -53,7 +54,7 @@ public class Main {
 
 	private static final JFrame main = new JFrame("This");
 	private static final JPanel[] subPanels = new JPanel[xnum*ynum];
-	private static ECGModel model;
+	private static final ECGModel model = new ECGModel();
 
 	private static void loadFile(String filename) {
 		try {
@@ -102,9 +103,7 @@ public class Main {
 	}
 
 	public static void main(String args[])
-			throws Exception {
-		model = new ECGModel();
-
+			throws Exception { //TODO: fix this
 		main.setBounds(20, 20, 1400, 750);
 
 		JMenuBar menubar = new JMenuBar();
@@ -121,6 +120,23 @@ public class Main {
 				}
 			}
 		});
+		JMenuItem save = new JMenuItem("Save...");
+		save.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int ret = fc.showSaveDialog(main);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try { 
+						model.writeDataMat(fc.getSelectedFile().getAbsolutePath());
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null, 
+													  "Error writing file: " + ex.getMessage(), 
+													  "IOException", 
+													  JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
 		JMenuItem exit = new JMenuItem("Exit");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -129,6 +145,7 @@ public class Main {
 			}
 		});
 		menu.add(open);
+		menu.add(save);
 		menu.add(exit);
 
 		main.setJMenuBar(menubar);
