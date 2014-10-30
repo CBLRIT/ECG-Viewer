@@ -15,17 +15,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-public class SGOptionDialog extends JDialog {
-	private final SGOptionDialog thisDialog = this;
-	private int left;
-	private int right;
+public class DetrendOptionDialog extends JDialog {
+	private final DetrendOptionDialog thisDialog = this;
 	private int degree;
 
-	public SGOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
+	public DetrendOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
 		super(thisFrame, title, modal);
 
-		left = 25;
-		right = 25;
 		degree = 6;
 
 		this.setLayout(new BorderLayout());
@@ -59,50 +55,9 @@ public class SGOptionDialog extends JDialog {
 			}
 		});
 
-		controls.add(new JLabel("Left Elements to Sample"), labels);
-		final JLabel leftNum = new JLabel("25");
-		controls.add(leftNum, values);
-		final JSlider leftSlide = new JSlider(1, 100, 25);
-		final JSlider rightSlide = new JSlider(1, 100, 25);
 		final JSlider degreeSlide = new JSlider(0, 10, 6);
-		leftSlide.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				leftNum.setText("" + leftSlide.getValue());
-				thisDialog.remove(preview[0].getPanel());
-				preview[0] = (ECGView)view.deepClone(true);
-				preview[0].applyFilter(0,
-									leftSlide.getValue(),
-									rightSlide.getValue(),
-									degreeSlide.getValue());
-				thisDialog.add(preview[0].getPanel());
-			}
-		});
-		controls.add(leftSlide, slider);
-
-		labels.gridy = 1;
-		controls.add(new JLabel("Right Elements to Sample"), labels);
-		final JLabel rightNum = new JLabel("25");
-		values.gridy = 1;
-		controls.add(rightNum, values);
-		rightSlide.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				rightNum.setText("" + rightSlide.getValue());
-				thisDialog.remove(preview[0].getPanel());
-				preview[0] = (ECGView)view.deepClone(true);
-				preview[0].applyFilter(0,
-									leftSlide.getValue(),
-									rightSlide.getValue(),
-									degreeSlide.getValue());
-				thisDialog.add(preview[0].getPanel());
-			}
-		});
-		slider.gridy = 1;
-		controls.add(rightSlide, slider);
-
-		labels.gridy = 2;
 		controls.add(new JLabel("Degree of Fitting Polynomial"), labels);
 		final JLabel degreeNum = new JLabel("6");
-		values.gridy = 2;
 		controls.add(degreeNum, values);
 		degreeSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -110,15 +65,11 @@ public class SGOptionDialog extends JDialog {
 				degreeNum.setText("" + degreeSlide.getValue());
 				thisDialog.remove(preview[0].getPanel());
 				preview[0] = (ECGView)view.deepClone(true);
-				preview[0].applyFilter(0,
-									   leftSlide.getValue(),
-									   rightSlide.getValue(),
-									   degreeSlide.getValue());
+				preview[0].detrend(degreeSlide.getValue());
 			//	System.out.println(degreeSlide.getValue());
 				thisDialog.add(preview[0].getPanel());
 			}
 		});
-		slider.gridy = 2;
 		controls.add(degreeSlide, slider);
 
 		final JButton accept = new JButton("OK");
@@ -127,8 +78,6 @@ public class SGOptionDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				accept.setEnabled(false);
 				cancel.setEnabled(false);
-				left = leftSlide.getValue();
-				right = rightSlide.getValue(); 
 				degree = degreeSlide.getValue();
 				thisFrame.revalidate();
 				thisDialog.dispose();
@@ -139,25 +88,22 @@ public class SGOptionDialog extends JDialog {
 				thisDialog.dispose();
 			}
 		});
-		labels.gridy = 3;
+		labels.gridy = 1;
 		labels.anchor = GridBagConstraints.CENTER;
 		controls.add(cancel, labels);
-		slider.gridy = 3;
+		slider.gridy = 1;
 		controls.add(accept, slider);
 
 		this.add(controls, BorderLayout.NORTH);
 
-		preview[0].applyFilter(0,
-							   leftSlide.getValue(),
-							   rightSlide.getValue(),
-							   degreeSlide.getValue());
-		
+		preview[0].detrend(degreeSlide.getValue());
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);
 	}
 
 	public void applyToDataset(ECGDataSet view) {
-		view.sgolayfilt(left, right, degree);
+		view.detrend(degree);
 	}
 }
+

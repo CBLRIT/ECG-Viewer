@@ -108,7 +108,6 @@ public class Main {
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu menu = new JMenu("File");
-		menubar.add(menu);
 		JMenuItem open = new JMenuItem("Open...");
 		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -147,6 +146,50 @@ public class Main {
 		menu.add(open);
 		menu.add(save);
 		menu.add(exit);
+		menubar.add(menu);
+
+		JMenu filter = new JMenu("Filter All");
+		JMenuItem filter_detrend = new JMenuItem("Detrend");
+		filter_detrend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DetrendOptionDialog dialog = new DetrendOptionDialog(main, "Savitzky-Golay Filter", true, view);
+				for(int i = 0; i < model.size(); i++) {
+					dialog.applyToDataset(model.getDataset(i));
+				}
+			}
+		});
+		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
+		filter_savitzky.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SGOptionDialog dialog = new SGOptionDialog(main, "Savitzky-Golay Filter", true, view);
+				for(int i = 0; i < model.size(); i++) {
+					dialog.applyToDataset(model.getDataset(i));
+				}
+			}
+		});
+		JMenuItem filter_high = new JMenuItem("High Pass");
+		filter_high.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				HighOptionDialog dialog = new HighOptionDialog(main, "High Pass Filter", true, view);
+				for(int i = 0; i < model.size(); i++) {
+					dialog.applyToDataset(model.getDataset(i));
+				}
+			}
+		});
+		JMenuItem filter_low = new JMenuItem("Low Pass");
+		filter_low.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LowOptionDialog dialog = new LowOptionDialog(main, "Low Pass Filter", true, view);
+				for(int i = 0; i < model.size(); i++) {
+					dialog.applyToDataset(model.getDataset(i));
+				}
+			}
+		});
+		filter.add(filter_detrend);
+		filter.add(filter_savitzky);
+		filter.add(filter_high);
+		filter.add(filter_low);
+		menubar.add(filter);
 
 		main.setJMenuBar(menubar);
 

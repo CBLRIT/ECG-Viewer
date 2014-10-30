@@ -106,6 +106,10 @@ public class ECGModel {
 		return points.get(i);
 	}
 
+	public int size() {
+		return points.size();
+	}
+
 	public void setBad(int i, boolean isBad) {
 		points.get(i).setBad(isBad);
 	}
