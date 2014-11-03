@@ -138,6 +138,10 @@ public class ECGView {
 		return this.panel;
 	}
 
+	public ECGDataSet getData() {
+		return this.origData;
+	}
+
 	public Object clone(boolean withLabels) {
 		return new ECGView(origData, title, withLabels);
 	}
