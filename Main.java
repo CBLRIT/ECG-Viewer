@@ -9,6 +9,7 @@ import java.awt.event.WindowListener;
 import java.awt.GridLayout;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -54,9 +55,13 @@ public class Main {
 
 	private static final JFrame main = new JFrame("This");
 	private static final JPanel[] subPanels = new JPanel[xnum*ynum];
+	private static final ArrayList<ECGView> graphs = new ArrayList<ECGView>();
 	private static final ECGModel model = new ECGModel();
 
 	private static void loadFile(String filename) {
+		graphs.clear();
+		model.clear();
+
 		try {
 			model.readData(filename);
 		} catch (IOException e) {
@@ -67,6 +72,7 @@ public class Main {
 		for(int i = 5; i < 125; i++) {
 		//	System.out.print(i + ": ");
 			final ECGView graph = new ECGView(model.getDataset(i), ""+(i-1), false);
+			graphs.add(graph);
 			int index = dataSetPlacement[i][0]*xnum + dataSetPlacement[i][1];
 			graph.getPanel().setPopupMenu(null); //turn off context menu for chart
 			subPanels[index].removeAll();
@@ -152,42 +158,54 @@ public class Main {
 		JMenuItem filter_detrend = new JMenuItem("Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = new ECGView(model.getDataset(9), ""+(9-1), true);
+				ECGView view = graphs.get(4);
 				DetrendOptionDialog dialog = new DetrendOptionDialog(main, "Detrend", true, view);
+
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
-					subPanels[i].revalidate();
+					if(i >= 4 && i < 124) {
+						graphs.get(i-4).revalidate();
+					}
 				}
 			}
 		});
 		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
 		filter_savitzky.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = new ECGView(model.getDataset(9), ""+(9-1), true);
+				ECGView view = graphs.get(4);
 				SGOptionDialog dialog = new SGOptionDialog(main, "Savitzky-Golay Filter", true, view);
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
+					if(i >= 4 && i < 124) {
+						graphs.get(i-4).revalidate();
+					}
 				}
 			}
 		});
 		JMenuItem filter_high = new JMenuItem("High Pass");
 		filter_high.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = new ECGView(model.getDataset(9), ""+(9-1), true);
+				ECGView view = graphs.get(4);
 				HighOptionDialog dialog = new HighOptionDialog(main, "High Pass Filter", true, view);
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
+					if(i >= 4 && i < 124) {
+						graphs.get(i-4).revalidate();
+					}
 				}
 			}
 		});
 		JMenuItem filter_low = new JMenuItem("Low Pass");
 		filter_low.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = new ECGView(model.getDataset(9), ""+(9-1), true);
+				ECGView view = graphs.get(4);
 				LowOptionDialog dialog = new LowOptionDialog(main, "Low Pass Filter", true, view);
 
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
+					if(i >= 4 && i < 124) {
+						graphs.get(i-4).revalidate();
+					}
 				}
 			}
 		});
@@ -209,7 +227,6 @@ public class Main {
 		
 		JScrollPane scrollMain = new JScrollPane(mainPanel);
 		main.add(scrollMain);
-		//main.add(mainPanel);
 
 		main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		main.setVisible(true);

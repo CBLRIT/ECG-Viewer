@@ -154,13 +154,12 @@ public class ECGView {
 		DefaultXYDataset dxyd = new DefaultXYDataset();
 		dxyd.addSeries(1, origData.toArray());
 		this.chart.getXYPlot().setDataset(dxyd);
+		this.panel.revalidate();
 	}
 
 	public void detrend(int degree) {
 		origData.detrend(degree);
-		DefaultXYDataset dxyd = new DefaultXYDataset();
-		dxyd.addSeries(1, origData.toArray());
-		this.chart.getXYPlot().setDataset(dxyd);
+		revalidate();
 	}
 
 	public void applyFilter(int which, Number... params) {
@@ -177,9 +176,7 @@ public class ECGView {
 			default:
 				return;
 		}
-		DefaultXYDataset dxyd = new DefaultXYDataset();
-		dxyd.addSeries(1, origData.toArray());
-		this.chart.getXYPlot().setDataset(dxyd);
+		revalidate();
 	}
 }
 

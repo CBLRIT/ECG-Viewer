@@ -27,6 +27,10 @@ public class ECGModel {
 		points = new ArrayList<ECGDataSet>();
 	}
 
+	public void clear() {
+		points.clear();
+	}
+
 	public double[][][] toArray() {
 		double[][][] arr = new double[points.size()][2][points.get(0).size()];
 		

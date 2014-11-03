@@ -61,8 +61,9 @@ public class ChartFrame extends JFrame {
 		JMenuItem filter_detrend = new JMenuItem("Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, "Savitzky-Golay Filter", true, view);
+				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, "Detrend", true, view);
 				dialog.applyToDataset(view.getData());
+				view.revalidate();
 			}
 		});
 		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
@@ -70,6 +71,7 @@ public class ChartFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				SGOptionDialog dialog = new SGOptionDialog(thisFrame, "Savitzky-Golay Filter", true, view);
 				dialog.applyToDataset(view.getData());
+				view.revalidate();
 			}
 		});
 		JMenuItem filter_high = new JMenuItem("High Pass");
@@ -77,6 +79,7 @@ public class ChartFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				HighOptionDialog dialog = new HighOptionDialog(thisFrame, "High Pass Filter", true, view);
 				dialog.applyToDataset(view.getData());
+				view.revalidate();
 			}
 		});
 		JMenuItem filter_low = new JMenuItem("Low Pass");
@@ -84,6 +87,7 @@ public class ChartFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				LowOptionDialog dialog = new LowOptionDialog(thisFrame, "Low Pass Filter", true, view);
 				dialog.applyToDataset(view.getData());
+				view.revalidate();
 			}
 		});
 		filter.add(filter_detrend);

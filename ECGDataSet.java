@@ -3,10 +3,6 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import mr.go.sgfilter.ContinuousPadder;
-import mr.go.sgfilter.SGFilter;
-import org.apache.commons.math3.fitting.PolynomialCurveFitter;
-import org.apache.commons.math3.fitting.WeightedObservedPoints;
 
 public class ECGDataSet {
 	private List<Double[]> set;
@@ -95,60 +91,18 @@ public class ECGDataSet {
 	}
 
 	public void detrend(int detrendPolynomial) {
-		PolynomialCurveFitter p = PolynomialCurveFitter.create(detrendPolynomial);
-		WeightedObservedPoints wop = new WeightedObservedPoints();
-		for(int i = 0; i < set.size(); i++) {
-			wop.add(set.get(i)[0], set.get(i)[1]);
-		}
-		double[] coeff = p.fit(wop.toList());
-		for(int h = 0; h < set.size(); h++) {
-			double val = set.get(h)[0];
-			double off = 0;
-			for(int i = detrendPolynomial; i >= 0; i--) {
-				off += coeff[i] * Math.pow(val, i);
-			}
-			set.set(h, new Double[]{set.get(h)[0], set.get(h)[1]-off});
-		}
+		Filters.detrend(set, detrendPolynomial);
 	}
 
 	public void sgolayfilt(int left, int right, int degree) {
-		double[][] data = this.toArray();
-		double[] coeffs = SGFilter.computeSGCoefficients(left, right, degree);
-	//	ContinuousPadder p = new ContinuousPadder();
-		SGFilter sgFilter = new SGFilter(left, right);
-	//	sgFilter.appendPreprocessor(p);
-		data[1] = sgFilter.smooth(data[1], coeffs);
-		for(int i = 0; i < set.size(); i++) {
-			set.set(i, new Double[]{set.get(i)[0], data[1][i]});
-		}
+		Filters.sgolayfilt(set, left, right, degree);
 	}
 
 	public void lowpassfilt(double freq) {
-		Double RC = 1/(2*Math.PI)/freq;
-		Double dt = set.get(1)[0] - set.get(0)[0];
-		Double a = dt / (RC + dt);
-
-		Double lasty = set.get(0)[1];
-		for(int i = 1; i < set.size(); i++) {
-			Double x = set.get(i)[1];
-
-			lasty = lasty + a * (x - lasty);
-			set.set(i, new Double[]{set.get(i)[0], lasty});
-		}
+		Filters.lowpassfilt(set, freq);
 	}
 
 	public void highpassfilt(double freq) {
-		Double RC = 1/(2*Math.PI)/freq;
-		Double dt = set.get(1)[0] - set.get(0)[0];
-		Double a = RC / (RC + dt);
-
-		Double lasty = set.get(0)[1];
-		for(int i = 1; i < set.size(); i++) {
-			Double x = set.get(i)[1];
-			Double lastx = set.get(i-1)[1];
-
-			lasty = a * (lasty + x - lastx);
-			set.set(i, new Double[]{set.get(i)[0], lasty});
-		}
+		Filters.highpassfilt(set, freq);
 	}
 }

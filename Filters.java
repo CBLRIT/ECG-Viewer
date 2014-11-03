@@ -1,6 +1,12 @@
 
+import java.util.List;
+import mr.go.sgfilter.ContinuousPadder;
+import mr.go.sgfilter.SGFilter;
+import org.apache.commons.math3.fitting.PolynomialCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoints;
+
 public class Filters {
-	public static void detrend(ArrayList<Double[]> set, int detrendPolynomial) {
+	public static void detrend(List<Double[]> set, int detrendPolynomial) {
 		PolynomialCurveFitter p = PolynomialCurveFitter.create(detrendPolynomial);
 		WeightedObservedPoints wop = new WeightedObservedPoints();
 		for(int i = 0; i < set.size(); i++) {
@@ -17,8 +23,8 @@ public class Filters {
 		}
 	}
 
-	public static void sgolayfilt(ArrayList<Double[]> set, int left, int right, int degree) {
-		double[][] data = this.toArray(set);
+	public static void sgolayfilt(List<Double[]> set, int left, int right, int degree) {
+		double[][] data = Filters.toArray(set);
 		double[] coeffs = SGFilter.computeSGCoefficients(left, right, degree);
 	//	ContinuousPadder p = new ContinuousPadder();
 		SGFilter sgFilter = new SGFilter(left, right);
@@ -29,7 +35,7 @@ public class Filters {
 		}
 	}
 
-	public static void lowpassfilt(ArrayList<Double[]> set, double freq) {
+	public static void lowpassfilt(List<Double[]> set, double freq) {
 		Double RC = 1/(2*Math.PI)/freq;
 		Double dt = set.get(1)[0] - set.get(0)[0];
 		Double a = dt / (RC + dt);
@@ -43,7 +49,7 @@ public class Filters {
 		}
 	}
 
-	public static void highpassfiltArrayList<Double[]> set, (double freq) {
+	public static void highpassfilt(List<Double[]> set, double freq) {
 		Double RC = 1/(2*Math.PI)/freq;
 		Double dt = set.get(1)[0] - set.get(0)[0];
 		Double a = RC / (RC + dt);
@@ -57,8 +63,12 @@ public class Filters {
 			set.set(i, new Double[]{set.get(i)[0], lasty});
 		}
 	}
+
+/*	public static void fftfilt(List<Double[]> set, double lowfreq, double highfreq) {
+		
+	} */
 	
-	private double[][] toArray(ArrayList<Double[]> set) {
+	private static double[][] toArray(List<Double[]> set) {
 		double[][] ret = new double[2][set.size()];
 
 		for(int j = 0; j < set.size(); j++) {
