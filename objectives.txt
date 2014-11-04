@@ -6,11 +6,14 @@ d|   a. Make sure data is correct
  |     i. Chinese datasets are ASCII and 64-lead
  |
 i| 1. BSP processing
-d|   a. filtering
+i|   a. filtering
 d|     i. low-order polynomial fit
 d|     ii. savitzky-golay filter
+n|     iii. FFT
+ |     iv. FCT
+ |     v. Wavelet
 d|   b. bad leads
-n|   c. beat annotation
+i|   c. beat annotation
 d|     i. note: use just time slices, not actual data points
  |     ii. different color annotations
  |   d. apply to all
