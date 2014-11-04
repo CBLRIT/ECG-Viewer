@@ -50,6 +50,11 @@ public class ECGModel {
 		(new MatFile(filename)).write(this.toArray());
 	}
 
+	public void writeDataCSV(String filename)
+			throws IOException {
+		(new CSVFile(filename)).write(this.toArray());
+	}
+
 	public void readData(String filename) 
 			throws IOException, FileNotFoundException {
 		ECGFile file = new ECGFile();

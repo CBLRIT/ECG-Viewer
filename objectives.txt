@@ -22,8 +22,9 @@ h| 2. electrode position
  |
 i| 3. data output
 n|   a. matlab matrix
- |   b. own file type?
- |   c. annotations and bad leads
+d|   b. csv
+ |   c. own file type?
+ |   d. annotations and bad leads
  |
  | 4. refactor!
  |   a. actually have an MVC/Observer pattern

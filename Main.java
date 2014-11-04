@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -125,14 +126,26 @@ public class Main {
 				}
 			}
 		});
-		JMenuItem save = new JMenuItem("Save...");
-		save.addActionListener(new ActionListener() {
+		JMenuItem export = new JMenuItem("Export...");
+		export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				FileNameExtensionFilter matlab = new FileNameExtensionFilter(
+					"MATLAB matrix", "m");
+				FileNameExtensionFilter csv = new FileNameExtensionFilter(
+					"Comma Separated Values", "csv");
+				fc.addChoosableFileFilter(matlab);
+				fc.addChoosableFileFilter(csv);
+				fc.setAcceptAllFileFilterUsed(false);
 				int ret = fc.showSaveDialog(main);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try { 
-						model.writeDataMat(fc.getSelectedFile().getAbsolutePath());
+						String extension = fc.getFileFilter().getDescription();
+						if("MATLAB matrix".equals(extension)) {
+							model.writeDataMat(fc.getSelectedFile().getAbsolutePath());
+						} else if ("Comma Separated Values".equals(extension)) {
+							model.writeDataCSV(fc.getSelectedFile().getAbsolutePath());
+						}
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
 													  "Error writing file: " + ex.getMessage(), 
@@ -150,7 +163,7 @@ public class Main {
 			}
 		});
 		menu.add(open);
-		menu.add(save);
+		menu.add(export);
 		menu.add(exit);
 		menubar.add(menu);
 

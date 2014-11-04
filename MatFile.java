@@ -10,7 +10,7 @@ import java.util.Date;
 * See http://www.mathworks.com/help/pdf_doc/matlab/matfile_format.pdf
 * for more info
 */
-public class MatFile {
+public class MatFile implements ECGOutputFile {
 	private FileOutputStream fs;
 
 	private static String pad(String s, int totalLen, char padWith) {
