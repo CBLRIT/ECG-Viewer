@@ -102,6 +102,6 @@ public class HighOptionDialog extends JDialog {
 	}
 
 	public void applyToDataset(ECGDataSet view) {
-		view.highpassfilt(freq/100.0);
+		view.highpassfilt(freq);
 	}
 }

@@ -15,14 +15,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-public class LowOptionDialog extends JDialog {
-	private final LowOptionDialog thisDialog = this;
+public class FFTOptionDialog extends JDialog {
+	private final FFTOptionDialog thisDialog = this;
 	private double freq;
 
-	public LowOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
+	public FFTOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
 		super(thisFrame, title, modal);
 
-		freq = 40;
+		freq = 60;
 
 		this.setLayout(new BorderLayout());
 
@@ -56,15 +56,15 @@ public class LowOptionDialog extends JDialog {
 		});
 
 		controls.add(new JLabel("Frequency Threshold"), labels);
-		final JLabel leftNum = new JLabel("40.0");
+		final JLabel leftNum = new JLabel("60.0");
 		controls.add(leftNum, values);
-		final JSlider leftSlide = new JSlider(3000, 7000, 4000);
+		final JSlider leftSlide = new JSlider(2000, 8000, 6000);
 		leftSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
 				thisDialog.remove(preview[0].getPanel());
 				preview[0] = (ECGView)view.deepClone(true);
-				preview[0].applyFilter(2, ((double)(int)leftSlide.getValue())/100.0);
+				preview[0].applyFilter(3, ((double)(int)leftSlide.getValue())/100.0);
 				thisDialog.add(preview[0].getPanel());
 			}
 		});
@@ -94,7 +94,7 @@ public class LowOptionDialog extends JDialog {
 
 		this.add(controls, BorderLayout.NORTH);
 
-		preview[0].applyFilter(2, ((double)(int)leftSlide.getValue())/100.0);
+		preview[0].applyFilter(3, ((double)(int)leftSlide.getValue())/100.0);
 		
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
@@ -102,6 +102,7 @@ public class LowOptionDialog extends JDialog {
 	}
 
 	public void applyToDataset(ECGDataSet view) {
-		view.lowpassfilt(freq);
+		view.highpassfftfilt(freq, 0);
 	}
 }
+

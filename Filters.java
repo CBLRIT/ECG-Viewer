@@ -1,9 +1,14 @@
 
+import java.util.ArrayList;
 import java.util.List;
 import mr.go.sgfilter.ContinuousPadder;
 import mr.go.sgfilter.SGFilter;
+import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
+import org.apache.commons.math3.transform.DftNormalization;
+import org.apache.commons.math3.transform.FastFourierTransformer;
+import org.apache.commons.math3.transform.TransformType;
 
 public class Filters {
 	public static void detrend(List<Double[]> set, int detrendPolynomial) {
@@ -64,9 +69,61 @@ public class Filters {
 		}
 	}
 
-/*	public static void fftfilt(List<Double[]> set, double lowfreq, double highfreq) {
-		
-	} */
+	public static void highpassfftfilt(List<Double[]> set, double lowfreq, double highfreq) {
+		/*
+		 * steps:
+		 * 1. pad data with 0s to get the number of samples to a power of 2
+		 * 2. perform fft
+		 * 3. filter based on frequency (see http://stackoverflow.com/a/2876292)
+		 * 4. inverse fft
+		 */
+
+		//step 1
+		ArrayList<Double[]> padded = new ArrayList<Double[]>(set);
+		int padTo = Filters.findNextLargestPower2(padded.size());
+		for(int i = padded.size(); i < padTo; i++) {
+			padded.add(new Double[]{0.0, 0.0});
+		}
+		double[][] arr = Filters.toArray(padded);
+
+		//step 2
+		FastFourierTransformer fft = new FastFourierTransformer(DftNormalization.STANDARD);
+		Complex[] out = fft.transform(arr[1], TransformType.FORWARD);
+
+		//step 3
+		double sampFreq = 1000.0 / (arr[0][1]-arr[0][0]);
+		int posHalf = out.length / 2;
+		for(int i = 0; i < posHalf; i++) {
+			int negInd = out.length - 1 - i;
+			double currFreq = (double)i * (sampFreq / (double)posHalf);
+			if (currFreq > lowfreq) {
+				out[i] = Complex.ZERO;
+				out[negInd] = Complex.ZERO;
+			} /* else if (currFreq < highfreq) {
+				double scale = 1.0 - ((currFreq - highFreq) / (lowFreq - highFreq));
+				out[i] = out[i].multiply(scale);
+				out[negInd] = out[negInd].multiply(scale);
+			} */
+		}
+
+		//step 4
+		out = fft.transform(out, TransformType.INVERSE);
+
+		//write changes
+		for(int i = 0; i < set.size(); i++) {
+			set.set(i, new Double[]{set.get(i)[0], out[i].getReal()});
+		}
+	} 
+
+	private static int findNextLargestPower2(int n) {
+		int i = 0;
+		for(; i < 32; i++ ) {
+			if(n >> i == 0) {
+				break;
+			}
+		}
+		return 1 << i;
+	}
 	
 	private static double[][] toArray(List<Double[]> set) {
 		double[][] ret = new double[2][set.size()];

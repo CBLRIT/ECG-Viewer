@@ -16,6 +16,7 @@ public class ECGModel {
 	private ArrayList<ECGDataSet> points; //<channel<at time<time, value>>
 	private final int tupleLength = 154;
 	private final int actualSize = 130;
+	private double sampleFreq = 0;
 
 	private <T> void printArrayList(ArrayList<T[]> arr) {
 		for(int i = 0; i < arr.size(); i++) {
@@ -58,6 +59,8 @@ public class ECGModel {
 		if(retval < 0) {
 			return;
 		}
+
+		sampleFreq = file.finfo.jsamp;
 
 	//	System.out.println(raw.get(raw.size()-1).getKey().toString() + ", " + raw.get(raw.size()-1).getValue().toString());
 	//	return;

@@ -82,6 +82,14 @@ public class ChartFrame extends JFrame {
 				view.revalidate();
 			}
 		});
+		JMenuItem filter_ffthigh = new JMenuItem("FFT High Pass");
+		filter_ffthigh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FFTOptionDialog dialog = new FFTOptionDialog(thisFrame, "FFT High Pass Filter", true, view);
+				dialog.applyToDataset(view.getData());
+				view.revalidate();
+			}
+		});
 		JMenuItem filter_low = new JMenuItem("Low Pass");
 		filter_low.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -93,6 +101,7 @@ public class ChartFrame extends JFrame {
 		filter.add(filter_detrend);
 		filter.add(filter_savitzky);
 		filter.add(filter_high);
+		filter.add(filter_ffthigh);
 		filter.add(filter_low);
 		
 		menu.add(filter);

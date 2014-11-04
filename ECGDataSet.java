@@ -105,4 +105,8 @@ public class ECGDataSet {
 	public void highpassfilt(double freq) {
 		Filters.highpassfilt(set, freq);
 	}
+
+	public void highpassfftfilt(double lowfreq, double highfreq) {
+		Filters.highpassfftfilt(set, lowfreq, highfreq);
+	}
 }

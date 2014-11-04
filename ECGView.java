@@ -173,6 +173,9 @@ public class ECGView {
 			case 2:
 				origData.lowpassfilt((double)params[0]);
 				break;
+			case 3: 
+				origData.highpassfftfilt((double)params[0], 0);
+				break;
 			default:
 				return;
 		}

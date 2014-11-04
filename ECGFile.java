@@ -65,6 +65,8 @@ public class ECGFile {
 		}
 	}
 
+	public fileinfo finfo;
+
 	/**
 	 * read - opens a file and reads it
 	 * @param fileName the file to open
@@ -75,7 +77,7 @@ public class ECGFile {
 	public int read(String fileName, 
 					int numLeads, 
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Integer>>> points) {
-		fileinfo finfo = new fileinfo();
+		finfo = new fileinfo();
 		
 		if(numLeads < 0) {
 			numLeads = 8;
