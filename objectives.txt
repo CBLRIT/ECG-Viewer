@@ -17,7 +17,7 @@ d|   b. bad leads
 d|   c. beat annotation
 d|     i. note: use just time slices, not actual data points
 d|     ii. different color annotations
-i|   d. apply to all
+d|   d. apply to all
  |   e. specify viewable graph domain
  |
 h| 2. electrode position
