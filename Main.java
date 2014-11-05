@@ -269,6 +269,19 @@ public class Main {
 				}
 			}
 		});
+		JMenuItem filter_highfft = new JMenuItem("FFT");
+		filter_highfft.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ECGView view = graphs.get(4);
+				FFTOptionDialog dialog = new FFTOptionDialog(main, "FFT Filter", true, view);
+				for(int i = 0; i < model.size(); i++) {
+					dialog.applyToDataset(model.getDataset(i));
+					if(i >= 4 && i < 124) {
+						graphs.get(i-4).revalidate();
+					}
+				}
+			}
+		});
 		JMenuItem filter_low = new JMenuItem("Low Pass");
 		filter_low.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -286,6 +299,7 @@ public class Main {
 		filter.add(filter_detrend);
 		filter.add(filter_savitzky);
 		filter.add(filter_high);
+		filter.add(filter_highfft);
 		filter.add(filter_low);
 		menubar.add(filter);
 
