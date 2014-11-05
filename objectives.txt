@@ -5,7 +5,8 @@ d|   a. Make sure data is correct
  |   b. Add support for other formats of data and layout
  |     i. Chinese datasets are ASCII and 64-lead
  |
-i| 1. BSP processing
+i| 1. BSP
+ |        (tip: trim then apply filter)
 i|   a. filtering
 d|     i. low-order polynomial fit
 d|     ii. savitzky-golay filter
