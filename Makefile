@@ -7,8 +7,13 @@ default:
 run:
 	java -cp $(LIBPATH) Main &
 
+urn: run
+
 debug:
 	jdb -classpath $(LIBPATH) Main
+
+unchecked:
+	javac -g -cp $(LIBPATH) *.java -Xlint:unchecked
 
 #Main.class: MoldTorso.class Main.java
 #	javac -cp $(LIBPATH) Main.java

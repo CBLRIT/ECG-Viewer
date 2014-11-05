@@ -7,11 +7,11 @@ import java.util.List;
 public class ECGDataSet {
 	private List<Double[]> set;
 	private boolean bad;
-	private HashSet<Double> annotations; //indicies into set
+	private HashSet<Annotation> annotations; //indicies into set
 
 	public ECGDataSet() {
 		set = new ArrayList<Double[]>();
-		annotations = new HashSet<Double>();
+		annotations = new HashSet<Annotation>();
 	}
 
 	public boolean isBad() {return bad;}
@@ -31,9 +31,9 @@ public class ECGDataSet {
 
 	public Object clone() {
 		ECGDataSet eds = new ECGDataSet();
-		eds.set = new ArrayList(this.set);
+		eds.set = new ArrayList<Double[]>(this.set);
 		eds.bad = this.bad;
-		eds.annotations = new HashSet(this.annotations);
+		eds.annotations = new HashSet<Annotation>(this.annotations);
 		return eds;
 	}
 
@@ -48,12 +48,12 @@ public class ECGDataSet {
 		return ret;
 	}
 
-	public ArrayList<Double> getAnnotations() {
-		return new ArrayList<Double>(annotations);
+	public ArrayList<Annotation> getAnnotations() {
+		return new ArrayList<Annotation>(annotations);
 	}
 
-	public void addAnnotation(double i) {
-		annotations.add(i);
+	public void addAnnotation(int type, double i) {
+		annotations.add(new Annotation(type, i));
 	}
 
 	public void clearAnnotations() {
@@ -65,21 +65,27 @@ public class ECGDataSet {
 	}
 
 	public void trimAnnotations(double between) {
-		Double[] annos = (Double[])annotations.toArray(new Double[annotations.size()]);
+		Annotation[] annos=(Annotation[])annotations.toArray(new Annotation[annotations.size()]);
 
 		//find closest lower than between
 		double lower = 0;
 		for(int i = 0; i < annos.length; i++) {
-			if(annos[i] < between && lower < annos[i]) {
-				lower = annos[i];
+			if(annos[i].getType() != Main.getSelectedAnnotationType()) {
+				continue;
+			}
+			if(annos[i].getLoc() < between && lower < annos[i].getLoc()) {
+				lower = annos[i].getLoc();
 			}
 		}
 
 		//find closet higher than between
 		double higher = set.get(set.size()-1)[0];
 		for(int i = 0; i < annos.length; i++) {
-			if(annos[i] > between && higher > annos[i]) {
-				higher = annos[i];
+			if(annos[i].getType() != Main.getSelectedAnnotationType()) {
+				continue;
+			}
+			if(annos[i].getLoc() > between && higher > annos[i].getLoc()) {
+				higher = annos[i].getLoc();
 			}
 		}
 

@@ -79,8 +79,9 @@ public class ECGView {
 						   new Color(233, 174, 174));
 
 		for(int i = 0; i < origData.getAnnotations().size(); i++) {
-			plot.addDomainMarker(new ValueMarker(origData.getAnnotations().get(i), 
-												 Color.BLACK, 
+			plot.addDomainMarker(new ValueMarker(origData.getAnnotations().get(i).getLoc(), 
+												 Main.getAnnotationColor(
+												 	origData.getAnnotations().get(i).getType()), 
 												 new BasicStroke()));
 		}
 
@@ -97,11 +98,12 @@ public class ECGView {
 					if(trim) {
 						thisView.setTrim(false);
 						origData.trimAnnotations(x);
-						thisView.clearAnnotations();
 						thisView.revalidate();
 					} else {
-						origData.addAnnotation(x);
-						plot.addDomainMarker(new ValueMarker(x, Color.BLACK, new BasicStroke()));
+						origData.addAnnotation(Main.getSelectedAnnotationType(), x);
+						plot.addDomainMarker(new ValueMarker(x, 
+															 Main.getSelectedAnnotationColor(), 
+															 new BasicStroke()));
 					}
 				}
 

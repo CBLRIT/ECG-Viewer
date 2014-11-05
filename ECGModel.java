@@ -2,6 +2,7 @@
 import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
@@ -53,6 +54,43 @@ public class ECGModel {
 	public void writeDataCSV(String filename)
 			throws IOException {
 		(new CSVFile(filename)).write(this.toArray());
+	}
+
+	public void writeBadLeads(String filename) 
+			throws IOException {
+		PrintWriter out = new PrintWriter(filename);
+
+		for(int i = 0; i < points.size(); i++) {
+			if(points.get(i).isBad()) {
+				out.println(i);
+			}
+		}
+
+		out.flush();
+		out.close();
+	}
+
+	public void writeAnnotations(String filename) 
+			throws IOException {
+		PrintWriter out = new PrintWriter(filename);
+
+		for(int i = 0; i < points.size(); i++) {
+			ArrayList<Annotation> annos = points.get(i).getAnnotations();
+			if(annos.size() == 0) {
+				continue;
+			}
+			out.print(i-1 + ": ");
+			for(int j = 0; j < annos.size(); j++) {
+				if(j != 0) {
+					out.print(", ");
+				}
+				out.print(annos.get(j));
+			}
+			out.println();
+		}
+
+		out.flush();
+		out.close();
 	}
 
 	public void readData(String filename) 

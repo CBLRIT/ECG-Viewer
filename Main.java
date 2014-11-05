@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -58,6 +59,9 @@ public class Main {
 	private static final JPanel[] subPanels = new JPanel[xnum*ynum];
 	private static final ArrayList<ECGView> graphs = new ArrayList<ECGView>();
 	private static final ECGModel model = new ECGModel();
+
+	private static int currAnnoType = 0;
+	private static HashMap<Integer, Color> annoColors = new HashMap<Integer, Color>();
 
 	private static void loadFile(String filename) {
 		graphs.clear();
@@ -109,8 +113,29 @@ public class Main {
 		}
 	}
 
+	public static int getSelectedAnnotationType() {
+		return currAnnoType;
+	}
+
+	public static void setSelectedAnnotationType(int type) {
+		currAnnoType = type;
+	}
+
+	public static Color getAnnotationColor(int type) {
+		return annoColors.get(type);
+	}
+
+	public static Color getSelectedAnnotationColor() {
+		return annoColors.get(currAnnoType);
+	}
+
 	public static void main(String args[])
 			throws Exception { //TODO: fix this
+		annoColors.put(0, Color.BLACK);
+		annoColors.put(1, Color.RED);
+		annoColors.put(2, Color.GREEN);
+		annoColors.put(3, Color.BLUE);
+
 		main.setBounds(20, 20, 1400, 750);
 
 		JMenuBar menubar = new JMenuBar();
@@ -155,6 +180,40 @@ public class Main {
 				}
 			}
 		});
+		JMenuItem export_badleads = new JMenuItem("Export Bad Leads...");
+		export_badleads.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int ret = fc.showSaveDialog(main);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try {
+						model.writeBadLeads(fc.getSelectedFile().getAbsolutePath());
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null, 
+													  "Error writing file: " + ex.getMessage(), 
+													  "IOException", 
+													  JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+		JMenuItem export_annos = new JMenuItem("Export Annotations...");
+		export_annos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int ret = fc.showSaveDialog(main);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try {
+						model.writeAnnotations(fc.getSelectedFile().getAbsolutePath());
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null, 
+													  "Error writing file: " + ex.getMessage(), 
+													  "IOException", 
+													  JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
 		JMenuItem exit = new JMenuItem("Exit");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -164,6 +223,8 @@ public class Main {
 		});
 		menu.add(open);
 		menu.add(export);
+		menu.add(export_annos);
+		menu.add(export_badleads);
 		menu.add(exit);
 		menubar.add(menu);
 

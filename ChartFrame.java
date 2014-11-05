@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JButton;
@@ -18,6 +19,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -61,7 +63,10 @@ public class ChartFrame extends JFrame {
 		JMenuItem filter_detrend = new JMenuItem("Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, "Detrend", true, view);
+				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, 
+																	 "Detrend", 
+																	 true, 
+																	 view);
 				dialog.applyToDataset(view.getData());
 				view.revalidate();
 			}
@@ -69,7 +74,10 @@ public class ChartFrame extends JFrame {
 		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
 		filter_savitzky.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SGOptionDialog dialog = new SGOptionDialog(thisFrame, "Savitzky-Golay Filter", true, view);
+				SGOptionDialog dialog = new SGOptionDialog(thisFrame, 
+														   "Savitzky-Golay Filter", 
+														   true, 
+														   view);
 				dialog.applyToDataset(view.getData());
 				view.revalidate();
 			}
@@ -77,7 +85,10 @@ public class ChartFrame extends JFrame {
 		JMenuItem filter_high = new JMenuItem("High Pass");
 		filter_high.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				HighOptionDialog dialog = new HighOptionDialog(thisFrame, "High Pass Filter", true, view);
+				HighOptionDialog dialog = new HighOptionDialog(thisFrame, 
+															   "High Pass Filter", 
+															   true, 
+															   view);
 				dialog.applyToDataset(view.getData());
 				view.revalidate();
 			}
@@ -85,7 +96,10 @@ public class ChartFrame extends JFrame {
 		JMenuItem filter_ffthigh = new JMenuItem("FFT High Pass");
 		filter_ffthigh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				FFTOptionDialog dialog = new FFTOptionDialog(thisFrame, "FFT High Pass Filter", true, view);
+				FFTOptionDialog dialog = new FFTOptionDialog(thisFrame, 
+															 "FFT High Pass Filter", 
+															 true, 
+															 view);
 				dialog.applyToDataset(view.getData());
 				view.revalidate();
 			}
@@ -93,7 +107,10 @@ public class ChartFrame extends JFrame {
 		JMenuItem filter_low = new JMenuItem("Low Pass");
 		filter_low.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LowOptionDialog dialog = new LowOptionDialog(thisFrame, "Low Pass Filter", true, view);
+				LowOptionDialog dialog = new LowOptionDialog(thisFrame, 
+															 "Low Pass Filter", 
+															 true, 
+															 view);
 				dialog.applyToDataset(view.getData());
 				view.revalidate();
 			}
@@ -121,6 +138,23 @@ public class ChartFrame extends JFrame {
 		});
 		annotations.add(annotations_clear);
 		annotations.add(annotations_trim);
+		annotations.addSeparator();
+		ButtonGroup annoGroup = new ButtonGroup();
+		JRadioButtonMenuItem[] annotations_colors = new JRadioButtonMenuItem[4];
+		for(int i = 0; i < annotations_colors.length; i++) {
+			final int count = i;
+			annotations_colors[i] = new JRadioButtonMenuItem("Annotation " + (i+1), 
+															 Main.getSelectedAnnotationType()==i);
+			annotations_colors[i].addActionListener(new ActionListener() {
+				private final int changeNum = count;
+
+				public void actionPerformed(ActionEvent e) {
+					Main.setSelectedAnnotationType(changeNum);
+				}
+			});
+			annotations.add(annotations_colors[i]);
+			annoGroup.add(annotations_colors[i]);
+		}
 
 		menu.add(annotations);
 
