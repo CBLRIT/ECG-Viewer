@@ -55,6 +55,10 @@ public class ECGView {
 		}
 		this.renderer = new XYLineAndShapeRenderer(true, false);
 		this.plot = new XYPlot(dataset, xaxis, yaxis, renderer);
+		if(withLabels) {
+			this.plot.setDomainPannable(true);
+			this.plot.setRangePannable(true);
+		}
 		this.chart = new JFreeChart(title, plot);
 		this.chart.removeLegend();
 		this.panel = new ChartPanel(

@@ -18,7 +18,7 @@ d|   c. beat annotation
 d|     i. note: use just time slices, not actual data points
 d|     ii. different color annotations
 d|   d. apply to all
- |   e. specify viewable graph domain
+i|   e. specify viewable graph domain
  |
 h| 2. electrode position
  |

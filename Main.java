@@ -1,4 +1,5 @@
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,11 +10,14 @@ import java.awt.event.WindowListener;
 import java.awt.GridLayout;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -21,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
+import org.jfree.chart.plot.XYPlot;
 
 public class Main {
 	private static final int dataSetPlacement[][] =  {
@@ -62,6 +67,11 @@ public class Main {
 
 	private static int currAnnoType = 0;
 	private static HashMap<Integer, Color> annoColors = new HashMap<Integer, Color>();
+
+	private static JFormattedTextField startText 
+		= new JFormattedTextField(NumberFormat.getIntegerInstance());
+	private static JFormattedTextField lenText 
+		= new JFormattedTextField(NumberFormat.getIntegerInstance());
 
 	private static void loadFile(String filename) {
 		graphs.clear();
@@ -111,6 +121,8 @@ public class Main {
 				public void mouseReleased(MouseEvent e) {}
 			});
 		}
+		
+		lenText.setValue(model.getDataset(42).size());
 	}
 
 	public static int getSelectedAnnotationType() {
@@ -132,11 +144,12 @@ public class Main {
 	public static void main(String args[])
 			throws Exception { //TODO: fix this
 		annoColors.put(0, Color.BLACK);
-		annoColors.put(1, Color.RED);
+		annoColors.put(1, Color.ORANGE);
 		annoColors.put(2, Color.GREEN);
 		annoColors.put(3, Color.BLUE);
 
 		main.setBounds(20, 20, 1400, 750);
+		main.setLayout(new BorderLayout());
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu menu = new JMenu("File");
@@ -314,7 +327,45 @@ public class Main {
 		}
 		
 		JScrollPane scrollMain = new JScrollPane(mainPanel);
-		main.add(scrollMain);
+		main.add(scrollMain, BorderLayout.CENTER);
+
+		JPanel statusBar = new JPanel();
+		JLabel startLabel = new JLabel("Start offset (ms):");
+		startText.setValue(0L);
+		startText.setColumns(10);
+		startText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				long start = (Long)startText.getValue();
+				long len = (Long)lenText.getValue();
+				for(int i = 0; i < graphs.size(); i++) {
+					((XYPlot)graphs.get(i).getPanel().getChart().getPlot()).getDomainAxis()
+																 .setAutoRange(true);
+					((XYPlot)graphs.get(i).getPanel().getChart().getPlot()).getDomainAxis()
+																 .setRange(start, start+len);
+				}
+			}
+		});
+		JLabel lenLabel = new JLabel("Length (ms):");
+		lenText.setValue(0L);
+		lenText.setColumns(10);
+		lenText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				long start = (Long)startText.getValue();
+				long len = (Long)lenText.getValue();
+				for(int i = 0; i < graphs.size(); i++) {
+					((XYPlot)graphs.get(i).getPanel().getChart().getPlot()).getDomainAxis()
+																 .setAutoRange(true);
+					((XYPlot)graphs.get(i).getPanel().getChart().getPlot()).getDomainAxis()
+																 .setRange(start, start+len);
+				}
+			}
+		});
+		statusBar.add(startLabel);
+		statusBar.add(startText);
+		statusBar.add(lenLabel);
+		statusBar.add(lenText);
+
+		main.add(statusBar, BorderLayout.SOUTH);
 
 		main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		main.setVisible(true);
