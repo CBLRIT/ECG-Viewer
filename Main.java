@@ -60,7 +60,7 @@ public class Main {
 	private static int ynum = 8;
 	private static int xnum = 18;
 
-	private static final JFrame main = new JFrame("This");
+	private static final JFrame main = new JFrame("ECG Viewer");
 	private static final JPanel[] subPanels = new JPanel[xnum*ynum];
 	private static final ArrayList<ECGView> graphs = new ArrayList<ECGView>();
 	private static final ECGModel model = new ECGModel();
@@ -122,7 +122,8 @@ public class Main {
 			});
 		}
 		
-		lenText.setValue(model.getDataset(42).size());
+		lenText.setValue(Math.ceil((double)model.getDataset(42).size()
+							*model.getSamplesPerSecond()));
 	}
 
 	public static int getSelectedAnnotationType() {

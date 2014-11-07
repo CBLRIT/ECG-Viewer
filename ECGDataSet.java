@@ -8,6 +8,7 @@ public class ECGDataSet {
 	private List<Double[]> set;
 	private boolean bad;
 	private HashSet<Annotation> annotations; //indicies into set
+	private double sampleFreq;
 
 	public ECGDataSet() {
 		set = new ArrayList<Double[]>();

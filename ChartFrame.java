@@ -7,12 +7,14 @@ import java.awt.event.WindowEvent;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.text.NumberFormat;
 import javax.swing.ButtonGroup;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -23,15 +25,21 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import org.jfree.chart.plot.XYPlot;
 
 public class ChartFrame extends JFrame {
 	private final ECGView view;
+	private final JFormattedTextField startText 
+		= new JFormattedTextField(NumberFormat.getIntegerInstance());
+	private final JFormattedTextField lenText 
+		= new JFormattedTextField(NumberFormat.getIntegerInstance());
 	private final JCheckBoxMenuItem file_badlead;
 	private final ChartFrame thisFrame = this;
 
 	public ChartFrame(ECGView v, String title) {
 		super(title);
 		setBounds(0, 0, 500, 500);
+		setLayout(new BorderLayout());
 
 		JMenuBar menu = new JMenuBar();
 
@@ -161,9 +169,47 @@ public class ChartFrame extends JFrame {
 		setJMenuBar(menu);
 
 		view = v;
-		add(view.getPanel());
+		add(view.getPanel(), BorderLayout.CENTER);
+
+		JPanel statusBar = new JPanel();
+		JLabel startLabel = new JLabel("Start offset (ms):");
+		startText.setValue(0L);
+		startText.setColumns(10);
+		startText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				long start = (Long)startText.getValue();
+				long len = (Long)lenText.getValue();
+				((XYPlot)view.getPanel().getChart().getPlot()).getDomainAxis()
+																 .setAutoRange(true);
+				((XYPlot)view.getPanel().getChart().getPlot()).getDomainAxis()
+																 .setRange(start, start+len);
+			}
+		});
+		JLabel lenLabel = new JLabel("Length (ms):");
+		lenText.setValue(0L);
+		lenText.setColumns(10);
+		lenText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				long start = (Long)startText.getValue();
+				long len = (Long)lenText.getValue();
+				((XYPlot)view.getPanel().getChart().getPlot()).getDomainAxis()
+																 .setAutoRange(true);
+				((XYPlot)view.getPanel().getChart().getPlot()).getDomainAxis()
+																 .setRange(start, start+len);
+			}
+		});
+		statusBar.add(startLabel);
+		statusBar.add(startText);
+		statusBar.add(lenLabel);
+		statusBar.add(lenText);
+		
+		lenText.setValue(view.getData().size()
+							*(view.getData().getAt(1)[0] - view.getData().getAt(0)[0]));
+
+		add(statusBar, BorderLayout.SOUTH);
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setResizable(false);
 		setVisible(true);
 	}
 }

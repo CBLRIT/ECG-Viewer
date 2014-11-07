@@ -103,7 +103,7 @@ public class ECGModel {
 			return;
 		}
 
-		sampleFreq = file.finfo.jsamp;
+		sampleFreq = file.finfo.sint;
 
 	//	System.out.println(raw.get(raw.size()-1).getKey().toString() + ", " + raw.get(raw.size()-1).getValue().toString());
 	//	return;
@@ -166,6 +166,10 @@ public class ECGModel {
 
 	public boolean isBad(int i) {
 		return points.get(i).isBad();
+	}
+
+	public double getSamplesPerSecond() {
+		return sampleFreq;
 	}
 }
 
