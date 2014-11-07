@@ -46,6 +46,19 @@ public class ECGModel {
 		return arr;
 	}
 
+	public double[][][] subsetToArray(double start, double end) {
+		double[][][] arr = new double[points.size()][2][points.get(0).subset(start, end).size()];
+		
+		for(int i = 0; i < points.size(); i++) {
+			for(int j = 0; j < points.get(0).subset(start, end).size(); j++) {
+				arr[i][0][j] = points.get(i).subset(start, end).getAt(j)[0];
+				arr[i][1][j] = points.get(i).subset(start, end).getAt(j)[1];
+			}
+		}
+
+		return arr;
+	}
+
 	public void writeDataMat(String filename) 
 			throws IOException {
 		(new MatFile(filename)).write(this.toArray());
@@ -54,6 +67,16 @@ public class ECGModel {
 	public void writeDataCSV(String filename)
 			throws IOException {
 		(new CSVFile(filename)).write(this.toArray());
+	}
+
+	public void writeDataSubsetMat(String filename, double start, double end) 
+			throws IOException {
+		(new MatFile(filename)).write(this.subsetToArray(start, end));
+	}
+
+	public void writeDataSubsetCSV(String filename, double start, double end)
+			throws IOException {
+		(new CSVFile(filename)).write(this.subsetToArray(start, end));
 	}
 
 	public void writeBadLeads(String filename) 

@@ -194,6 +194,41 @@ public class Main {
 				}
 			}
 		});
+		JMenuItem export_subset = new JMenuItem("Export Subset...");
+		export_subset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				FileNameExtensionFilter matlab = new FileNameExtensionFilter(
+					"MATLAB matrix", "m");
+				FileNameExtensionFilter csv = new FileNameExtensionFilter(
+					"Comma Separated Values", "csv");
+				fc.addChoosableFileFilter(csv);
+				fc.addChoosableFileFilter(matlab);
+				fc.setAcceptAllFileFilterUsed(false);
+				int ret = fc.showSaveDialog(main);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try { 
+						String extension = fc.getFileFilter().getDescription();
+						if("MATLAB matrix".equals(extension)) {
+							model.writeDataSubsetMat(fc.getSelectedFile().getAbsolutePath(), 
+													 (Long)startText.getValue(),
+													 (Long)startText.getValue()
+													 		+(Long)lenText.getValue());
+						} else if ("Comma Separated Values".equals(extension)) {
+							model.writeDataSubsetCSV(fc.getSelectedFile().getAbsolutePath(),
+													 (Long)startText.getValue(),
+													 (Long)startText.getValue()
+													 		+(Long)lenText.getValue());
+						}
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null, 
+													  "Error writing file: " + ex.getMessage(), 
+													  "IOException", 
+													  JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
 		JMenuItem export_badleads = new JMenuItem("Export Bad Leads...");
 		export_badleads.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -237,6 +272,7 @@ public class Main {
 		});
 		menu.add(open);
 		menu.add(export);
+		menu.add(export_subset);
 		menu.add(export_annos);
 		menu.add(export_badleads);
 		menu.add(exit);

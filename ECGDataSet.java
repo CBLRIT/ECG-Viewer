@@ -65,6 +65,18 @@ public class ECGDataSet {
 		return annotations.contains(i);
 	}
 
+	public ECGDataSet subset(double start, double end) {
+		ECGDataSet newSet = new ECGDataSet();
+
+		for(int i = 0; i < this.set.size(); i++) {
+			if(this.set.get(i)[0] >= start && this.set.get(i)[0] < end) {
+				newSet.set.add(this.set.get(i));
+			}
+		}
+
+		return newSet;
+	}
+
 	public void trimAnnotations(double between) {
 		Annotation[] annos=(Annotation[])annotations.toArray(new Annotation[annotations.size()]);
 
