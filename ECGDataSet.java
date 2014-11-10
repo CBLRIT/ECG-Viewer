@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * class ECGDataSet - 
+ */
 public class ECGDataSet {
 	private List<Double[]> set;
 	private boolean bad;

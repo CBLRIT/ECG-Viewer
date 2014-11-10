@@ -13,14 +13,14 @@ d|     ii. savitzky-golay filter
 n|     iii. FFT
  |     iv. FCT
  |     v. Wavelet
-i|	   vi. undo/reset changes in chartframe
+i|     vi. undo/reset changes in chartframe
 d|   b. bad leads
 d|   c. beat annotation
 d|     i. note: use just time slices, not actual data points
 d|     ii. different color annotations
-i|	   iii. enable/disable annotations
+d|     iii. enable/disable annotations
 d|   d. apply to all
-i|	   i. update graphs
+i|     i. update graphs
 d|   e. specify viewable graph domain
  |
 h| 2. electrode position
@@ -34,7 +34,7 @@ d|   d. annotations and bad leads
 i| 4. refactor!
  |   a. actually have an MVC/Observer pattern
  |
- | 5. document!
+i| 5. document!
 
 
 -------KEY------

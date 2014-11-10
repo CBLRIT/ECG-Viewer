@@ -34,15 +34,15 @@ public class CSVFile implements ECGOutputFile {
 	 */
 	public void write(double data[][][]) 
 			throws IOException {
-		for(int i = 0; i < data.length; i++) {
+		for(int i = 2; i < data.length-5; i++) {
 			out.write(",", 0, 1);
-			out.write("" + i, 0, new Integer(i).toString().length());
+			out.write("" + (i-1), 0, new Integer(i-1).toString().length());
 		}
 		out.write("\n", 0, 1);
 
 		for(int i = 0; i < data[0][0].length; i++) {
 			out.write("" + data[0][0][i], 0, new Double(data[0][0][i]).toString().length());
-			for(int j = 0; j < data.length; j++) {
+			for(int j = 2; j < data.length-5; j++) {
 				out.write("," + data[j][1][i], 0, new Double(data[j][1][i]).toString().length() + 1);
 			}
 			out.write("\n", 0, 1);

@@ -2,8 +2,8 @@
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -33,13 +33,15 @@ import org.jfree.chart.plot.XYPlot;
  * @author Dakota Williams
  */
 public class ChartFrame extends JFrame {
-	private final ECGView view;
+	private ECGView view;
+	private ECGView realView;
 	private final JFormattedTextField startText 
 		= new JFormattedTextField(NumberFormat.getIntegerInstance());
 	private final JFormattedTextField lenText 
 		= new JFormattedTextField(NumberFormat.getIntegerInstance());
 	private final JCheckBoxMenuItem file_badlead;
 	private final ChartFrame thisFrame = this;
+	private final JCheckBoxMenuItem anno_enable;
 
 	/**
 	 * Constructor - creates the frame and everything in it
@@ -52,20 +54,39 @@ public class ChartFrame extends JFrame {
 		setBounds(0, 0, 500, 500);
 		setLayout(new BorderLayout());
 
+		//keep a copy
+		view = (ECGView) v.deepClone(true);
+		realView = v;
+
 		//start with the menu bar
 		JMenuBar menu = new JMenuBar();
 
 		//dataset menu
 		JMenu file = new JMenu("Dataset");
+		JMenuItem file_apply = new JMenuItem("Apply Changes");
+		file_apply.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.realView = view;
+			}
+		});
+		file.add(file_apply);
+		JMenuItem file_reset = new JMenuItem("Reset Changes");
+		file_reset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.view = realView;
+				thisFrame.view.revalidate();
+			}
+		});
+		file.add(file_reset);
 		file_badlead = new JCheckBoxMenuItem("Bad Lead");
 		file_badlead.setState(v.isBad());
 		file_badlead.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.setBackground(view.isBad() ? 
+				thisFrame.view.setBackground(thisFrame.view.isBad() ? 
 										UIManager.getColor("Panel.background") : 
 										new Color(233, 174, 174));
 				thisFrame.revalidate();
-				view.setBad(!view.isBad());
+				thisFrame.view.setBad(!view.isBad());
 				file_badlead.setState(view.isBad());
 			}
 		});
@@ -89,8 +110,8 @@ public class ChartFrame extends JFrame {
 																	 "Detrend", 
 																	 true, 
 																	 view);
-				dialog.applyToDataset(view.getData());
-				view.revalidate();
+				dialog.applyToDataset(thisFrame.view.getData());
+				thisFrame.view.revalidate();
 			}
 		});
 		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
@@ -100,8 +121,8 @@ public class ChartFrame extends JFrame {
 														   "Savitzky-Golay Filter", 
 														   true, 
 														   view);
-				dialog.applyToDataset(view.getData());
-				view.revalidate();
+				dialog.applyToDataset(thisFrame.view.getData());
+				thisFrame.view.revalidate();
 			}
 		});
 		JMenuItem filter_high = new JMenuItem("High Pass");
@@ -111,8 +132,8 @@ public class ChartFrame extends JFrame {
 															   "High Pass Filter", 
 															   true, 
 															   view);
-				dialog.applyToDataset(view.getData());
-				view.revalidate();
+				dialog.applyToDataset(thisFrame.view.getData());
+				thisFrame.view.revalidate();
 			}
 		});
 		JMenuItem filter_ffthigh = new JMenuItem("FFT High Pass");
@@ -122,8 +143,8 @@ public class ChartFrame extends JFrame {
 															 "FFT High Pass Filter", 
 															 true, 
 															 view);
-				dialog.applyToDataset(view.getData());
-				view.revalidate();
+				dialog.applyToDataset(thisFrame.view.getData());
+				thisFrame.view.revalidate();
 			}
 		});
 		JMenuItem filter_low = new JMenuItem("Low Pass");
@@ -133,8 +154,8 @@ public class ChartFrame extends JFrame {
 															 "Low Pass Filter", 
 															 true, 
 															 view);
-				dialog.applyToDataset(view.getData());
-				view.revalidate();
+				dialog.applyToDataset(thisFrame.view.getData());
+				thisFrame.view.revalidate();
 			}
 		});
 		filter.add(filter_detrend);
@@ -147,26 +168,36 @@ public class ChartFrame extends JFrame {
 
 		//annotation menu
 		JMenu annotations = new JMenu("Annotation");
+		anno_enable = new JCheckBoxMenuItem("Place Annotations");
+		anno_enable.setState(false);
+		anno_enable.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanPlace(anno_enable.getState());
+			}
+		});
 		JMenuItem annotations_clear = new JMenuItem("Clear");
 		annotations_clear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.clearAnnotations();
+				thisFrame.view.clearAnnotations();
 			}
 		});
 		JMenuItem annotations_trim = new JMenuItem("Trim");
 		annotations_trim.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.setTrim(true);
+				thisFrame.view.setTrim(true);
 			}
 		});
+		annotations.add(anno_enable);
 		annotations.add(annotations_clear);
 		annotations.add(annotations_trim);
 		annotations.addSeparator();
 		ButtonGroup annoGroup = new ButtonGroup();
 		JRadioButtonMenuItem[] annotations_colors = new JRadioButtonMenuItem[4];
+		String[] desc = {"T-wave", "R-wave", "QRS-complex", "P-wave"};
 		for(int i = 0; i < annotations_colors.length; i++) {
 			final int count = i;
-			annotations_colors[i] = new JRadioButtonMenuItem("Annotation " + (i+1), 
+			annotations_colors[i] = new JRadioButtonMenuItem("Annotation " + (i+1) 
+																+ " (" + desc[i] + ")", 
 															 Main.getSelectedAnnotationType()==i);
 			annotations_colors[i].addActionListener(new ActionListener() {
 				private final int changeNum = count;
@@ -184,8 +215,7 @@ public class ChartFrame extends JFrame {
 		setJMenuBar(menu);
 
 		//add the specified view to the frame
-		view = v;
-		add(view.getPanel(), BorderLayout.CENTER);
+		add(thisFrame.view.getPanel(), BorderLayout.CENTER);
 
 		JPanel statusBar = new JPanel();
 		JLabel startLabel = new JLabel("Start offset (ms):");
@@ -195,9 +225,9 @@ public class ChartFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				long start = (Long)startText.getValue();
 				long len = (Long)lenText.getValue();
-				((XYPlot)view.getPanel().getChart().getPlot()).getDomainAxis()
+				((XYPlot)thisFrame.view.getPanel().getChart().getPlot()).getDomainAxis()
 																 .setAutoRange(true);
-				((XYPlot)view.getPanel().getChart().getPlot()).getDomainAxis()
+				((XYPlot)thisFrame.view.getPanel().getChart().getPlot()).getDomainAxis()
 																 .setRange(start, start+len);
 			}
 		});
@@ -208,9 +238,9 @@ public class ChartFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				long start = (Long)startText.getValue();
 				long len = (Long)lenText.getValue();
-				((XYPlot)view.getPanel().getChart().getPlot()).getDomainAxis()
+				((XYPlot)thisFrame.view.getPanel().getChart().getPlot()).getDomainAxis()
 																 .setAutoRange(true);
-				((XYPlot)view.getPanel().getChart().getPlot()).getDomainAxis()
+				((XYPlot)thisFrame.view.getPanel().getChart().getPlot()).getDomainAxis()
 																 .setRange(start, start+len);
 			}
 		});
@@ -219,8 +249,8 @@ public class ChartFrame extends JFrame {
 		statusBar.add(lenLabel);
 		statusBar.add(lenText);
 		
-		lenText.setValue(view.getData().size()
-							*(view.getData().getAt(1)[0] - view.getData().getAt(0)[0]));
+		lenText.setValue(thisFrame.view.getData().size()
+				*(thisFrame.view.getData().getAt(1)[0] - thisFrame.view.getData().getAt(0)[0]));
 
 		add(statusBar, BorderLayout.SOUTH);
 

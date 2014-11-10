@@ -36,6 +36,8 @@ public class ECGView {
 	private boolean trim;
 	private final ECGView thisView = this;
 
+	private boolean canPlace = false;
+
 	public ECGView(ECGDataSet data, String title, boolean withLabels) {
 		trim = false;
 
@@ -103,7 +105,7 @@ public class ECGView {
 						thisView.setTrim(false);
 						origData.trimAnnotations(x);
 						thisView.revalidate();
-					} else {
+					} else if(canPlace) {
 						origData.addAnnotation(Main.getSelectedAnnotationType(), x);
 						plot.addDomainMarker(new ValueMarker(x, 
 															 Main.getSelectedAnnotationColor(), 
@@ -116,6 +118,10 @@ public class ECGView {
 		}
 
 //		System.out.println(origData.toArray()[1][0]);
+	}
+
+	public void setCanPlace(boolean b) {
+		canPlace = b;
 	}
 
 	public void setTrim(boolean b) {
@@ -160,6 +166,8 @@ public class ECGView {
 		DefaultXYDataset dxyd = new DefaultXYDataset();
 		dxyd.addSeries(1, origData.toArray());
 		this.chart.getXYPlot().setDataset(dxyd);
+		this.chart.getXYPlot().setDataset(this.chart.getXYPlot().getDataset());
+		this.chart.fireChartChanged();
 		this.panel.revalidate();
 	}
 
