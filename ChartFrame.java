@@ -27,6 +27,11 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import org.jfree.chart.plot.XYPlot;
 
+/**
+ * class ChartFrame - creates a simple frame for displaying one chart in detail
+ *
+ * @author Dakota Williams
+ */
 public class ChartFrame extends JFrame {
 	private final ECGView view;
 	private final JFormattedTextField startText 
@@ -36,13 +41,21 @@ public class ChartFrame extends JFrame {
 	private final JCheckBoxMenuItem file_badlead;
 	private final ChartFrame thisFrame = this;
 
+	/**
+	 * Constructor - creates the frame and everything in it
+	 *
+	 * @param v the view to display
+	 * @param title the title of the frame
+	 */
 	public ChartFrame(ECGView v, String title) {
 		super(title);
 		setBounds(0, 0, 500, 500);
 		setLayout(new BorderLayout());
 
+		//start with the menu bar
 		JMenuBar menu = new JMenuBar();
 
+		//dataset menu
 		JMenu file = new JMenu("Dataset");
 		file_badlead = new JCheckBoxMenuItem("Bad Lead");
 		file_badlead.setState(v.isBad());
@@ -67,6 +80,7 @@ public class ChartFrame extends JFrame {
 		file.add(file_exit);
 		menu.add(file);
 
+		//filter menu
 		JMenu filter = new JMenu("Filter");
 		JMenuItem filter_detrend = new JMenuItem("Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
@@ -131,6 +145,7 @@ public class ChartFrame extends JFrame {
 		
 		menu.add(filter);
 
+		//annotation menu
 		JMenu annotations = new JMenu("Annotation");
 		JMenuItem annotations_clear = new JMenuItem("Clear");
 		annotations_clear.addActionListener(new ActionListener() {
@@ -168,6 +183,7 @@ public class ChartFrame extends JFrame {
 
 		setJMenuBar(menu);
 
+		//add the specified view to the frame
 		view = v;
 		add(view.getPanel(), BorderLayout.CENTER);
 

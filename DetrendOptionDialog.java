@@ -15,11 +15,28 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
+/**
+ * class DetrendOptionDialog - creates a dialog that provides options for
+ *							   detrending data
+ *
+ * @author Dakota Williams
+ */
 public class DetrendOptionDialog extends JDialog {
 	private final DetrendOptionDialog thisDialog = this;
 	private int degree;
 
-	public DetrendOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
+	/**
+	 * Constructor - creates the dialog
+	 *
+	 * @param thisFrame the parent frame
+	 * @param title the title of the dialog
+	 * @param modal whether the dialog should be modal
+	 * @param view the view to display in the dialog (preview)
+	 */
+	public DetrendOptionDialog(final JFrame thisFrame, 
+							   String title, 
+							   boolean modal, 
+							   final ECGView view) {
 		super(thisFrame, title, modal);
 
 		degree = 6;
@@ -61,12 +78,10 @@ public class DetrendOptionDialog extends JDialog {
 		controls.add(degreeNum, values);
 		degreeSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-			//	System.out.println(degreeSlide.getValue());
 				degreeNum.setText("" + degreeSlide.getValue());
 				thisDialog.remove(preview[0].getPanel());
 				preview[0] = (ECGView)view.deepClone(true);
 				preview[0].detrend(degreeSlide.getValue());
-			//	System.out.println(degreeSlide.getValue());
 				thisDialog.add(preview[0].getPanel());
 			}
 		});
@@ -102,6 +117,11 @@ public class DetrendOptionDialog extends JDialog {
 		this.setVisible(true);
 	}
 
+	/**
+	 * applyToDataset - applies the data gathered from the dialog
+	 *					to a view
+	 * @param view the data to apply the detrend to
+	 */
 	public void applyToDataset(ECGDataSet view) {
 		view.detrend(degree);
 	}

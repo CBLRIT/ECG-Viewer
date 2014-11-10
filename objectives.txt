@@ -1,34 +1,37 @@
 objectives of program:
 
-i| 0. Data input
+h| 0. Data input
 d|   a. Make sure data is correct
  |   b. Add support for other formats of data and layout
  |     i. Chinese datasets are ASCII and 64-lead
  |
-i| 1. BSP
+d| 1. BSP
  |        (tip: trim then apply filter)
-i|   a. filtering
+d|   a. filtering
 d|     i. low-order polynomial fit
 d|     ii. savitzky-golay filter
 n|     iii. FFT
  |     iv. FCT
  |     v. Wavelet
+i|	   vi. undo/reset changes in chartframe
 d|   b. bad leads
 d|   c. beat annotation
 d|     i. note: use just time slices, not actual data points
 d|     ii. different color annotations
+i|	   iii. enable/disable annotations
 d|   d. apply to all
-i|   e. specify viewable graph domain
+i|	   i. update graphs
+d|   e. specify viewable graph domain
  |
 h| 2. electrode position
  |
-i| 3. data output
+h| 3. data output
 n|   a. matlab matrix - inefficient
 d|   b. csv
  |   c. own file type?
 d|   d. annotations and bad leads
  |
- | 4. refactor!
+i| 4. refactor!
  |   a. actually have an MVC/Observer pattern
  |
  | 5. document!

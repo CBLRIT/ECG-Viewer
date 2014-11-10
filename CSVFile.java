@@ -4,15 +4,34 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+/**
+ * class CSVFile - writes ECG data to an output file
+ *
+ * @author Dakota Williams
+ */
 public class CSVFile implements ECGOutputFile {
 	private OutputStreamWriter out;
 
+	/**
+	 * Constructor - initializes the file writer
+	 *
+	 * @param filename the file to write to
+	 */
 	public CSVFile(String filename) {
 		try { 
 			out = new OutputStreamWriter(new FileOutputStream(filename));
 		} catch (FileNotFoundException e) {}
 	}
 
+	/**
+	 * write - writes data to the file
+	 *
+	 * @param data The data to write. 
+	 * 		Array describes (in order of outermost to innermost):
+	 *			1. channel number
+	 *			2. x (0) or y (1)
+	 *			3. sample number
+	 */
 	public void write(double data[][][]) 
 			throws IOException {
 		for(int i = 0; i < data.length; i++) {
