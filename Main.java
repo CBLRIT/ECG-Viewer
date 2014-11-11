@@ -282,67 +282,68 @@ public class Main {
 		JMenuItem filter_detrend = new JMenuItem("Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = graphs.get(4);
+				ECGView view = graphs.get(35);
 				DetrendOptionDialog dialog = new DetrendOptionDialog(main, "Detrend", true, view);
 
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
-					if(i >= 4 && i < 124) {
-						graphs.get(i-4).revalidate();
-					}
+				}
+
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
 		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
 		filter_savitzky.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = graphs.get(4);
+				ECGView view = graphs.get(35);
 				SGOptionDialog dialog = new SGOptionDialog(main, "Savitzky-Golay Filter", true, view);
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
-					if(i >= 4 && i < 124) {
-						graphs.get(i-4).revalidate();
-					}
+				}
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
 		JMenuItem filter_high = new JMenuItem("High Pass");
 		filter_high.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = graphs.get(4);
+				ECGView view = graphs.get(35);
 				HighOptionDialog dialog = new HighOptionDialog(main, "High Pass Filter", true, view);
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
-					if(i >= 4 && i < 124) {
-						graphs.get(i-4).revalidate();
-					}
+				}
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
 		JMenuItem filter_highfft = new JMenuItem("FFT");
 		filter_highfft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = graphs.get(4);
+				ECGView view = graphs.get(35);
 				FFTOptionDialog dialog = new FFTOptionDialog(main, "FFT Filter", true, view);
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
-					if(i >= 4 && i < 124) {
-						graphs.get(i-4).revalidate();
-					}
+				}
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
 		JMenuItem filter_low = new JMenuItem("Low Pass");
 		filter_low.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = graphs.get(4);
+				ECGView view = graphs.get(35);
 				LowOptionDialog dialog = new LowOptionDialog(main, "Low Pass Filter", true, view);
 
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
-					if(i >= 4 && i < 124) {
-						graphs.get(i-4).revalidate();
-					}
+				}
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
