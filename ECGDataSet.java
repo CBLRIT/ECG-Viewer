@@ -38,6 +38,7 @@ public class ECGDataSet {
 		eds.set = new ArrayList<Double[]>(this.set);
 		eds.bad = this.bad;
 		eds.annotations = new HashSet<Annotation>(this.annotations);
+		eds.sampleFreq = this.sampleFreq;
 		return eds;
 	}
 

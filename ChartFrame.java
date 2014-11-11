@@ -49,14 +49,15 @@ public class ChartFrame extends JFrame {
 	 * @param v the view to display
 	 * @param title the title of the frame
 	 */
-	public ChartFrame(ECGView v, String title) {
+	public ChartFrame(final ECGView v, String title) {
 		super(title);
 		setBounds(0, 0, 500, 500);
 		setLayout(new BorderLayout());
 
 		//keep a copy
+		final ECGDataSet orig = (ECGDataSet)v.getData().clone();
 		view = (ECGView) v.deepClone(true);
-		realView = v;
+		view.setData(orig);
 
 		//start with the menu bar
 		JMenuBar menu = new JMenuBar();
@@ -66,15 +67,14 @@ public class ChartFrame extends JFrame {
 		JMenuItem file_apply = new JMenuItem("Apply Changes");
 		file_apply.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				thisFrame.realView = view;
+				v.setData(view.getData());
 			}
 		});
 		file.add(file_apply);
 		JMenuItem file_reset = new JMenuItem("Reset Changes");
 		file_reset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				thisFrame.view = realView;
-				thisFrame.view.revalidate();
+				view.setData(orig);
 			}
 		});
 		file.add(file_reset);

@@ -95,7 +95,7 @@ public class Main {
 			final int count = i-1;
 			graph.getPanel().addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
-					ChartFrame cf = new ChartFrame((ECGView)graph.clone(true), ""+count);
+					ChartFrame cf = new ChartFrame(graph, ""+count);
 					cf.addWindowListener(new WindowListener() {
 						public void windowClosing(WindowEvent e) {
 							graph.setBackground(!graph.isBad() ? 
