@@ -28,6 +28,7 @@ public class HighOptionDialog extends JDialog {
 
 		final ECGView[] preview = new ECGView[1];
 		preview[0] = (ECGView)view.deepClone(true);
+		final ECGDataSet orig = view.getData();
 
 		JPanel controls = new JPanel(new GridBagLayout());
 
@@ -63,7 +64,7 @@ public class HighOptionDialog extends JDialog {
 			public void stateChanged(ChangeEvent e) {
 				leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
 				thisDialog.remove(preview[0].getPanel());
-				preview[0] = (ECGView)view.deepClone(true);
+				preview[0].setData(orig);
 				preview[0].applyFilter(1, ((double)(int)leftSlide.getValue())/100.0);
 				thisDialog.add(preview[0].getPanel());
 			}

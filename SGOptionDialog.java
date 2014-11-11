@@ -32,6 +32,7 @@ public class SGOptionDialog extends JDialog {
 
 		final ECGView[] preview = new ECGView[1];
 		preview[0] = (ECGView)view.deepClone(true);
+		final ECGDataSet orig = view.getData();
 
 		JPanel controls = new JPanel(new GridBagLayout());
 
@@ -69,7 +70,7 @@ public class SGOptionDialog extends JDialog {
 			public void stateChanged(ChangeEvent e) {
 				leftNum.setText("" + leftSlide.getValue());
 				thisDialog.remove(preview[0].getPanel());
-				preview[0] = (ECGView)view.deepClone(true);
+				preview[0].setData(orig);
 				preview[0].applyFilter(0,
 									leftSlide.getValue(),
 									rightSlide.getValue(),
@@ -88,7 +89,7 @@ public class SGOptionDialog extends JDialog {
 			public void stateChanged(ChangeEvent e) {
 				rightNum.setText("" + rightSlide.getValue());
 				thisDialog.remove(preview[0].getPanel());
-				preview[0] = (ECGView)view.deepClone(true);
+				preview[0].setData(orig);
 				preview[0].applyFilter(0,
 									leftSlide.getValue(),
 									rightSlide.getValue(),
@@ -109,7 +110,7 @@ public class SGOptionDialog extends JDialog {
 			//	System.out.println(degreeSlide.getValue());
 				degreeNum.setText("" + degreeSlide.getValue());
 				thisDialog.remove(preview[0].getPanel());
-				preview[0] = (ECGView)view.deepClone(true);
+				preview[0].setData(orig);
 				preview[0].applyFilter(0,
 									   leftSlide.getValue(),
 									   rightSlide.getValue(),

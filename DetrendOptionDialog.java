@@ -45,6 +45,7 @@ public class DetrendOptionDialog extends JDialog {
 
 		final ECGView[] preview = new ECGView[1];
 		preview[0] = (ECGView)view.deepClone(true);
+		final ECGDataSet orig = (ECGDataSet)view.getData().clone();
 
 		JPanel controls = new JPanel(new GridBagLayout());
 
@@ -80,9 +81,10 @@ public class DetrendOptionDialog extends JDialog {
 			public void stateChanged(ChangeEvent e) {
 				degreeNum.setText("" + degreeSlide.getValue());
 				thisDialog.remove(preview[0].getPanel());
-				preview[0] = (ECGView)view.deepClone(true);
+				preview[0].setData(orig);
 				preview[0].detrend(degreeSlide.getValue());
 				thisDialog.add(preview[0].getPanel());
+				thisDialog.revalidate();
 			}
 		});
 		controls.add(degreeSlide, slider);
