@@ -1,0 +1,91 @@
+
+<project name="SGFilter" default="zip" basedir=".">
+    <property name="version" value="v1_2" />
+    <property name="revision" value="" />
+    <property name="src" value="src" />
+    <property name="tests" value="tests" />
+    <property name="doc" value="doc" />
+    <property name="dist" value="dist" />
+    <property name="lib" value="lib" />
+    <property name="zip" value="zip" />
+    <property name="bin" value="bin" />
+    <property name="junit-lib" value="/usr/share/java/junit4.jar" />
+    <property name="jarfile" value="${dist}/sgfilter_${version}${revision}.jar" />
+
+    <target name="build" description="compilation">
+        <mkdir dir="${bin}" />
+        <javac srcdir="${src}:${tests}" destdir="${bin}" listfiles="on" source="1.6" target="1.6" debug="on" debuglevel="lines,source,vars">
+            <classpath>
+                <fileset dir="${lib}">
+                    <include name="*.jar" />
+                </fileset>
+                <pathelement location="${junit-lib}" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="test" depends="build" description="runs tests">
+        <junit printsummary="yes">
+            <classpath>
+                <pathelement location="${bin}" />
+                <fileset dir="${lib}">
+                    <include name="*.jar" />
+                </fileset>
+                <filelist files="${junit-lib}" />
+            </classpath>
+            <formatter type="xml"/>
+            <formatter type="brief" usefile="false"/>
+            <test name="mr.go.sgfilter.tests.FilterTestCase" haltonfailure="no">
+            </test>
+        </junit>
+    </target>
+
+    <target name="jar" depends="build" description="creates jar library">
+        <mkdir dir="${dist}" />
+        <jar destfile="${jarfile}">
+            <fileset dir="${bin}">
+                <exclude name="mr/go/sgfilter/tests/**" />
+            </fileset>
+        </jar>
+    </target>
+	
+    <target name="clean" description="deletes all artifacts">
+        <delete file="${jarfile}" />
+        <delete dir="${dist}" />
+        <delete dir="${zip}" />
+        <delete dir="${bin}" />
+        <delete dir="${doc}" />
+    </target>
+
+    <target name="javadoc">
+        <javadoc access="public" author="true" source="1.6" destdir="${doc}" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="mr.go.sgfilter" sourcepath="${src}" splitindex="true" use="true" version="false">
+            <classpath>
+                <fileset dir="${lib}">
+                    <include name="*.jar" />
+                </fileset>
+            </classpath>
+        </javadoc>
+    </target>
+
+    <target depends="clean,jar,javadoc" name="zip">
+        <mkdir dir="${zip}" />
+
+        <zip destfile="${zip}/sgfilter_${version}${revision}.zip">
+            <zipfileset file="${jarfile}" />
+            <zipfileset dir="${doc}" prefix="doc" />
+            <zipfileset dir="${lib}" prefix="lib" />
+            <zipfileset file="LICENSE.txt" />
+        </zip>
+
+        <zip destfile="${zip}/sgfilter_${version}${revision}_src.zip">
+            <zipfileset file="${jarfile}" />
+            <zipfileset file="LICENSE.txt" />
+            <zipfileset dir="${src}" prefix="src" />
+            <zipfileset dir="${tests}" prefix="tests" />
+            <zipfileset dir="${lib}" prefix="lib" />
+            <zipfileset dir="${doc}" prefix="doc" />
+            <zipfileset file="build.xml" />
+        </zip>
+    </target>
+
+</project>
