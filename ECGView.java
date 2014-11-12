@@ -19,6 +19,11 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
+/**
+ * class ECGView - a class that handles rendering of the charts
+ *
+ * @author Dakota Williams
+ */
 public class ECGView {
 	private ChartPanel panel;
 	private JFreeChart chart;
@@ -38,6 +43,13 @@ public class ECGView {
 
 	private boolean canPlace = false;
 
+	/**
+	 * Constructor - initializes the view
+	 *
+	 * @param data the dataset to display
+	 * @param title the title of the chart
+	 * @param withLabels whether labels on the chart should be shown
+	 */
 	public ECGView(ECGDataSet data, String title, boolean withLabels) {
 		trim = false;
 
@@ -121,53 +133,109 @@ public class ECGView {
 //		System.out.println(origData.toArray()[1][0]);
 	}
 
+	/**
+	 * setCanPlace - sets whether clicking the chart will place annotations
+	 *
+	 * @param b the value of the flag
+	 */
 	public void setCanPlace(boolean b) {
 		canPlace = b;
 	}
 
+	/**
+	 * setTrim - sets the flag whether clicking the chart will trim the data
+	 *
+	 * @param b the value of the flag
+	 */
 	public void setTrim(boolean b) {
 		trim = b;
 	}
 
+	/**
+	 * clearAnnotations - clears annotations from the view
+	 */
 	public void clearAnnotations() {
 		plot.clearDomainMarkers();
 		this.origData.clearAnnotations();
 	}
 
+	/**
+	 * setBackground - sets the background color of the panel
+	 *
+	 * @param c the color to set the panel to
+	 */
 	public void setBackground(Color c) {
 		this.chart.setBackgroundPaint(c);
 		this.panel.revalidate();
 	}
 
+	/**
+	 * setBad - sets whether the data should be marked as bad
+	 *
+	 * @param b the value of the flag
+	 */
 	public void setBad(boolean b) {
 		origData.setBad(b);
 	}
 
+	/**
+	 * isBad - gets whether the data being displayed is marked as bad
+	 *
+	 * @return true if bad
+	 */
 	public boolean isBad() {
 		return origData.isBad();
 	}
 
+	/**
+	 * getPanel - gets the Swing panel to display
+	 *
+	 * @return a JFreeChart ChartPanel
+	 */
 	public ChartPanel getPanel() {
 		return this.panel;
 	}
 
+	/**
+	 * getData - gets the data being displayed
+	 *
+	 * @return the data being displayed
+	 */
 	public ECGDataSet getData() {
 		return this.origData;
 	}
 
+	/**
+	 * setData - sets the data being displayed
+	 *
+	 * @param e the data to display
+	 */
 	public void setData(ECGDataSet e) {
 		this.origData = (ECGDataSet)e.clone();
 		this.revalidate();
 	}
 
+	/**
+	 * clone - copies the view
+	 *
+	 * @param withLabels should the new view have labels on the chart?
+	 */
 	public Object clone(boolean withLabels) {
 		return new ECGView(origData, title, withLabels);
 	}
 
+	/**
+	 * deepClone - performs a deep copy on the view
+	 *
+	 * @param withLabels should the new view have labels on the chart?
+	 */
 	public Object deepClone(boolean withLabels) {
 		return new ECGView((ECGDataSet)origData.clone(), title, withLabels);
 	}
 
+	/**
+	 * revalidate - redraws the chart
+	 */
 	public void revalidate() {
 		DefaultXYDataset dxyd = new DefaultXYDataset();
 		dxyd.addSeries(1, origData.toArray());
@@ -177,11 +245,30 @@ public class ECGView {
 		this.panel.revalidate();
 	}
 
+	/**
+	 * detrend - detrends the data displayed in the chart
+	 *
+	 * @param degree the degree of the fitting polynomial
+	 */
 	public void detrend(int degree) {
 		origData.detrend(degree);
 		revalidate();
 	}
 
+	/** 
+	 * applyFilter - applies a filter to the data
+	 *
+	 * @param which number associated with a filter
+	 *		0 = savitzky-golay filter
+	 *		1 = high pass
+	 *		2 = low pass
+	 *		3 = fft
+	 * @param params the params to pass to each filter
+	 *		sgfilter: 1 = left samples, 2 = right samples, 3 = degree polynomial
+	 *		high pass: 1 = threshold
+	 *      low pass: 1 = threshold
+	 *      fft: 1 = threshold
+	 */
 	public void applyFilter(int which, Number... params) {
 		switch(which) {
 			case 0:

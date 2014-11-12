@@ -12,6 +12,11 @@ import java.util.Arrays;
 import java.util.Collections;
 //import org.jfree.data.xy.DefaultXYDataset;
 
+/**
+ * class ECGModel - class for holding all datasets
+ *
+ * @author Dakota Williams
+ */
 public class ECGModel {
 	//private DefaultXYDataset points; //x is time, y is value
 	private ArrayList<ECGDataSet> points; //<channel<at time<time, value>>
@@ -25,14 +30,26 @@ public class ECGModel {
 		}
 	}
 
+	/**
+	 * Constructor - initializes the model
+	 */
 	public ECGModel() {
 		points = new ArrayList<ECGDataSet>();
 	}
 
+	/**
+	 * clear - clears all datasets from the model
+	 */
 	public void clear() {
 		points.clear();
 	}
 
+	/**
+	 * toArray - creates an array representation of the model
+	 *
+	 * @return an array of arrays of arrays, nested like so:
+	 *		[channel][x, y][samples], sizes [# channels][2][# samples]
+	 */
 	public double[][][] toArray() {
 		double[][][] arr = new double[points.size()][2][points.get(0).size()];
 		
@@ -46,6 +63,12 @@ public class ECGModel {
 		return arr;
 	}
 
+	/**
+	 * subsetToArray - creates an array representation of data between to times
+	 *
+	 * @param start the time before the first sample in the subset
+	 * @param end the time after the last sample in the subset
+	 */
 	public double[][][] subsetToArray(double start, double end) {
 		double[][][] arr = new double[points.size()][2][points.get(0).subset(start, end).size()];
 		
@@ -59,26 +82,56 @@ public class ECGModel {
 		return arr;
 	}
 
+	/**
+	 * writeDataMat - creates a MATLAB file with the data contained in this model
+	 *
+	 * @param filename the name of the file to write to
+	 */
 	public void writeDataMat(String filename) 
 			throws IOException {
 		(new MatFile(filename)).write(this.toArray());
 	}
 
+	/**
+	 * writeDataCSV - creates a Comma Separated Value file with the data 
+	 *					contained in this model
+	 *
+	 * @param filename the name of the file to write to
+	 */
 	public void writeDataCSV(String filename)
 			throws IOException {
 		(new CSVFile(filename)).write(this.toArray());
 	}
 
+	/**
+	 * writeDataSubsetMat - writes a subset of the data to a MATLAB file
+	 *
+	 * @param filename the name of the file to write to
+	 * @param start the time before the first element in the subset
+	 * @param end the time after the last element in the subset
+	 */
 	public void writeDataSubsetMat(String filename, double start, double end) 
 			throws IOException {
 		(new MatFile(filename)).write(this.subsetToArray(start, end));
 	}
 
+	/**
+	 * writeDataSubsetCSV - writes a subset of the data to a CSV file
+	 *
+	 * @param filename the name of the file to write to
+	 * @param start the time before the first element in the subset
+	 * @param end the time after the last element in the subset
+	 */
 	public void writeDataSubsetCSV(String filename, double start, double end)
 			throws IOException {
 		(new CSVFile(filename)).write(this.subsetToArray(start, end));
 	}
 
+	/**
+	 * writeBadLeads - writes the bad lead numbers one per line to a file
+	 *
+	 * @param filename the file to write to
+	 */
 	public void writeBadLeads(String filename) 
 			throws IOException {
 		PrintWriter out = new PrintWriter(filename);
@@ -93,6 +146,12 @@ public class ECGModel {
 		out.close();
 	}
 
+	/**
+	 * writeAnnotations - writes the all of the annotations to a file
+	 * Format: <lead number>: (<annotation type>, <annotation location>), <more annotations> ...
+	 *
+	 * @param filename the name of the file to write to
+	 */
 	public void writeAnnotations(String filename) 
 			throws IOException {
 		PrintWriter out = new PrintWriter(filename);
@@ -116,6 +175,13 @@ public class ECGModel {
 		out.close();
 	}
 
+	/**
+	 * readData - reads raw data in from a file
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 *
+	 * @param filename the name of the file to read
+	 */
 	public void readData(String filename) 
 			throws IOException, FileNotFoundException {
 		ECGFile file = new ECGFile();
@@ -175,22 +241,49 @@ public class ECGModel {
 	//	System.out.println(Arrays.toString(points.get(4).get(0)));
 	}
 
+	/**
+	 * getDataset - gets the dataset of channel number i
+	 *
+	 * @param i the index of the dataset
+	 */
 	public ECGDataSet getDataset(int i) {
 		return points.get(i);
 	}
 
+	/**
+	 * size - the number of datasets in this model
+	 *
+	 * @return the number of datasets in this model
+	 */
 	public int size() {
 		return points.size();
 	}
 
+	/**
+	 * setBad - sets or unsets the specified lead as a bad lead
+	 *
+	 * @param i the index of the lead
+	 * @param isBad whether the lead should be set as bad
+	 */
 	public void setBad(int i, boolean isBad) {
 		points.get(i).setBad(isBad);
 	}
 
+	/**
+	 * isBad - gets whether the lead is bad or not
+	 * 
+	 * @param i the index of the lead
+	 * @return the badness of the lead
+	 */
 	public boolean isBad(int i) {
 		return points.get(i).isBad();
 	}
 
+	/**
+	 * getSamplesPerSecond - gets the rate at which the samples were taken
+	 *
+	 * @return the number of samples taken per second
+	 */
 	public double getSamplesPerSecond() {
 		return sampleFreq;
 	}

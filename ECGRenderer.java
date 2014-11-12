@@ -5,6 +5,12 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
+/**
+ * @deprecated
+ * class ECGRenderer - defines a custom renderer for charts
+ *
+ * @author Dakota Williams
+ */
 public class ECGRenderer extends XYLineAndShapeRenderer {
 	private ECGDataSet dataset;
 
