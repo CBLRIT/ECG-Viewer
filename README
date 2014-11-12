@@ -1,7 +1,8 @@
 ECG Viewer - Opens and manipulates raw ECG data
 ===============================================
-Author: Dakota Williams
-Funded by: <funded by here>
+Author: Dakota Williams, drw9888@rit.edu
+
+This work is supported by the National Science Foundation CAREER Award #ACI-1350374 
 
 Running from command line: java -jar path/to/file/ECGViewer.jar
 
