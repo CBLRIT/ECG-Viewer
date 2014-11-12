@@ -23,6 +23,7 @@ release:
 	echo "Main-Class: Main" > manifest.txt
 	echo "Class-Path: $(LIBS)" >> manifest.txt
 	jar cfm ECGViewer.jar manifest.txt *.class $(LIBS)
+	chmod u+x ECGViewer.jar
 	make clean
 	rm manifest.txt
 
