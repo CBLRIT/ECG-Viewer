@@ -6,7 +6,7 @@ This work is supported by the National Science Foundation CAREER Award #ACI-1350
 
 Running from command line: `java -jar path/to/file/ECGViewer.jar`
 
-Output file formats:</br>
+Output file formats:<br/>
 1. Export and Export Subset: CSV, with title row (lead number) and title column (time of sample)<br/>
 2. Bad Leads: Lead numbers, one per line<br/>
 3. Annotations: One lead per line of the format:<br/>
