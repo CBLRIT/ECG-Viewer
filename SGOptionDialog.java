@@ -20,6 +20,7 @@ public class SGOptionDialog extends JDialog {
 	private int left;
 	private int right;
 	private int degree;
+	private boolean retVal = false;
 
 	public SGOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
 		super(thisFrame, title, modal);
@@ -133,6 +134,7 @@ public class SGOptionDialog extends JDialog {
 				degree = degreeSlide.getValue();
 				thisFrame.revalidate();
 				thisDialog.dispose();
+				retVal = true;
 			}
 		});
 		cancel.addActionListener(new ActionListener() {
@@ -156,6 +158,10 @@ public class SGOptionDialog extends JDialog {
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);
+	}
+
+	public boolean accepted() {
+		return retVal;
 	}
 
 	public void applyToDataset(ECGDataSet view) {

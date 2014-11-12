@@ -110,7 +110,9 @@ public class ChartFrame extends JFrame {
 																	 "Detrend", 
 																	 true, 
 																	 view);
-				dialog.applyToDataset(thisFrame.view.getData());
+				if(dialog.accepted()) {
+					dialog.applyToDataset(thisFrame.view.getData());
+				}
 				thisFrame.view.revalidate();
 			}
 		});
@@ -121,7 +123,9 @@ public class ChartFrame extends JFrame {
 														   "Savitzky-Golay Filter", 
 														   true, 
 														   view);
-				dialog.applyToDataset(thisFrame.view.getData());
+				if(dialog.accepted()) {
+					dialog.applyToDataset(thisFrame.view.getData());
+				}
 				thisFrame.view.revalidate();
 			}
 		});
@@ -132,7 +136,9 @@ public class ChartFrame extends JFrame {
 															   "High Pass Filter", 
 															   true, 
 															   view);
-				dialog.applyToDataset(thisFrame.view.getData());
+				if(dialog.accepted()) {
+					dialog.applyToDataset(thisFrame.view.getData());
+				}
 				thisFrame.view.revalidate();
 			}
 		});
@@ -143,7 +149,9 @@ public class ChartFrame extends JFrame {
 															 "FFT High Pass Filter", 
 															 true, 
 															 view);
-				dialog.applyToDataset(thisFrame.view.getData());
+				if(dialog.accepted()) {
+					dialog.applyToDataset(thisFrame.view.getData());
+				}
 				thisFrame.view.revalidate();
 			}
 		});
@@ -154,7 +162,9 @@ public class ChartFrame extends JFrame {
 															 "Low Pass Filter", 
 															 true, 
 															 view);
-				dialog.applyToDataset(thisFrame.view.getData());
+				if(dialog.accepted()) {
+					dialog.applyToDataset(thisFrame.view.getData());
+				}
 				thisFrame.view.revalidate();
 			}
 		});

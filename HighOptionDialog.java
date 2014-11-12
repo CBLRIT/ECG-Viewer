@@ -18,6 +18,7 @@ import javax.swing.JSlider;
 public class HighOptionDialog extends JDialog {
 	private final HighOptionDialog thisDialog = this;
 	private double freq;
+	private boolean retVal = false;
 
 	public HighOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
 		super(thisFrame, title, modal);
@@ -80,6 +81,7 @@ public class HighOptionDialog extends JDialog {
 				freq = ((double)(int)leftSlide.getValue())/100.0;
 				thisFrame.revalidate();
 				thisDialog.dispose();
+				retVal = true;
 			}
 		});
 		cancel.addActionListener(new ActionListener() {
@@ -100,6 +102,10 @@ public class HighOptionDialog extends JDialog {
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);
+	}
+
+	public boolean accepted() {
+		return retVal;
 	}
 
 	public void applyToDataset(ECGDataSet view) {

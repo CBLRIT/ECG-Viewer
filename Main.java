@@ -284,6 +284,9 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
 				DetrendOptionDialog dialog = new DetrendOptionDialog(main, "Detrend", true, view);
+				if(!dialog.accepted()) {
+					return;
+				}
 
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
@@ -299,6 +302,9 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
 				SGOptionDialog dialog = new SGOptionDialog(main, "Savitzky-Golay Filter", true, view);
+				if(!dialog.accepted()) {
+					return;
+				}
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
 				}
@@ -312,6 +318,9 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
 				HighOptionDialog dialog = new HighOptionDialog(main, "High Pass Filter", true, view);
+				if(!dialog.accepted()) {
+					return;
+				}
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
 				}
@@ -325,6 +334,9 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
 				FFTOptionDialog dialog = new FFTOptionDialog(main, "FFT Filter", true, view);
+				if(!dialog.accepted()) {
+					return;
+				}
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
 				}
@@ -338,6 +350,9 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
 				LowOptionDialog dialog = new LowOptionDialog(main, "Low Pass Filter", true, view);
+				if(!dialog.accepted()) {
+					return;
+				}
 
 				for(int i = 0; i < model.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));

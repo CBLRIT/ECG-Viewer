@@ -24,6 +24,7 @@ import javax.swing.JSlider;
 public class DetrendOptionDialog extends JDialog {
 	private final DetrendOptionDialog thisDialog = this;
 	private int degree;
+	private boolean retVal = false;
 
 	/**
 	 * Constructor - creates the dialog
@@ -85,6 +86,7 @@ public class DetrendOptionDialog extends JDialog {
 				preview[0].detrend(degreeSlide.getValue());
 				thisDialog.add(preview[0].getPanel());
 				thisDialog.revalidate();
+				retVal = true;
 			}
 		});
 		controls.add(degreeSlide, slider);
@@ -98,6 +100,7 @@ public class DetrendOptionDialog extends JDialog {
 				degree = degreeSlide.getValue();
 				thisFrame.revalidate();
 				thisDialog.dispose();
+				retVal = true;
 			}
 		});
 		cancel.addActionListener(new ActionListener() {
@@ -117,6 +120,10 @@ public class DetrendOptionDialog extends JDialog {
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);
+	}
+
+	public boolean accepted() {
+		return retVal;
 	}
 
 	/**

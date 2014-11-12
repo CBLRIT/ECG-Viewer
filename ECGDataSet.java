@@ -35,7 +35,11 @@ public class ECGDataSet {
 
 	public Object clone() {
 		ECGDataSet eds = new ECGDataSet();
-		eds.set = new ArrayList<Double[]>(this.set);
+		eds.set = new ArrayList<Double[]>();
+		for(int i = 0; i < this.set.size(); i++) {
+			eds.set.add(new Double[] {(double)this.set.get(i)[0],
+									  (double)this.set.get(i)[1]});
+		}
 		eds.bad = this.bad;
 		eds.annotations = new HashSet<Annotation>(this.annotations);
 		eds.sampleFreq = this.sampleFreq;
