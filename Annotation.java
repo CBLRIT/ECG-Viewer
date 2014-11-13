@@ -43,7 +43,7 @@ public class Annotation {
 	 * @return a string of the form "([type], [location])"
 	 */
 	public String toString() {
-		return "(" + type + ", " + location + ")";
+		return (double)type + " " + location;
 	}
 }
 

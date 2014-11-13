@@ -85,6 +85,22 @@ public class ECGDataSet {
 	}
 
 	/**
+	 * copyFrom - make this a shallow copy of e
+	 *
+	 * @param e the thing to copy
+	 */
+	public void copyFrom(ECGDataSet e) {
+		this.set = new ArrayList<Double[]>();
+		for(int i = 0; i < e.set.size(); i++) {
+			this.set.add(new Double[] {(double)e.set.get(i)[0],
+									  (double)e.set.get(i)[1]});
+		}
+		this.bad = e.bad;
+		this.annotations = new HashSet<Annotation>(e.annotations);
+		this.sampleFreq = e.sampleFreq;
+	}
+
+	/**
 	 * toArray - creates an array representation of the dataset
 	 *
 	 * @return a 2xN matrix where the array of arrays is the x and y values
@@ -117,6 +133,15 @@ public class ECGDataSet {
 	 */
 	public void addAnnotation(int type, double i) {
 		annotations.add(new Annotation(type, i));
+	}
+
+	/**
+	 * setAnnotations - sets the annotations of the dataset
+	 *
+	 * @param annos the annotations
+	 */
+	public void setAnnotations(ArrayList<Annotation> annos) {
+		annotations = new HashSet<Annotation>(annos);
 	}
 
 	/** 

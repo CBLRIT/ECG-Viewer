@@ -161,14 +161,9 @@ public class ECGModel {
 			if(annos.size() == 0) {
 				continue;
 			}
-			out.print(i-1 + ": ");
 			for(int j = 0; j < annos.size(); j++) {
-				if(j != 0) {
-					out.print(", ");
-				}
-				out.print(annos.get(j));
+				out.println(((double)(i-1)) + " " + annos.get(j));
 			}
-			out.println();
 		}
 
 		out.flush();

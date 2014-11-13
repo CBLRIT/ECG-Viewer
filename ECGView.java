@@ -104,7 +104,6 @@ public class ECGView {
 		}
 
 		if(withLabels) {
-			final ECGDataSet[] set = {origData};
 			panel.addChartMouseListener(new ChartMouseListener() {
 				public void chartMouseClicked(ChartMouseEvent event) {
 					ChartEntity ce = event.getEntity();
@@ -116,10 +115,10 @@ public class ECGView {
 																  plot.getDomainAxisEdge());
 					if(trim) {
 						thisView.setTrim(false);
-						set[0].trimAnnotations(x);
+						origData.trimAnnotations(x);
 						thisView.revalidate();
 					} else if(canPlace) {
-						set[0].addAnnotation(Main.getSelectedAnnotationType(), x);
+						origData.addAnnotation(Main.getSelectedAnnotationType(), x);
 						plot.addDomainMarker(new ValueMarker(x, 
 															 Main.getSelectedAnnotationColor(), 
 															 new BasicStroke()));
@@ -211,7 +210,7 @@ public class ECGView {
 	 * @param e the data to display
 	 */
 	public void setData(ECGDataSet e) {
-		this.origData = (ECGDataSet)e.clone();
+		this.origData.copyFrom(e);
 		this.revalidate();
 	}
 
