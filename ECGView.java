@@ -35,8 +35,8 @@ public class ECGView {
 	private final int defaultWidth = 100;
 	private final int defaultHeight = 100;
 
-	private ECGModel model;
-	private int index;
+	private final ECGViewHandler handler;
+	private ECGDataSet origData;
 	private String title;
 
 	private boolean trim;
@@ -51,15 +51,15 @@ public class ECGView {
 	 * @param title the title of the chart
 	 * @param withLabels whether labels on the chart should be shown
 	 */
-	public ECGView(ECGModel model, int index, String title, boolean withLabels) {
+	public ECGView(ECGViewHandler handler, ECGDataSet data, String title, boolean withLabels) {
 		trim = false;
 
-		this.model = model;
-		this.index = index;
+		this.handler = handler;
 		this.title = title;
+		this.origData = data;
 
 		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries(1, model.getDataset(index).toArray());
+		dataset.addSeries(1, origData.toArray());
 		
 		this.xaxis = new NumberAxis("Time (msec)");
 		if(!withLabels) {
@@ -93,16 +93,19 @@ public class ECGView {
 			true, //zoom
 			false //tooltip
 		);
+		if(!withLabels) {
+			this.panel.setPopupMenu(null);
+		}
 
 		this.setBackground(!this.isBad() ? 
 						   UIManager.getColor("Panel.background") : 
 						   new Color(233, 174, 174));
 
-		for(int i = 0; i < model.getDataset(index).getAnnotations().size(); i++) {
+		for(int i = 0; i < origData.getAnnotations().size(); i++) {
 			plot.addDomainMarker(
-				new ValueMarker(model.getDataset(index).getAnnotations().get(i).getLoc(), 
-			 	Main.getAnnotationColor(
-					model.getDataset(index).getAnnotations().get(i).getType()), 
+				new ValueMarker(origData.getAnnotations().get(i).getLoc(), 
+			 	this.handler.getAnnotationColor(
+					origData.getAnnotations().get(i).getType()), 
 				 	new BasicStroke()));
 		}
 
@@ -118,13 +121,13 @@ public class ECGView {
 																  plot.getDomainAxisEdge());
 					if(trim) {
 						thisView.setTrim(false);
-						model.getDataset(index).trimAnnotations(x);
+						origData.trimAnnotations(x, thisView.handler.getSelectedAnnotationType());
 						thisView.revalidate();
 					} else if(canPlace) {
-						model.getDataset(index).addAnnotation(Main.getSelectedAnnotationType(), x);
+						origData.addAnnotation(thisView.handler.getSelectedAnnotationType(), x);
 						plot.addDomainMarker(new ValueMarker(x, 
-															 Main.getSelectedAnnotationColor(), 
-															 new BasicStroke()));
+												 thisView.handler.getSelectedAnnotationColor(), 
+												 new BasicStroke()));
 					}
 				}
 
@@ -132,7 +135,7 @@ public class ECGView {
 			});
 		}
 
-//		System.out.println(model.getDataset(index).toArray()[1][0]);
+//		System.out.println(origData.toArray()[1][0]);
 	}
 
 	/**
@@ -158,7 +161,7 @@ public class ECGView {
 	 */
 	public void clearAnnotations() {
 		plot.clearDomainMarkers();
-		this.model.getDataset(index).clearAnnotations();
+		this.origData.clearAnnotations();
 	}
 
 	/**
@@ -177,7 +180,7 @@ public class ECGView {
 	 * @param b the value of the flag
 	 */
 	public void setBad(boolean b) {
-		model.getDataset(index).setBad(b);
+		origData.setBad(b);
 	}
 
 	/**
@@ -186,7 +189,7 @@ public class ECGView {
 	 * @return true if bad
 	 */
 	public boolean isBad() {
-		return model.getDataset(index).isBad();
+		return origData.isBad();
 	}
 
 	/**
@@ -204,7 +207,7 @@ public class ECGView {
 	 * @return the data being displayed
 	 */
 	public ECGDataSet getData() {
-		return this.model.getDataset(index);
+		return this.origData;
 	}
 
 	/**
@@ -213,7 +216,7 @@ public class ECGView {
 	 * @param e the data to display
 	 */
 	public void setData(ECGDataSet e) {
-		this.model.getDataset(index).copyFrom(e);
+		this.origData.copyFrom(e);
 		this.revalidate();
 	}
 
@@ -223,7 +226,7 @@ public class ECGView {
 	 * @param withLabels should the new view have labels on the chart?
 	 */
 	public Object clone(boolean withLabels) {
-		return new ECGView(model.getDataset(index), title, withLabels);
+		return new ECGView(handler, origData, title, withLabels);
 	}
 
 	/**
@@ -232,7 +235,7 @@ public class ECGView {
 	 * @param withLabels should the new view have labels on the chart?
 	 */
 	public Object deepClone(boolean withLabels) {
-		return new ECGView((ECGDataSet)model.getDataset(index).clone(), title, withLabels);
+		return new ECGView(handler, (ECGDataSet)origData.clone(), title, withLabels);
 	}
 
 	/**
@@ -240,7 +243,7 @@ public class ECGView {
 	 */
 	public void revalidate() {
 		DefaultXYDataset dxyd = new DefaultXYDataset();
-		dxyd.addSeries(1, model.getDataset(index).toArray());
+		dxyd.addSeries(1, origData.toArray());
 		this.chart.getXYPlot().setDataset(dxyd);
 		this.chart.getXYPlot().setDataset(this.chart.getXYPlot().getDataset());
 		this.chart.fireChartChanged();
@@ -253,7 +256,7 @@ public class ECGView {
 	 * @param degree the degree of the fitting polynomial
 	 */
 	public void detrend(int degree) {
-		model.getDataset(index).detrend(degree);
+		origData.detrend(degree);
 		revalidate();
 	}
 
@@ -274,16 +277,16 @@ public class ECGView {
 	public void applyFilter(int which, Number... params) {
 		switch(which) {
 			case 0:
-				model.getDataset(index).sgolayfilt((int)params[0], (int)params[1], (int)params[2]);
+				origData.sgolayfilt((int)params[0], (int)params[1], (int)params[2]);
 				break;
 			case 1:
-				model.getDataset(index).highpassfilt((double)params[0]);
+				origData.highpassfilt((double)params[0]);
 				break;
 			case 2:
-				model.getDataset(index).lowpassfilt((double)params[0]);
+				origData.lowpassfilt((double)params[0]);
 				break;
 			case 3: 
-				model.getDataset(index).highpassfftfilt((double)params[0], 0);
+				origData.highpassfftfilt((double)params[0], 0);
 				break;
 			default:
 				return;

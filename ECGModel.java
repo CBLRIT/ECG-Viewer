@@ -19,7 +19,10 @@ import java.util.Collections;
  */
 public class ECGModel {
 	//private DefaultXYDataset points; //x is time, y is value
-	private ArrayList<ECGDataSet> points; //<channel<at time<time, value>>
+	private ECGDataSet[] first2CrapLeads; //size 2
+	private ECGDataSet[] limbLeads; //size 3
+	private ECGDataSet[] points; //size 120; this one actually matters
+	private ECGDataSet[] mysteriousLeads; //size 5
 	private final int tupleLength = 154;
 	private final int actualSize = 130;
 	private double sampleFreq = 0;
@@ -34,14 +37,20 @@ public class ECGModel {
 	 * Constructor - initializes the model
 	 */
 	public ECGModel() {
-		points = new ArrayList<ECGDataSet>();
+		first2CrapLeads = new ECGDataSet[2];
+		limbLeads = new ECGDataSet[3];
+		points = new ECGDataSet[120];
+		mysteriousLeads = new ECGDataSet[5];
 	}
 
 	/**
 	 * clear - clears all datasets from the model
 	 */
 	public void clear() {
-		points.clear();
+		first2CrapLeads = new ECGDataSet[2];
+		limbLeads = new ECGDataSet[3];
+		points = new ECGDataSet[120];
+		mysteriousLeads = new ECGDataSet[5];
 	}
 
 	/**
@@ -51,12 +60,12 @@ public class ECGModel {
 	 *		[channel][x, y][samples], sizes [# channels][2][# samples]
 	 */
 	public double[][][] toArray() {
-		double[][][] arr = new double[points.size()][2][points.get(0).size()];
+		double[][][] arr = new double[points.length][2][points[0].size()];
 		
-		for(int i = 0; i < points.size(); i++) {
-			for(int j = 0; j < points.get(0).size(); j++) {
-				arr[i][0][j] = points.get(i).getAt(j)[0];
-				arr[i][1][j] = points.get(i).getAt(j)[1];
+		for(int i = 0; i < points.length; i++) {
+			for(int j = 0; j < points[0].size(); j++) {
+				arr[i][0][j] = points[i].getAt(j)[0];
+				arr[i][1][j] = points[i].getAt(j)[1];
 			}
 		}
 
@@ -70,12 +79,12 @@ public class ECGModel {
 	 * @param end the time after the last sample in the subset
 	 */
 	public double[][][] subsetToArray(double start, double end) {
-		double[][][] arr = new double[points.size()][2][points.get(0).subset(start, end).size()];
+		double[][][] arr = new double[points.length][2][points[0].subset(start, end).size()];
 		
-		for(int i = 0; i < points.size(); i++) {
-			for(int j = 0; j < points.get(0).subset(start, end).size(); j++) {
-				arr[i][0][j] = points.get(i).subset(start, end).getAt(j)[0];
-				arr[i][1][j] = points.get(i).subset(start, end).getAt(j)[1];
+		for(int i = 0; i < points.length; i++) {
+			for(int j = 0; j < points[0].subset(start, end).size(); j++) {
+				arr[i][0][j] = points[i].subset(start, end).getAt(j)[0];
+				arr[i][1][j] = points[i].subset(start, end).getAt(j)[1];
 			}
 		}
 
@@ -136,8 +145,8 @@ public class ECGModel {
 			throws IOException {
 		PrintWriter out = new PrintWriter(filename);
 
-		for(int i = 0; i < points.size(); i++) {
-			if(points.get(i).isBad()) {
+		for(int i = 0; i < points.length; i++) {
+			if(points[i].isBad()) {
 				out.println(i);
 			}
 		}
@@ -156,8 +165,8 @@ public class ECGModel {
 			throws IOException {
 		PrintWriter out = new PrintWriter(filename);
 
-		for(int i = 0; i < points.size(); i++) {
-			ArrayList<Annotation> annos = points.get(i).getAnnotations();
+		for(int i = 0; i < points.length; i++) {
+			ArrayList<Annotation> annos = points[i].getAnnotations();
 			if(annos.size() == 0) {
 				continue;
 			}
@@ -179,6 +188,8 @@ public class ECGModel {
 	 */
 	public void readData(String filename) 
 			throws IOException, FileNotFoundException {
+		this.clear();
+
 		ECGFile file = new ECGFile();
 		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Integer>>> raw
 			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Integer>>>();
@@ -194,18 +205,29 @@ public class ECGModel {
 
 		for(int i = 0; i < raw.size(); i++) {
 			for(int j = 0; j < actualSize; j++) {
-				if(i == 0) {
-					points.add(new ECGDataSet());
+				ECGDataSet[] temp;
+				if(j < 2) {
+					temp = first2CrapLeads;
+				} else if (j < 5) {
+					temp = limbLeads;
+				} else if (j < 125) {
+					temp = points;
+				} else {
+					temp = mysteriousLeads;
 				}
-				points.get(j).addTuple(raw.get(i).getKey(), 
+
+				if(i == 0) {
+					temp[j] = new ECGDataSet();
+				}
+				temp[j].addTuple(raw.get(i).getKey(), 
 									   (double)raw.get(i).getValue().get(j)*0.125);
 			}
 		}
 
 		for(int i = 0; i < actualSize; i++) {
 			ArrayList<Double> values = new ArrayList<Double>();
-			for(int j = 0; j < points.get(i).size(); j++) {
-				values.add(new Double(points.get(i).getAt(j)[1]));
+			for(int j = 0; j < points[i].size(); j++) {
+				values.add(new Double(points[i].getAt(j)[1]));
 			}
 
 			Collections.sort(values);
@@ -218,22 +240,22 @@ public class ECGModel {
 			}
 
 	/*		if (i == 4) {
-				printArrayList(points.get(i));
+				printArrayList(points[i]);
 				System.out.println(values.toString());
 				System.out.println(median);
 			}
 	*/
 
 
-			for(int j = 0; j < points.get(i).size(); j++) {
-				points.get(i).getAt(j)[1] -= median;
+			for(int j = 0; j < points[i].size(); j++) {
+				points[i].getAt(j)[1] -= median;
 			}
 
-	//		System.out.println(i + ": " + points.get(i).toArray()[1][0]);
+	//		System.out.println(i + ": " + points[i].toArray()[1][0]);
 		}
 		
-	//	printArrayList(points.get(4));
-	//	System.out.println(Arrays.toString(points.get(4).get(0)));
+	//	printArrayList(points[4]);
+	//	System.out.println(Arrays.toString(points[4].get(0)));
 	}
 
 	/**
@@ -242,7 +264,7 @@ public class ECGModel {
 	 * @param i the index of the dataset
 	 */
 	public ECGDataSet getDataset(int i) {
-		return points.get(i);
+		return points[i];
 	}
 
 	/**
@@ -251,7 +273,7 @@ public class ECGModel {
 	 * @return the number of datasets in this model
 	 */
 	public int size() {
-		return points.size();
+		return points.length;
 	}
 
 	/**
@@ -261,7 +283,7 @@ public class ECGModel {
 	 * @param isBad whether the lead should be set as bad
 	 */
 	public void setBad(int i, boolean isBad) {
-		points.get(i).setBad(isBad);
+		points[i].setBad(isBad);
 	}
 
 	/**
@@ -271,7 +293,7 @@ public class ECGModel {
 	 * @return the badness of the lead
 	 */
 	public boolean isBad(int i) {
-		return points.get(i).isBad();
+		return points[i].isBad();
 	}
 
 	/**

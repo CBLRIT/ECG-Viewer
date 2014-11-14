@@ -90,11 +90,7 @@ public class ECGDataSet {
 	 * @param e the thing to copy
 	 */
 	public void copyFrom(ECGDataSet e) {
-		this.set = new ArrayList<Double[]>();
-		for(int i = 0; i < e.set.size(); i++) {
-			this.set.add(new Double[] {(double)e.set.get(i)[0],
-									  (double)e.set.get(i)[1]});
-		}
+		this.set = new ArrayList<Double[]>(e.set);
 		this.bad = e.bad;
 		this.annotations = new HashSet<Annotation>(e.annotations);
 		this.sampleFreq = e.sampleFreq;
@@ -184,13 +180,13 @@ public class ECGDataSet {
 	 *
 	 * @param between a time between annotations
 	 */
-	public void trimAnnotations(double between) {
+	public void trimAnnotations(double between, int type) {
 		Annotation[] annos=(Annotation[])annotations.toArray(new Annotation[annotations.size()]);
 
 		//find closest lower than between
 		double lower = 0;
 		for(int i = 0; i < annos.length; i++) {
-			if(annos[i].getType() != Main.getSelectedAnnotationType()) {
+			if(annos[i].getType() != type) {
 				continue;
 			}
 			if(annos[i].getLoc() < between && lower < annos[i].getLoc()) {
@@ -201,7 +197,7 @@ public class ECGDataSet {
 		//find closet higher than between
 		double higher = set.get(set.size()-1)[0];
 		for(int i = 0; i < annos.length; i++) {
-			if(annos[i].getType() != Main.getSelectedAnnotationType()) {
+			if(annos[i].getType() != type) {
 				continue;
 			}
 			if(annos[i].getLoc() > between && higher > annos[i].getLoc()) {

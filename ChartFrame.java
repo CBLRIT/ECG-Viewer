@@ -49,12 +49,13 @@ public class ChartFrame extends JFrame {
 	 * @param v the view to display
 	 * @param title the title of the frame
 	 */
-	public ChartFrame(final ECGView v, String title) {
+	public ChartFrame(final ECGViewHandler handler, int index, String title) {
 		super(title);
 		setBounds(0, 0, 500, 500);
 		setLayout(new BorderLayout());
 
 		//keep a copy
+		final ECGView v = handler.getView(index, true);
 		final ECGDataSet orig = (ECGDataSet)v.getData().clone();
 		view = (ECGView) v.deepClone(true);
 		view.setData(orig);
@@ -207,13 +208,13 @@ public class ChartFrame extends JFrame {
 		for(int i = 0; i < annotations_colors.length; i++) {
 			final int count = i;
 			annotations_colors[i] = new JRadioButtonMenuItem("Annotation " + (i+1) 
-																+ " (" + desc[i] + ")", 
-															 Main.getSelectedAnnotationType()==i);
+														+ " (" + desc[i] + ")", 
+														handler.getSelectedAnnotationType()==i);
 			annotations_colors[i].addActionListener(new ActionListener() {
 				private final int changeNum = count;
 
 				public void actionPerformed(ActionEvent e) {
-					Main.setSelectedAnnotationType(changeNum);
+					handler.setSelectedAnnotationType(changeNum);
 				}
 			});
 			annotations.add(annotations_colors[i]);

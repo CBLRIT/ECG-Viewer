@@ -1,5 +1,27 @@
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.GridLayout;
+import java.io.IOException;
+import java.text.NumberFormat;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 
 public class MainFrame extends JFrame {
 	private final int dataSetPlacement[][] =  {
@@ -35,7 +57,12 @@ public class MainFrame extends JFrame {
 	private int xnum = 18;
 
 	private ECGViewHandler views;
-	private static final JPanel[] subPanels = new JPanel[xnum*ynum];
+	private final JPanel[] subPanels = new JPanel[xnum*ynum];
+
+	private JFormattedTextField startText 
+		= new JFormattedTextField(NumberFormat.getIntegerInstance());
+	private JFormattedTextField lenText 
+		= new JFormattedTextField(NumberFormat.getIntegerInstance());
 
 	public MainFrame(ECGViewHandler views) {
 		super("ECG Viewer");
@@ -69,7 +96,7 @@ public class MainFrame extends JFrame {
 				fc.addChoosableFileFilter(matlab);
 				fc.addChoosableFileFilter(csv);
 				fc.setAcceptAllFileFilterUsed(false);
-				int ret = fc.showSaveDialog(main);
+				int ret = fc.showSaveDialog(this);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try { 
 						String extension = fc.getFileFilter().getDescription();
@@ -98,7 +125,7 @@ public class MainFrame extends JFrame {
 				fc.addChoosableFileFilter(csv);
 				fc.addChoosableFileFilter(matlab);
 				fc.setAcceptAllFileFilterUsed(false);
-				int ret = fc.showSaveDialog(main);
+				int ret = fc.showSaveDialog(this);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try { 
 						String extension = fc.getFileFilter().getDescription();
@@ -126,7 +153,7 @@ public class MainFrame extends JFrame {
 		export_badleads.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
-				int ret = fc.showSaveDialog(main);
+				int ret = fc.showSaveDialog(this);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
 						model.writeBadLeads(fc.getSelectedFile().getAbsolutePath());
@@ -143,7 +170,7 @@ public class MainFrame extends JFrame {
 		export_annos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
-				int ret = fc.showSaveDialog(main);
+				int ret = fc.showSaveDialog(this);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
 						model.writeAnnotations(fc.getSelectedFile().getAbsolutePath());
@@ -159,8 +186,8 @@ public class MainFrame extends JFrame {
 		JMenuItem exit = new JMenuItem("Exit");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				main.setVisible(false);
-				main.dispose();
+				this.setVisible(false);
+				this.dispose();
 			}
 		});
 		menu.add(open);
@@ -176,7 +203,7 @@ public class MainFrame extends JFrame {
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
-				DetrendOptionDialog dialog = new DetrendOptionDialog(main, "Detrend", true, view);
+				DetrendOptionDialog dialog = new DetrendOptionDialog(this, "Detrend", true, view);
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -194,7 +221,7 @@ public class MainFrame extends JFrame {
 		filter_savitzky.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
-				SGOptionDialog dialog = new SGOptionDialog(main, "Savitzky-Golay Filter", true, view);
+				SGOptionDialog dialog = new SGOptionDialog(this, "Savitzky-Golay Filter", true, view);
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -210,7 +237,7 @@ public class MainFrame extends JFrame {
 		filter_high.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
-				HighOptionDialog dialog = new HighOptionDialog(main, "High Pass Filter", true, view);
+				HighOptionDialog dialog = new HighOptionDialog(this, "High Pass Filter", true, view);
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -226,7 +253,7 @@ public class MainFrame extends JFrame {
 		filter_highfft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
-				FFTOptionDialog dialog = new FFTOptionDialog(main, "FFT Filter", true, view);
+				FFTOptionDialog dialog = new FFTOptionDialog(this, "FFT Filter", true, view);
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -242,7 +269,7 @@ public class MainFrame extends JFrame {
 		filter_low.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
-				LowOptionDialog dialog = new LowOptionDialog(main, "Low Pass Filter", true, view);
+				LowOptionDialog dialog = new LowOptionDialog(this, "Low Pass Filter", true, view);
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -262,7 +289,7 @@ public class MainFrame extends JFrame {
 		filter.add(filter_low);
 		menubar.add(filter);
 
-		main.setJMenuBar(menubar);
+		this.setJMenuBar(menubar);
 
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new GridLayout(ynum, xnum));
@@ -271,9 +298,44 @@ public class MainFrame extends JFrame {
 			subPanels[i] = new JPanel();
 			mainPanel.add(subPanels[i]);
 		}
+
+		for(int i = 0; i < model.size(); i++) {
+			int index = dataSetPlacement[i][0]*xnum + dataSetPlacement[i][1];
+			subPanels[i].removeAll();
+			subPanels[i].add(views.getView(i, false));
+
+			final int count = i-1;
+			graph.getPanel().addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					ChartFrame cf = new ChartFrame(graph, ""+count);
+					cf.addWindowListener(new WindowListener() {
+						public void windowClosing(WindowEvent e) {
+							graph.setBackground(!graph.isBad() ? 
+												UIManager.getColor("Panel.background") : 
+												new Color(233, 174, 174));
+							graph.revalidate();
+						}
+
+						//don't care
+						public void windowOpened(WindowEvent e) {}
+						public void windowIconified(WindowEvent e) {}
+						public void windowDeiconified(WindowEvent e) {}
+						public void windowDeactivated(WindowEvent e) {}
+						public void windowActivated(WindowEvent e) {}
+						public void windowClosed(WindowEvent e) {}
+					});
+				}
+
+				//don't care
+				public void mouseEntered(MouseEvent e) {}
+				public void mouseExited(MouseEvent e) {}
+				public void mousePressed(MouseEvent e) {}
+				public void mouseReleased(MouseEvent e) {}
+			});
+		}
 		
 		JScrollPane scrollMain = new JScrollPane(mainPanel);
-		main.add(scrollMain, BorderLayout.CENTER);
+		this.add(scrollMain, BorderLayout.CENTER);
 
 		JPanel statusBar = new JPanel();
 		JLabel startLabel = new JLabel("Start offset (ms):");
@@ -311,9 +373,9 @@ public class MainFrame extends JFrame {
 		statusBar.add(lenLabel);
 		statusBar.add(lenText);
 
-		main.add(statusBar, BorderLayout.SOUTH);
+		this.add(statusBar, BorderLayout.SOUTH);
 
-		main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		main.setVisible(true);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setVisible(true);
 	}
 }
