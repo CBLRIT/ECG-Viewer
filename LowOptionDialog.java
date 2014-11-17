@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-public class LowOptionDialog extends JDialog {
+public class LowOptionDialog extends FilterDialog {
 	private final LowOptionDialog thisDialog = this;
 	private double freq;
 	private boolean retVal = false;
@@ -108,7 +108,7 @@ public class LowOptionDialog extends JDialog {
 		return retVal;
 	}
 
-	public void applyToDataset(ECGDataSet view) {
-		view.lowpassfilt(freq);
+	public Number[] returnVals() {
+		return new Number[]{freq};
 	}
 }

@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-public class SGOptionDialog extends JDialog {
+public class SGOptionDialog extends FilterDialog {
 	private final SGOptionDialog thisDialog = this;
 	private int left;
 	private int right;
@@ -164,7 +164,7 @@ public class SGOptionDialog extends JDialog {
 		return retVal;
 	}
 
-	public void applyToDataset(ECGDataSet view) {
-		view.sgolayfilt(left, right, degree);
+	public Number[] returnVals() {
+		return new Number[]{left, right, degree};
 	}
 }

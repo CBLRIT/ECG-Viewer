@@ -304,5 +304,45 @@ public class ECGModel {
 	public double getSamplesPerSecond() {
 		return sampleFreq;
 	}
+
+	/** 
+	 * applyFilter - applies a filter to the data
+	 *
+	 * @param index the lead to apply the filter to
+	 * @param filterNum number associated with a filter
+	 *		0 = savitzky-golay filter
+	 *		1 = high pass
+	 *		2 = low pass
+	 *		3 = fft
+	 *		4 = detrend
+	 * @param params the params to pass to each filter
+	 *		sgfilter: 1 = left samples, 2 = right samples, 3 = polynomial degree
+	 *		high pass: 1 = threshold
+	 *      low pass: 1 = threshold
+	 *      fft: 1 = threshold
+	 *		detrend: 1 = polynomial degree
+	 */
+	public void applyFilter(int index, int filterNum, Number[] params) {
+		switch(filterNum) {
+			case 0:
+				points[index].sgolayfilt((int)params[0], (int)params[1], (int)params[2]);
+				break;
+			case 1:
+				points[index].highpassfilt((double)params[0]);
+				break;
+			case 2:
+				points[index].lowpassfilt((double)params[0]);
+				break;
+			case 3: 
+				points[index].highpassfftfilt((double)params[0], 0);
+				break;
+			case 4:
+				points[index].detrend((int)params[0]);
+				break;
+			default:
+				return;
+		}
+		revalidate();
+	}
 }
 

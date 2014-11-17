@@ -21,7 +21,7 @@ import javax.swing.JSlider;
  *
  * @author Dakota Williams
  */
-public class DetrendOptionDialog extends JDialog {
+public class DetrendOptionDialog extends FilterDialog {
 	private final DetrendOptionDialog thisDialog = this;
 	private int degree;
 	private boolean retVal = false;
@@ -122,17 +122,22 @@ public class DetrendOptionDialog extends JDialog {
 		this.setVisible(true);
 	}
 
+	/**
+	 * accepted - whether the user clicked ok
+	 *
+	 * @return true if ok
+	 */
 	public boolean accepted() {
 		return retVal;
 	}
 
 	/**
-	 * applyToDataset - applies the data gathered from the dialog
-	 *					to a view
-	 * @param view the data to apply the detrend to
+	 * returnVals - returns the data gathered from the dialog
+	 *
+	 * @return an array of the data gathered from the dialog
 	 */
-	public void applyToDataset(ECGDataSet view) {
-		view.detrend(degree);
+	public Number[] returnVals() {
+		return new Number[]{degree};
 	}
 }
 

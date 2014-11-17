@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-public class FFTOptionDialog extends JDialog {
+public class FFTOptionDialog extends FilterDialog {
 	private final FFTOptionDialog thisDialog = this;
 	private double freq;
 	private boolean retVal = false;
@@ -108,8 +108,8 @@ public class FFTOptionDialog extends JDialog {
 		return retVal;
 	}
 
-	public void applyToDataset(ECGDataSet view) {
-		view.highpassfftfilt(freq, 0);
+	public Number[] returnVals() {
+		return new Number[]{freq};
 	}
 }
 

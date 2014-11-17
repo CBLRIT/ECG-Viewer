@@ -56,7 +56,7 @@ public class MainFrame extends JFrame {
 	private int ynum = 8;
 	private int xnum = 18;
 
-	private ECGViewHandler views;
+	private final ECGViewHandler views;
 	private final JPanel[] subPanels = new JPanel[xnum*ynum];
 
 	private JFormattedTextField startText 
@@ -64,13 +64,15 @@ public class MainFrame extends JFrame {
 	private JFormattedTextField lenText 
 		= new JFormattedTextField(NumberFormat.getIntegerInstance());
 
-	public MainFrame(ECGViewHandler views) {
+	private MainFrame thisFrame = this;
+
+	public MainFrame(final ECGViewHandler views) {
 		super("ECG Viewer");
 
 		this.views = views;
 
-		main.setBounds(20, 20, 1400, 750);
-		main.setLayout(new BorderLayout());
+		this.setBounds(20, 20, 1400, 750);
+		this.setLayout(new BorderLayout());
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu menu = new JMenu("File");
@@ -78,10 +80,10 @@ public class MainFrame extends JFrame {
 		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
-				int ret = fc.showOpenDialog(main);
+				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
-					loadFile(fc.getSelectedFile().getAbsolutePath());
-					main.revalidate();
+					views.loadFile(fc.getSelectedFile().getAbsolutePath());
+					thisFrame.revalidate();
 				}
 			}
 		});
@@ -96,14 +98,14 @@ public class MainFrame extends JFrame {
 				fc.addChoosableFileFilter(matlab);
 				fc.addChoosableFileFilter(csv);
 				fc.setAcceptAllFileFilterUsed(false);
-				int ret = fc.showSaveDialog(this);
+				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try { 
 						String extension = fc.getFileFilter().getDescription();
 						if("MATLAB matrix".equals(extension)) {
-							model.writeDataMat(fc.getSelectedFile().getAbsolutePath());
+							views.writeDataMat(fc.getSelectedFile().getAbsolutePath());
 						} else if ("Comma Separated Values".equals(extension)) {
-							model.writeDataCSV(fc.getSelectedFile().getAbsolutePath());
+							views.writeDataCSV(fc.getSelectedFile().getAbsolutePath());
 						}
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
@@ -125,17 +127,17 @@ public class MainFrame extends JFrame {
 				fc.addChoosableFileFilter(csv);
 				fc.addChoosableFileFilter(matlab);
 				fc.setAcceptAllFileFilterUsed(false);
-				int ret = fc.showSaveDialog(this);
+				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try { 
 						String extension = fc.getFileFilter().getDescription();
 						if("MATLAB matrix".equals(extension)) {
-							model.writeDataSubsetMat(fc.getSelectedFile().getAbsolutePath(), 
+							views.writeDataSubsetMat(fc.getSelectedFile().getAbsolutePath(), 
 													 (Long)startText.getValue(),
 													 (Long)startText.getValue()
 													 		+(Long)lenText.getValue());
 						} else if ("Comma Separated Values".equals(extension)) {
-							model.writeDataSubsetCSV(fc.getSelectedFile().getAbsolutePath(),
+							views.writeDataSubsetCSV(fc.getSelectedFile().getAbsolutePath(),
 													 (Long)startText.getValue(),
 													 (Long)startText.getValue()
 													 		+(Long)lenText.getValue());
@@ -153,10 +155,10 @@ public class MainFrame extends JFrame {
 		export_badleads.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
-				int ret = fc.showSaveDialog(this);
+				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
-						model.writeBadLeads(fc.getSelectedFile().getAbsolutePath());
+						views.writeBadLeads(fc.getSelectedFile().getAbsolutePath());
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
 													  "Error writing file: " + ex.getMessage(), 
@@ -170,10 +172,10 @@ public class MainFrame extends JFrame {
 		export_annos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
-				int ret = fc.showSaveDialog(this);
+				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
-						model.writeAnnotations(fc.getSelectedFile().getAbsolutePath());
+						views.writeAnnotations(fc.getSelectedFile().getAbsolutePath());
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
 													  "Error writing file: " + ex.getMessage(), 
@@ -186,8 +188,8 @@ public class MainFrame extends JFrame {
 		JMenuItem exit = new JMenuItem("Exit");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				this.setVisible(false);
-				this.dispose();
+				thisFrame.setVisible(false);
+				thisFrame.dispose();
 			}
 		});
 		menu.add(open);
@@ -202,13 +204,13 @@ public class MainFrame extends JFrame {
 		JMenuItem filter_detrend = new JMenuItem("Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = graphs.get(35);
-				DetrendOptionDialog dialog = new DetrendOptionDialog(this, "Detrend", true, view);
+				ECGView view = views.getView(35);
+				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, "Detrend", true, view);
 				if(!dialog.accepted()) {
 					return;
 				}
 
-				for(int i = 0; i < model.size(); i++) {
+				for(int i = 0; i < views.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
 				}
 
@@ -221,11 +223,11 @@ public class MainFrame extends JFrame {
 		filter_savitzky.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
-				SGOptionDialog dialog = new SGOptionDialog(this, "Savitzky-Golay Filter", true, view);
+				SGOptionDialog dialog = new SGOptionDialog(thisFrame, "Savitzky-Golay Filter", true, view);
 				if(!dialog.accepted()) {
 					return;
 				}
-				for(int i = 0; i < model.size(); i++) {
+				for(int i = 0; i < views.size(); i++) {
 					dialog.applyToDataset(model.getDataset(i));
 				}
 				for(int i = 0; i < graphs.size(); i++) {
@@ -237,7 +239,7 @@ public class MainFrame extends JFrame {
 		filter_high.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
-				HighOptionDialog dialog = new HighOptionDialog(this, "High Pass Filter", true, view);
+				HighOptionDialog dialog = new HighOptionDialog(thisFrame, "High Pass Filter", true, view);
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -253,7 +255,7 @@ public class MainFrame extends JFrame {
 		filter_highfft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
-				FFTOptionDialog dialog = new FFTOptionDialog(this, "FFT Filter", true, view);
+				FFTOptionDialog dialog = new FFTOptionDialog(thisFrame, "FFT Filter", true, view);
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -269,7 +271,7 @@ public class MainFrame extends JFrame {
 		filter_low.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ECGView view = graphs.get(35);
-				LowOptionDialog dialog = new LowOptionDialog(this, "Low Pass Filter", true, view);
+				LowOptionDialog dialog = new LowOptionDialog(thisFrame, "Low Pass Filter", true, view);
 				if(!dialog.accepted()) {
 					return;
 				}

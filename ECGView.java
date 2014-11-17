@@ -249,49 +249,5 @@ public class ECGView {
 		this.chart.fireChartChanged();
 		this.panel.revalidate();
 	}
-
-	/**
-	 * detrend - detrends the data displayed in the chart
-	 *
-	 * @param degree the degree of the fitting polynomial
-	 */
-	public void detrend(int degree) {
-		origData.detrend(degree);
-		revalidate();
-	}
-
-	/** 
-	 * applyFilter - applies a filter to the data
-	 *
-	 * @param which number associated with a filter
-	 *		0 = savitzky-golay filter
-	 *		1 = high pass
-	 *		2 = low pass
-	 *		3 = fft
-	 * @param params the params to pass to each filter
-	 *		sgfilter: 1 = left samples, 2 = right samples, 3 = degree polynomial
-	 *		high pass: 1 = threshold
-	 *      low pass: 1 = threshold
-	 *      fft: 1 = threshold
-	 */
-	public void applyFilter(int which, Number... params) {
-		switch(which) {
-			case 0:
-				origData.sgolayfilt((int)params[0], (int)params[1], (int)params[2]);
-				break;
-			case 1:
-				origData.highpassfilt((double)params[0]);
-				break;
-			case 2:
-				origData.lowpassfilt((double)params[0]);
-				break;
-			case 3: 
-				origData.highpassfftfilt((double)params[0], 0);
-				break;
-			default:
-				return;
-		}
-		revalidate();
-	}
 }
 

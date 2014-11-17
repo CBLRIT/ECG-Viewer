@@ -1,5 +1,6 @@
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class ECGViewHandler {
@@ -35,11 +36,44 @@ public class ECGViewHandler {
 		return annoColors.get(currAnnoType);
 	}
 
-	public void loadFile(String file) {
+	public void loadFile(String file) 
+			throws IOException {
 		model.readData(file);
+	}
+
+	public void writeDataCSV(String file) {
+		model.writeDataCSV(file);
+	}
+
+	public void writeDataMat(String file) {
+		model.writeDataMat(file);
+	}
+	
+	public void writeDataSubsetCSV(String file, double start, double end) {
+		model.writeDataSubsetCSV(file, start, end);
+	}
+
+	public void writeDataSubsetMat(String file, double start, double end) {
+		model.writeDataSubsetMat(file, start, end);
+	}
+
+	public void writeBadLeads(String file) {
+		model.writeBadLeads(file);
+	}
+
+	public void writeAnnotations(String file) {
+		model.writeAnnotations(file);
+	}
+
+	public int size() {
+		return model.size();
 	}
 
 	public ECGView getView(int i, boolean withLabels) {
 		return new ECGView(this, model.getDataset(i), ""+(i+4), withLabels);
+	}
+
+	public void applyFilter(FilterDialog f, int index) {
+		model.applyFilter(index, f.id, f.returnVals());
 	}
 }
