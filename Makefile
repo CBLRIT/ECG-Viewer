@@ -10,8 +10,6 @@ default:
 run:
 	java -cp $(LIBPATH) Main &
 
-urn: run
-
 debug:
 	jdb -classpath $(LIBPATH) Main
 
@@ -19,13 +17,18 @@ unchecked:
 	javac -g -cp $(LIBPATH) *.java -Xlint:unchecked
 
 release:
-	javac -cp $(LIBPATH) *.java
-	echo "Main-Class: Main" > manifest.txt
-	echo "Class-Path: $(LIBS)" >> manifest.txt
-	jar cfm ECGViewer.jar manifest.txt *.class $(LIBS)
-	chmod u+x ECGViewer.jar
-	make clean
-	rm manifest.txt
+	make -i realclean
+	mkdir ECGViewer
+	mkdir ECGViewer/libs
+	for lib in $(LIBS); do \
+		cp $$lib ECGViewer/libs/ ; \
+	done
+	cp manifest.txt ECGViewer/
+	cd ECGViewer; \
+	javac -cp .:$(shell cd ECGViewer; ls -1 libs/*.jar | sed -e ':a;N;$$!ba;s/\s/:/g') ../*.java -d ./; \
+	jar cfm ECGViewer.jar manifest.txt *.class
+	chmod u+x ECGViewer/ECGViewer.jar
+	rm ECGViewer/*.class ECGViewer/manifest.txt
 
 #Main.class: MoldTorso.class Main.java
 #	javac -cp $(LIBPATH) Main.java
@@ -43,5 +46,6 @@ clean:
 	rm *.class
 
 realclean:
-	rm *.class ECGViewer.jar
+	rm *.class
+	rm -rf ECGViewer
 
