@@ -20,16 +20,23 @@ public class HighOptionDialog extends FilterDialog {
 	private double freq;
 	private boolean retVal = false;
 
-	public HighOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
-		super(thisFrame, title, modal);
+	public final int id = 1;
+
+	public HighOptionDialog(final JFrame thisFrame, 
+							String title, 
+							boolean modal, 
+							final ECGViewHandler handler,
+							final int index) {
+		super(thisFrame, title, modal, handler, index);
 
 		freq = 0.25;
 
 		this.setLayout(new BorderLayout());
 
-		final ECGView[] preview = new ECGView[1];
-		preview[0] = (ECGView)view.deepClone(true);
-		final ECGDataSet orig = view.getData();
+		final ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
+																id, 
+																new Number[]{0.25}, 
+																true)};
 
 		JPanel controls = new JPanel(new GridBagLayout());
 
@@ -65,8 +72,11 @@ public class HighOptionDialog extends FilterDialog {
 			public void stateChanged(ChangeEvent e) {
 				leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
 				thisDialog.remove(preview[0].getPanel());
-				preview[0].setData(orig);
-				preview[0].applyFilter(1, ((double)(int)leftSlide.getValue())/100.0);
+				preview[0] = handler.shallowFilter(
+										index, 
+										id, 
+										new Number[]{((double)(int)leftSlide.getValue())/100.0}, 
+										true);
 				thisDialog.add(preview[0].getPanel());
 			}
 		});
@@ -97,8 +107,6 @@ public class HighOptionDialog extends FilterDialog {
 
 		this.add(controls, BorderLayout.NORTH);
 
-		preview[0].applyFilter(1, ((double)(int)leftSlide.getValue())/100.0);
-		
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);

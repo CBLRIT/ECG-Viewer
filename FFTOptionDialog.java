@@ -20,16 +20,23 @@ public class FFTOptionDialog extends FilterDialog {
 	private double freq;
 	private boolean retVal = false;
 
-	public FFTOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
-		super(thisFrame, title, modal);
+	public final int id = 3;
+
+	public FFTOptionDialog(final JFrame thisFrame, 
+						   String title, 
+						   boolean modal, 
+						   final ECGViewHandler handler,
+						   final int index) {
+		super(thisFrame, title, modal, handler, index);
 
 		freq = 60;
 
 		this.setLayout(new BorderLayout());
 
-		final ECGView[] preview = new ECGView[1];
-		preview[0] = (ECGView)view.deepClone(true);
-		final ECGDataSet orig = view.getData();
+		final ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
+																id, 
+																new Number[]{60.0}, 
+																true)};
 
 		JPanel controls = new JPanel(new GridBagLayout());
 
@@ -65,8 +72,11 @@ public class FFTOptionDialog extends FilterDialog {
 			public void stateChanged(ChangeEvent e) {
 				leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
 				thisDialog.remove(preview[0].getPanel());
-				preview[0].setData(orig);
-				preview[0].applyFilter(3, ((double)(int)leftSlide.getValue())/100.0);
+				preview[0] = handler.shallowFilter(
+										index, 
+										id, 
+										new Number[]{((double)(int)leftSlide.getValue())/100.0}, 
+										true);
 				thisDialog.add(preview[0].getPanel());
 			}
 		});
@@ -97,8 +107,6 @@ public class FFTOptionDialog extends FilterDialog {
 
 		this.add(controls, BorderLayout.NORTH);
 
-		preview[0].applyFilter(3, ((double)(int)leftSlide.getValue())/100.0);
-		
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);

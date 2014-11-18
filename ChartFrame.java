@@ -33,8 +33,9 @@ import org.jfree.chart.plot.XYPlot;
  * @author Dakota Williams
  */
 public class ChartFrame extends JFrame {
-	private ECGView view;
-	private ECGView realView;
+	private ECGViewHandler handler;
+	private final ECGView view;
+	private int index;
 	private final JFormattedTextField startText 
 		= new JFormattedTextField(NumberFormat.getIntegerInstance());
 	private final JFormattedTextField lenText 
@@ -54,11 +55,9 @@ public class ChartFrame extends JFrame {
 		setBounds(0, 0, 500, 500);
 		setLayout(new BorderLayout());
 
-		//keep a copy
-		final ECGView v = handler.getView(index, true);
-		final ECGDataSet orig = (ECGDataSet)v.getData().clone();
-		view = (ECGView) v.deepClone(true);
-		view.setData(orig);
+		this.handler = handler;
+		this.index = index;
+		view = handler.getView(index, true);
 
 		//start with the menu bar
 		JMenuBar menu = new JMenuBar();
@@ -68,19 +67,19 @@ public class ChartFrame extends JFrame {
 		JMenuItem file_apply = new JMenuItem("Apply Changes");
 		file_apply.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				v.setData(view.getData());
+				thisFrame.handler.applyChanges(thisFrame.index);
 			}
 		});
 		file.add(file_apply);
 		JMenuItem file_reset = new JMenuItem("Reset Changes");
 		file_reset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.setData(orig);
+				thisFrame.handler.resetChanges(thisFrame.index);
 			}
 		});
 		file.add(file_reset);
 		file_badlead = new JCheckBoxMenuItem("Bad Lead");
-		file_badlead.setState(v.isBad());
+		file_badlead.setState(view.isBad());
 		file_badlead.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				thisFrame.view.setBackground(thisFrame.view.isBad() ? 
@@ -110,9 +109,10 @@ public class ChartFrame extends JFrame {
 				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, 
 																	 "Detrend", 
 																	 true, 
-																	 view);
+																	 thisFrame.handler,
+																	 thisFrame.index);
 				if(dialog.accepted()) {
-					dialog.applyToDataset(thisFrame.view.getData());
+					handler.applyFilter(dialog, thisFrame.index);
 				}
 				thisFrame.view.revalidate();
 			}
@@ -123,9 +123,10 @@ public class ChartFrame extends JFrame {
 				SGOptionDialog dialog = new SGOptionDialog(thisFrame, 
 														   "Savitzky-Golay Filter", 
 														   true, 
-														   view);
+														   thisFrame.handler,
+														   thisFrame.index);
 				if(dialog.accepted()) {
-					dialog.applyToDataset(thisFrame.view.getData());
+					handler.applyFilter(dialog, thisFrame.index);
 				}
 				thisFrame.view.revalidate();
 			}
@@ -136,9 +137,10 @@ public class ChartFrame extends JFrame {
 				HighOptionDialog dialog = new HighOptionDialog(thisFrame, 
 															   "High Pass Filter", 
 															   true, 
-															   view);
+															   thisFrame.handler,
+															   thisFrame.index);
 				if(dialog.accepted()) {
-					dialog.applyToDataset(thisFrame.view.getData());
+					handler.applyFilter(dialog, thisFrame.index);
 				}
 				thisFrame.view.revalidate();
 			}
@@ -149,9 +151,10 @@ public class ChartFrame extends JFrame {
 				FFTOptionDialog dialog = new FFTOptionDialog(thisFrame, 
 															 "FFT High Pass Filter", 
 															 true, 
-															 view);
+															 thisFrame.handler,
+															 thisFrame.index);
 				if(dialog.accepted()) {
-					dialog.applyToDataset(thisFrame.view.getData());
+					handler.applyFilter(dialog, thisFrame.index);
 				}
 				thisFrame.view.revalidate();
 			}
@@ -162,9 +165,10 @@ public class ChartFrame extends JFrame {
 				LowOptionDialog dialog = new LowOptionDialog(thisFrame, 
 															 "Low Pass Filter", 
 															 true, 
-															 view);
+															 thisFrame.handler,
+															 thisFrame.index);
 				if(dialog.accepted()) {
-					dialog.applyToDataset(thisFrame.view.getData());
+					handler.applyFilter(dialog, thisFrame.index);
 				}
 				thisFrame.view.revalidate();
 			}
@@ -236,10 +240,7 @@ public class ChartFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				long start = (Long)startText.getValue();
 				long len = (Long)lenText.getValue();
-				((XYPlot)thisFrame.view.getPanel().getChart().getPlot()).getDomainAxis()
-																 .setAutoRange(true);
-				((XYPlot)thisFrame.view.getPanel().getChart().getPlot()).getDomainAxis()
-																 .setRange(start, start+len);
+				thisFrame.view.setViewingDomain(start, start+len);
 			}
 		});
 		JLabel lenLabel = new JLabel("Length (ms):");
@@ -249,10 +250,7 @@ public class ChartFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				long start = (Long)startText.getValue();
 				long len = (Long)lenText.getValue();
-				((XYPlot)thisFrame.view.getPanel().getChart().getPlot()).getDomainAxis()
-																 .setAutoRange(true);
-				((XYPlot)thisFrame.view.getPanel().getChart().getPlot()).getDomainAxis()
-																 .setRange(start, start+len);
+				thisFrame.view.setViewingDomain(start, start+len);
 			}
 		});
 		statusBar.add(startLabel);

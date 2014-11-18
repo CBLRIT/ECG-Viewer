@@ -22,6 +22,7 @@ public class ECGModel {
 	private ECGDataSet[] first2CrapLeads; //size 2
 	private ECGDataSet[] limbLeads; //size 3
 	private ECGDataSet[] points; //size 120; this one actually matters
+	private ECGDataSet[] tempPoints; //size 120, all changes go here
 	private ECGDataSet[] mysteriousLeads; //size 5
 	private final int tupleLength = 154;
 	private final int actualSize = 130;
@@ -40,6 +41,7 @@ public class ECGModel {
 		first2CrapLeads = new ECGDataSet[2];
 		limbLeads = new ECGDataSet[3];
 		points = new ECGDataSet[120];
+		tempPoints = new ECGDataSet[120];
 		mysteriousLeads = new ECGDataSet[5];
 	}
 
@@ -50,6 +52,7 @@ public class ECGModel {
 		first2CrapLeads = new ECGDataSet[2];
 		limbLeads = new ECGDataSet[3];
 		points = new ECGDataSet[120];
+		tempPoints = new ECGDataSet[120];
 		mysteriousLeads = new ECGDataSet[5];
 	}
 
@@ -157,7 +160,7 @@ public class ECGModel {
 
 	/**
 	 * writeAnnotations - writes the all of the annotations to a file
-	 * Format: <lead number>: (<annotation type>, <annotation location>), <more annotations> ...
+	 * Format: <lead number> <annotation type> <annotation location>
 	 *
 	 * @param filename the name of the file to write to
 	 */
@@ -283,7 +286,7 @@ public class ECGModel {
 	 * @param isBad whether the lead should be set as bad
 	 */
 	public void setBad(int i, boolean isBad) {
-		points[i].setBad(isBad);
+		tempPoints[i].setBad(isBad);
 	}
 
 	/**
@@ -293,7 +296,7 @@ public class ECGModel {
 	 * @return the badness of the lead
 	 */
 	public boolean isBad(int i) {
-		return points[i].isBad();
+		return tempPoints[i].isBad();
 	}
 
 	/**
@@ -325,24 +328,59 @@ public class ECGModel {
 	public void applyFilter(int index, int filterNum, Number[] params) {
 		switch(filterNum) {
 			case 0:
-				points[index].sgolayfilt((int)params[0], (int)params[1], (int)params[2]);
+				tempPoints[index].sgolayfilt((int)params[0], (int)params[1], (int)params[2]);
 				break;
 			case 1:
-				points[index].highpassfilt((double)params[0]);
+				tempPoints[index].highpassfilt((double)params[0]);
 				break;
 			case 2:
-				points[index].lowpassfilt((double)params[0]);
+				tempPoints[index].lowpassfilt((double)params[0]);
 				break;
 			case 3: 
-				points[index].highpassfftfilt((double)params[0], 0);
+				tempPoints[index].highpassfftfilt((double)params[0], 0);
 				break;
 			case 4:
-				points[index].detrend((int)params[0]);
+				tempPoints[index].detrend((int)params[0]);
 				break;
 			default:
 				return;
 		}
-		revalidate();
+	}
+
+	/**
+	 * commitChanges - applies temporary changes to the permanent data set
+	 */
+	public void commitChanges() {
+		for(int i = 0; i < tempPoints.length; i++) {
+			this.commitChanges(i);
+		}
+	}
+
+	/**
+	 * commitChanges - applies temporary changes to one of the leads
+	 *
+	 * @param index the lead to apply changes
+	 */
+	public void commitChanges(int index) {
+		points[index].copyFrom(tempPoints[index]);
+	}
+
+	/**
+	 * resetChanges - resets the temporary changes back to the original
+	 */
+	public void resetChanges() {
+		for(int i = 0; i < points.length; i++) {
+			this.resetChanges(i);
+		}
+	}
+
+	/**
+	 * resetChanges - resets the temporary changes for one lead
+	 * 
+	 * @param index the lead to reset
+	 */
+	public void resetChanges(int index) {
+		tempPoints[index].copyFrom(points[index]);
 	}
 }
 

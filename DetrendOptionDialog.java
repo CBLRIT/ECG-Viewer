@@ -26,6 +26,8 @@ public class DetrendOptionDialog extends FilterDialog {
 	private int degree;
 	private boolean retVal = false;
 
+	public final int id = 4;
+
 	/**
 	 * Constructor - creates the dialog
 	 *
@@ -37,16 +39,18 @@ public class DetrendOptionDialog extends FilterDialog {
 	public DetrendOptionDialog(final JFrame thisFrame, 
 							   String title, 
 							   boolean modal, 
-							   final ECGView view) {
-		super(thisFrame, title, modal);
+							   final ECGViewHandler handler,
+							   final int index) {
+		super(thisFrame, title, modal, handler, index);
 
 		degree = 6;
 
 		this.setLayout(new BorderLayout());
 
-		final ECGView[] preview = new ECGView[1];
-		preview[0] = (ECGView)view.deepClone(true);
-		final ECGDataSet orig = (ECGDataSet)view.getData().clone();
+		final ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
+																id, 
+																new Number[]{6}, 
+																true)};
 
 		JPanel controls = new JPanel(new GridBagLayout());
 
@@ -82,11 +86,12 @@ public class DetrendOptionDialog extends FilterDialog {
 			public void stateChanged(ChangeEvent e) {
 				degreeNum.setText("" + degreeSlide.getValue());
 				thisDialog.remove(preview[0].getPanel());
-				preview[0].setData(orig);
-				preview[0].detrend(degreeSlide.getValue());
+				preview[0] = handler.shallowFilter(index, 
+												   id, 
+												   new Number[]{degreeSlide.getValue()}, 
+												   true);
 				thisDialog.add(preview[0].getPanel());
 				thisDialog.revalidate();
-				retVal = true;
 			}
 		});
 		controls.add(degreeSlide, slider);
@@ -116,7 +121,6 @@ public class DetrendOptionDialog extends FilterDialog {
 
 		this.add(controls, BorderLayout.NORTH);
 
-		preview[0].detrend(degreeSlide.getValue());
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);

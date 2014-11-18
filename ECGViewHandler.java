@@ -70,10 +70,46 @@ public class ECGViewHandler {
 	}
 
 	public ECGView getView(int i, boolean withLabels) {
-		return new ECGView(this, model.getDataset(i), ""+(i+4), withLabels);
+		return new ECGView(this, model.getDataset(i), i, ""+(i+4), withLabels);
 	}
 
 	public void applyFilter(FilterDialog f, int index) {
 		model.applyFilter(index, f.id, f.returnVals());
 	}
+
+	public void applyChanges(int index) {
+		model.commitChanges(index);
+	}
+
+	public void resetChanges(int index) {
+		model.resetChanges(index);
+	}
+
+	public ECGView shallowFilter(int index, 
+								 int filterId, 
+								 Number[] params, 
+								 boolean withLabels) {
+		ECGDataSet data = model.getDataset(index).clone();
+		switch(filterId) {
+			case 0:
+				data.sgolayfilt((int)params[0], (int)params[1], (int)params[2]);
+				break;
+			case 1:
+				data.highpassfilt((double)params[0]);
+				break;
+			case 2:
+				data.lowpassfilt((double)params[0]);
+				break;
+			case 3: 
+				data.highpassfftfilt((double)params[0], 0);
+				break;
+			case 4:
+				data.detrend((int)params[0]);
+				break;
+			default:
+				break;
+		}
+		return new ECGView(this, data, -1, ""+index,  withLabels);
+	}
 }
+

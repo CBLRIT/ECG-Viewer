@@ -22,8 +22,14 @@ public class SGOptionDialog extends FilterDialog {
 	private int degree;
 	private boolean retVal = false;
 
-	public SGOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
-		super(thisFrame, title, modal);
+	public final int id = 0;
+
+	public SGOptionDialog(final JFrame thisFrame, 
+						  String title, 
+						  boolean modal, 
+						  final ECGViewHandler handler,
+						  final int index) {
+		super(thisFrame, title, modal, handler, index);
 
 		left = 25;
 		right = 25;
@@ -31,9 +37,10 @@ public class SGOptionDialog extends FilterDialog {
 
 		this.setLayout(new BorderLayout());
 
-		final ECGView[] preview = new ECGView[1];
-		preview[0] = (ECGView)view.deepClone(true);
-		final ECGDataSet orig = view.getData();
+		ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
+																id, 
+																new Number[]{25, 25, 6}, 
+																true)};
 
 		JPanel controls = new JPanel(new GridBagLayout());
 
@@ -71,11 +78,13 @@ public class SGOptionDialog extends FilterDialog {
 			public void stateChanged(ChangeEvent e) {
 				leftNum.setText("" + leftSlide.getValue());
 				thisDialog.remove(preview[0].getPanel());
-				preview[0].setData(orig);
-				preview[0].applyFilter(0,
-									leftSlide.getValue(),
-									rightSlide.getValue(),
-									degreeSlide.getValue());
+				preview[0] = handler.shallowFilter(
+										index, 
+										id, 
+										new Number[]{leftSlide.getValue(),
+													 rightSlide.getValue(),
+													 degreeSlide.getValue()}, 
+										true);
 				thisDialog.add(preview[0].getPanel());
 			}
 		});
@@ -90,11 +99,13 @@ public class SGOptionDialog extends FilterDialog {
 			public void stateChanged(ChangeEvent e) {
 				rightNum.setText("" + rightSlide.getValue());
 				thisDialog.remove(preview[0].getPanel());
-				preview[0].setData(orig);
-				preview[0].applyFilter(0,
-									leftSlide.getValue(),
-									rightSlide.getValue(),
-									degreeSlide.getValue());
+				preview[0] = handler.shallowFilter(
+										index, 
+										id, 
+										new Number[]{leftSlide.getValue(),
+													 rightSlide.getValue(),
+													 degreeSlide.getValue()}, 
+										true);
 				thisDialog.add(preview[0].getPanel());
 			}
 		});
@@ -108,15 +119,15 @@ public class SGOptionDialog extends FilterDialog {
 		controls.add(degreeNum, values);
 		degreeSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-			//	System.out.println(degreeSlide.getValue());
 				degreeNum.setText("" + degreeSlide.getValue());
 				thisDialog.remove(preview[0].getPanel());
-				preview[0].setData(orig);
-				preview[0].applyFilter(0,
-									   leftSlide.getValue(),
-									   rightSlide.getValue(),
-									   degreeSlide.getValue());
-			//	System.out.println(degreeSlide.getValue());
+				preview[0] = handler.shallowFilter(
+										index, 
+										id, 
+										new Number[]{leftSlide.getValue(),
+													 rightSlide.getValue(),
+													 degreeSlide.getValue()}, 
+										true);
 				thisDialog.add(preview[0].getPanel());
 			}
 		});
@@ -150,11 +161,6 @@ public class SGOptionDialog extends FilterDialog {
 
 		this.add(controls, BorderLayout.NORTH);
 
-		preview[0].applyFilter(0,
-							   leftSlide.getValue(),
-							   rightSlide.getValue(),
-							   degreeSlide.getValue());
-		
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);

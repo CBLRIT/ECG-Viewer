@@ -5,10 +5,13 @@ import javax.swing.JFrame;
 public abstract class FilterDialog extends JDialog {
 	public final int id;
 
-	public abstract FilterDialog(final JFrame thisFrame, 
+	public FilterDialog(final JFrame thisFrame, 
 								 String title, 
 								 boolean modal, 
-								 final ECGView view);
+								 final ECGViewHandler handler,
+								 final int index) {
+		super(thisFrame, title, modal);
+	}
 
 	public abstract boolean accepted();
 

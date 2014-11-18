@@ -20,12 +20,21 @@ public class LowOptionDialog extends FilterDialog {
 	private double freq;
 	private boolean retVal = false;
 
-	public LowOptionDialog(final JFrame thisFrame, String title, boolean modal, final ECGView view) {
-		super(thisFrame, title, modal);
+	public final int id = 2;
+
+	public LowOptionDialog(final JFrame thisFrame, 
+						   String title, 
+						   boolean modal, 
+						   final ECGViewHandler handler,
+						   final int index) {
+		super(thisFrame, title, modal, handler, index);
 
 		freq = 40;
 
-		this.setLayout(new BorderLayout());
+		final ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
+																id, 
+																new Number[]{40.0}, 
+																true)};
 
 		final ECGView[] preview = new ECGView[1];
 		preview[0] = (ECGView)view.deepClone(true);
@@ -65,8 +74,11 @@ public class LowOptionDialog extends FilterDialog {
 			public void stateChanged(ChangeEvent e) {
 				leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
 				thisDialog.remove(preview[0].getPanel());
-				preview[0].setData(orig);
-				preview[0].applyFilter(2, ((double)(int)leftSlide.getValue())/100.0);
+				preview[0] = handler.shallowFilter(
+										index, 
+										id, 
+										new Number[]{((double)(int)leftSlide.getValue())/100.0}, 
+										true);
 				thisDialog.add(preview[0].getPanel());
 			}
 		});
@@ -97,8 +109,6 @@ public class LowOptionDialog extends FilterDialog {
 
 		this.add(controls, BorderLayout.NORTH);
 
-		preview[0].applyFilter(2, ((double)(int)leftSlide.getValue())/100.0);
-		
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);
