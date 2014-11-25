@@ -69,6 +69,14 @@ public class ECGViewHandler {
 		return model.size();
 	}
 
+	public int leadSize(int index) {
+		return model.getDataset(index).size();
+	}
+
+	public double getSampleInterval() {
+		return model.getSamplesPerSecond();
+	}
+
 	public ECGView getView(int i, boolean withLabels) {
 		return new ECGView(this, model.getDataset(i), i, ""+(i+4), withLabels);
 	}
@@ -89,7 +97,7 @@ public class ECGViewHandler {
 								 int filterId, 
 								 Number[] params, 
 								 boolean withLabels) {
-		ECGDataSet data = model.getDataset(index).clone();
+		ECGDataSet data = (ECGDataSet)model.getDataset(index).clone();
 		switch(filterId) {
 			case 0:
 				data.sgolayfilt((int)params[0], (int)params[1], (int)params[2]);

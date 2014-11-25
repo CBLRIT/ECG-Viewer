@@ -258,8 +258,7 @@ public class ChartFrame extends JFrame {
 		statusBar.add(lenLabel);
 		statusBar.add(lenText);
 		
-		lenText.setValue(thisFrame.view.getData().size()
-				*(thisFrame.view.getData().getAt(1)[0] - thisFrame.view.getData().getAt(0)[0]));
+		lenText.setValue(thisFrame.handler.leadSize(index)*thisFrame.handler.getSampleInterval());
 
 		add(statusBar, BorderLayout.SOUTH);
 
