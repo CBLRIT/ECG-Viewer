@@ -1,6 +1,7 @@
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ECGViewHandler {
@@ -41,27 +42,33 @@ public class ECGViewHandler {
 		model.readData(file);
 	}
 
-	public void writeDataCSV(String file) {
+	public void writeDataCSV(String file) 
+			throws IOException {
 		model.writeDataCSV(file);
 	}
 
-	public void writeDataMat(String file) {
+	public void writeDataMat(String file) 
+			throws IOException {
 		model.writeDataMat(file);
 	}
 	
-	public void writeDataSubsetCSV(String file, double start, double end) {
+	public void writeDataSubsetCSV(String file, double start, double end) 
+			throws IOException {
 		model.writeDataSubsetCSV(file, start, end);
 	}
 
-	public void writeDataSubsetMat(String file, double start, double end) {
+	public void writeDataSubsetMat(String file, double start, double end) 
+			throws IOException {
 		model.writeDataSubsetMat(file, start, end);
 	}
 
-	public void writeBadLeads(String file) {
+	public void writeBadLeads(String file) 
+			throws IOException {
 		model.writeBadLeads(file);
 	}
 
-	public void writeAnnotations(String file) {
+	public void writeAnnotations(String file) 
+			throws IOException {
 		model.writeAnnotations(file);
 	}
 
@@ -117,7 +124,27 @@ public class ECGViewHandler {
 			default:
 				break;
 		}
-		return new ECGView(this, data, -1, ""+index,  withLabels);
+		return new ECGView(this, data, index, ""+index,  withLabels);
+	}
+
+	public ArrayList<Annotation> getAnnotations() {
+		return model.getAnnotations();
+	}
+
+	public void addAnnotation(int type, double i) {
+		model.addAnnotation(type, i);
+	}
+
+	public void clearAnnotations() {
+		model.clearAnnotations();
+	}
+
+	public void setBad(int index, boolean isBad) {
+		model.setBad(index, isBad);
+	}
+
+	public boolean isBad(int index) {
+		return model.isBad(index);
 	}
 }
 

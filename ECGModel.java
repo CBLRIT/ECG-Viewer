@@ -10,6 +10,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 //import org.jfree.data.xy.DefaultXYDataset;
 
 /**
@@ -27,6 +28,7 @@ public class ECGModel {
 	private final int tupleLength = 154;
 	private final int actualSize = 130;
 	private double sampleFreq = 0;
+	private HashSet<Annotation> annotations;	
 
 	private <T> void printArrayList(ArrayList<T[]> arr) {
 		for(int i = 0; i < arr.size(); i++) {
@@ -43,6 +45,7 @@ public class ECGModel {
 		points = new ECGDataSet[120];
 		tempPoints = new ECGDataSet[120];
 		mysteriousLeads = new ECGDataSet[5];
+		annotations = new HashSet<Annotation>();
 	}
 
 	/**
@@ -54,6 +57,50 @@ public class ECGModel {
 		points = new ECGDataSet[120];
 		tempPoints = new ECGDataSet[120];
 		mysteriousLeads = new ECGDataSet[5];
+	}
+
+	/**
+	 * getAnnotations - gets a list of all annotations
+	 *
+	 * @return an ArrayList of all Annotations of this dataset
+	 */
+	public ArrayList<Annotation> getAnnotations() {
+		return new ArrayList<Annotation>(annotations);
+	}
+
+	/**
+	 * addAnnotation - adds an annotation to the dataset
+	 *
+	 * @param type an integer representing the type of annotation
+	 * @param i the time at which the annotation should be located
+	 */
+	public void addAnnotation(int type, double i) {
+		annotations.add(new Annotation(type, i));
+	}
+
+	/**
+	 * setAnnotations - sets the annotations of the dataset
+	 *
+	 * @param annos the annotations
+	 */
+	public void setAnnotations(ArrayList<Annotation> annos) {
+		annotations = new HashSet<Annotation>(annos);
+	}
+
+	/** 
+	 * clearAnnotations - removes all annotations associated with this dataset
+	 */
+	public void clearAnnotations() {
+		annotations.clear();
+	}
+
+	/**
+	 * isAnnotated - removes an annotation at the specified location
+	 *
+	 * @param i the location to remove
+	 */
+	public boolean isAnnotated(double i) {
+		return annotations.contains(i);
 	}
 
 	/**
@@ -168,14 +215,9 @@ public class ECGModel {
 			throws IOException {
 		PrintWriter out = new PrintWriter(filename);
 
-		for(int i = 0; i < points.length; i++) {
-			ArrayList<Annotation> annos = points[i].getAnnotations();
-			if(annos.size() == 0) {
-				continue;
-			}
-			for(int j = 0; j < annos.size(); j++) {
-				out.println(((double)(i-1)) + " " + annos.get(j));
-			}
+		ArrayList<Annotation> annos = this.getAnnotations();
+		for(int j = 0; j < annos.size(); j++) {
+			out.println(annos.get(j));
 		}
 
 		out.flush();
@@ -209,28 +251,32 @@ public class ECGModel {
 		for(int i = 0; i < raw.size(); i++) {
 			for(int j = 0; j < actualSize; j++) {
 				ECGDataSet[] temp;
+				int offset = 0;
 				if(j < 2) {
 					temp = first2CrapLeads;
 				} else if (j < 5) {
+					offset = 2;
 					temp = limbLeads;
 				} else if (j < 125) {
-					temp = points;
+					offset = 5;
+					temp = tempPoints;
 				} else {
+					offset = 125;
 					temp = mysteriousLeads;
 				}
 
 				if(i == 0) {
-					temp[j] = new ECGDataSet();
+					temp[j-offset] = new ECGDataSet();
 				}
-				temp[j].addTuple(raw.get(i).getKey(), 
+				temp[j-offset].addTuple(raw.get(i).getKey(), 
 									   (double)raw.get(i).getValue().get(j)*0.125);
 			}
 		}
 
-		for(int i = 0; i < actualSize; i++) {
+		for(int i = 0; i < tempPoints.length; i++) {
 			ArrayList<Double> values = new ArrayList<Double>();
-			for(int j = 0; j < points[i].size(); j++) {
-				values.add(new Double(points[i].getAt(j)[1]));
+			for(int j = 0; j < tempPoints[i].size(); j++) {
+				values.add(new Double(tempPoints[i].getAt(j)[1]));
 			}
 
 			Collections.sort(values);
@@ -250,12 +296,14 @@ public class ECGModel {
 	*/
 
 
-			for(int j = 0; j < points[i].size(); j++) {
-				points[i].getAt(j)[1] -= median;
+			for(int j = 0; j < tempPoints[i].size(); j++) {
+				tempPoints[i].getAt(j)[1] -= median;
 			}
 
 	//		System.out.println(i + ": " + points[i].toArray()[1][0]);
 		}
+
+		this.commitChanges();
 		
 	//	printArrayList(points[4]);
 	//	System.out.println(Arrays.toString(points[4].get(0)));
@@ -362,6 +410,9 @@ public class ECGModel {
 	 * @param index the lead to apply changes
 	 */
 	public void commitChanges(int index) {
+		if(points[index] == null) {
+			points[index] = new ECGDataSet();
+		}
 		points[index].copyFrom(tempPoints[index]);
 	}
 

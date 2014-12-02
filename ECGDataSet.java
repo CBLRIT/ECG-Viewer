@@ -1,7 +1,6 @@
 
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -12,7 +11,6 @@ import java.util.List;
 public class ECGDataSet {
 	private List<Double[]> set;
 	private boolean bad;
-	private HashSet<Annotation> annotations; //indicies into set
 	private double sampleFreq;
 
 	/**
@@ -20,7 +18,6 @@ public class ECGDataSet {
 	 */
 	public ECGDataSet() {
 		set = new ArrayList<Double[]>();
-		annotations = new HashSet<Annotation>();
 	}
 
 	/**
@@ -79,7 +76,6 @@ public class ECGDataSet {
 									  (double)this.set.get(i)[1]});
 		}
 		eds.bad = this.bad;
-		eds.annotations = new HashSet<Annotation>(this.annotations);
 		eds.sampleFreq = this.sampleFreq;
 		return eds;
 	}
@@ -92,7 +88,6 @@ public class ECGDataSet {
 	public void copyFrom(ECGDataSet e) {
 		this.set = new ArrayList<Double[]>(e.set);
 		this.bad = e.bad;
-		this.annotations = new HashSet<Annotation>(e.annotations);
 		this.sampleFreq = e.sampleFreq;
 	}
 
@@ -113,50 +108,6 @@ public class ECGDataSet {
 	}
 
 	/**
-	 * getAnnotations - gets a list of all annotations
-	 *
-	 * @return an ArrayList of all Annotations of this dataset
-	 */
-	public ArrayList<Annotation> getAnnotations() {
-		return new ArrayList<Annotation>(annotations);
-	}
-
-	/**
-	 * addAnnotation - adds an annotation to the dataset
-	 *
-	 * @param type an integer representing the type of annotation
-	 * @param i the time at which the annotation should be located
-	 */
-	public void addAnnotation(int type, double i) {
-		annotations.add(new Annotation(type, i));
-	}
-
-	/**
-	 * setAnnotations - sets the annotations of the dataset
-	 *
-	 * @param annos the annotations
-	 */
-	public void setAnnotations(ArrayList<Annotation> annos) {
-		annotations = new HashSet<Annotation>(annos);
-	}
-
-	/** 
-	 * clearAnnotations - removes all annotations associated with this dataset
-	 */
-	public void clearAnnotations() {
-		annotations.clear();
-	}
-
-	/**
-	 * isAnnotated - removes an annotation at the specified location
-	 *
-	 * @param i the location to remove
-	 */
-	public boolean isAnnotated(double i) {
-		return annotations.contains(i);
-	}
-
-	/**
 	 * subset - gets a subset of this dataset
 	 *
 	 * @param start the time before the first element in the subset
@@ -173,43 +124,6 @@ public class ECGDataSet {
 		}
 
 		return newSet;
-	}
-
-	/**
-	 * trimAnnotations - crops the dataset down to between annotations
-	 *
-	 * @param between a time between annotations
-	 */
-	public void trimAnnotations(double between, int type) {
-		Annotation[] annos=(Annotation[])annotations.toArray(new Annotation[annotations.size()]);
-
-		//find closest lower than between
-		double lower = 0;
-		for(int i = 0; i < annos.length; i++) {
-			if(annos[i].getType() != type) {
-				continue;
-			}
-			if(annos[i].getLoc() < between && lower < annos[i].getLoc()) {
-				lower = annos[i].getLoc();
-			}
-		}
-
-		//find closet higher than between
-		double higher = set.get(set.size()-1)[0];
-		for(int i = 0; i < annos.length; i++) {
-			if(annos[i].getType() != type) {
-				continue;
-			}
-			if(annos[i].getLoc() > between && higher > annos[i].getLoc()) {
-				higher = annos[i].getLoc();
-			}
-		}
-
-		//set should be always sorted, so a binary search shouldn't break
-		int lowerInd = Math.abs(Arrays.binarySearch(this.toArray()[0], lower));
-		int higherInd = Math.abs(Arrays.binarySearch(this.toArray()[0], higher));
-
-		set = set.subList(lowerInd, higherInd);
 	}
 
 	/**

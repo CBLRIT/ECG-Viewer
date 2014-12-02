@@ -31,14 +31,12 @@ public class LowOptionDialog extends FilterDialog {
 
 		freq = 40;
 
+		this.setLayout(new BorderLayout());
+
 		final ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
 																id, 
 																new Number[]{40.0}, 
 																true)};
-
-		final ECGView[] preview = new ECGView[1];
-		preview[0] = (ECGView)view.deepClone(true);
-		final ECGDataSet orig = view.getData();
 
 		JPanel controls = new JPanel(new GridBagLayout());
 

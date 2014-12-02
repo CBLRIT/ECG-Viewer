@@ -10,6 +10,7 @@ import java.awt.event.WindowListener;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
@@ -22,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
+import org.jfree.chart.plot.XYPlot;
 
 public class MainFrame extends JFrame {
 	private final int dataSetPlacement[][] =  {
@@ -58,6 +60,7 @@ public class MainFrame extends JFrame {
 
 	private final ECGViewHandler views;
 	private final JPanel[] subPanels = new JPanel[xnum*ynum];
+	private final ArrayList<ECGView> graphs = new ArrayList<ECGView>();
 
 	private JFormattedTextField startText 
 		= new JFormattedTextField(NumberFormat.getIntegerInstance());
@@ -82,7 +85,54 @@ public class MainFrame extends JFrame {
 				JFileChooser fc = new JFileChooser();
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
-					views.loadFile(fc.getSelectedFile().getAbsolutePath());
+					try {
+						views.loadFile(fc.getSelectedFile().getAbsolutePath());
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null, 
+													  "Could not load file", 
+													  "Error",
+													  JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					graphs.clear();
+					for(int i = 0; i < views.size(); i++) {
+						int index = dataSetPlacement[i+5][0]*xnum + dataSetPlacement[i+5][1];
+						final ECGView graph = views.getView(i, false);
+						subPanels[index].removeAll();
+
+						final int count = i;
+						graph.getPanel().addMouseListener(new MouseListener() {
+							public void mouseClicked(MouseEvent e) {
+								ChartFrame cf = new ChartFrame(views, count, ""+(count+4));
+								cf.addWindowListener(new WindowListener() {
+									public void windowClosing(WindowEvent e) {
+										graph.setBackground(!graph.isBad() ? 
+														UIManager.getColor("Panel.background") : 
+														new Color(233, 174, 174));
+										graph.revalidate();
+									}
+
+									//don't care
+									public void windowOpened(WindowEvent e) {}
+									public void windowIconified(WindowEvent e) {}
+									public void windowDeiconified(WindowEvent e) {}
+									public void windowDeactivated(WindowEvent e) {}
+									public void windowActivated(WindowEvent e) {}
+									public void windowClosed(WindowEvent e) {}
+								});
+							}
+
+							//don't care
+							public void mouseEntered(MouseEvent e) {}
+							public void mouseExited(MouseEvent e) {}
+							public void mousePressed(MouseEvent e) {}
+							public void mouseReleased(MouseEvent e) {}
+						});
+
+						graphs.add(graph);
+						subPanels[index].add(graph.getPanel());
+					}
+		
 					thisFrame.revalidate();
 				}
 			}
@@ -94,7 +144,7 @@ public class MainFrame extends JFrame {
 				FileNameExtensionFilter matlab = new FileNameExtensionFilter(
 					"MATLAB matrix", "m");
 				FileNameExtensionFilter csv = new FileNameExtensionFilter(
-					"Comma Separated Values", "csv");
+						"Comma Separated Values", "csv");
 				fc.addChoosableFileFilter(matlab);
 				fc.addChoosableFileFilter(csv);
 				fc.setAcceptAllFileFilterUsed(false);
@@ -204,83 +254,78 @@ public class MainFrame extends JFrame {
 		JMenuItem filter_detrend = new JMenuItem("Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = views.getView(35);
-				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, "Detrend", true, view);
+				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, "Detrend", true, views, 35);
 				if(!dialog.accepted()) {
 					return;
 				}
 
 				for(int i = 0; i < views.size(); i++) {
-					dialog.applyToDataset(model.getDataset(i));
+					views.applyFilter(dialog, i);
 				}
 
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
+				for(int i = 0; i < subPanels.length; i++) {
+					subPanels[i].revalidate();
 				}
 			}
 		});
 		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
 		filter_savitzky.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = graphs.get(35);
-				SGOptionDialog dialog = new SGOptionDialog(thisFrame, "Savitzky-Golay Filter", true, view);
+				SGOptionDialog dialog = new SGOptionDialog(thisFrame, "Savitzky-Golay Filter", true, views, 35);
 				if(!dialog.accepted()) {
 					return;
 				}
 				for(int i = 0; i < views.size(); i++) {
-					dialog.applyToDataset(model.getDataset(i));
+					views.applyFilter(dialog, i);
 				}
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
+				for(int i = 0; i < subPanels.length; i++) {
+					subPanels[i].revalidate();
 				}
 			}
 		});
 		JMenuItem filter_high = new JMenuItem("High Pass");
 		filter_high.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = graphs.get(35);
-				HighOptionDialog dialog = new HighOptionDialog(thisFrame, "High Pass Filter", true, view);
+				HighOptionDialog dialog = new HighOptionDialog(thisFrame, "High Pass Filter", true, views, 35);
 				if(!dialog.accepted()) {
 					return;
 				}
-				for(int i = 0; i < model.size(); i++) {
-					dialog.applyToDataset(model.getDataset(i));
+				for(int i = 0; i < views.size(); i++) {
+					views.applyFilter(dialog, i);
 				}
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
+				for(int i = 0; i < subPanels.length; i++) {
+					subPanels[i].revalidate();
 				}
 			}
 		});
 		JMenuItem filter_highfft = new JMenuItem("FFT");
 		filter_highfft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = graphs.get(35);
-				FFTOptionDialog dialog = new FFTOptionDialog(thisFrame, "FFT Filter", true, view);
+				FFTOptionDialog dialog = new FFTOptionDialog(thisFrame, "FFT Filter", true, views, 35);
 				if(!dialog.accepted()) {
 					return;
 				}
-				for(int i = 0; i < model.size(); i++) {
-					dialog.applyToDataset(model.getDataset(i));
+				for(int i = 0; i < views.size(); i++) {
+					views.applyFilter(dialog, i);
 				}
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
+				for(int i = 0; i < subPanels.length; i++) {
+					subPanels[i].revalidate();
 				}
 			}
 		});
 		JMenuItem filter_low = new JMenuItem("Low Pass");
 		filter_low.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ECGView view = graphs.get(35);
-				LowOptionDialog dialog = new LowOptionDialog(thisFrame, "Low Pass Filter", true, view);
+				LowOptionDialog dialog = new LowOptionDialog(thisFrame, "Low Pass Filter", true, views, 35);
 				if(!dialog.accepted()) {
 					return;
 				}
 
-				for(int i = 0; i < model.size(); i++) {
-					dialog.applyToDataset(model.getDataset(i));
+				for(int i = 0; i < views.size(); i++) {
+					views.applyFilter(dialog, i);
 				}
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
+				for(int i = 0; i < subPanels.length; i++) {
+					subPanels[i].revalidate();
 				}
 			}
 		});
@@ -301,41 +346,6 @@ public class MainFrame extends JFrame {
 			mainPanel.add(subPanels[i]);
 		}
 
-		for(int i = 0; i < model.size(); i++) {
-			int index = dataSetPlacement[i][0]*xnum + dataSetPlacement[i][1];
-			subPanels[i].removeAll();
-			subPanels[i].add(views.getView(i, false));
-
-			final int count = i-1;
-			graph.getPanel().addMouseListener(new MouseListener() {
-				public void mouseClicked(MouseEvent e) {
-					ChartFrame cf = new ChartFrame(graph, ""+count);
-					cf.addWindowListener(new WindowListener() {
-						public void windowClosing(WindowEvent e) {
-							graph.setBackground(!graph.isBad() ? 
-												UIManager.getColor("Panel.background") : 
-												new Color(233, 174, 174));
-							graph.revalidate();
-						}
-
-						//don't care
-						public void windowOpened(WindowEvent e) {}
-						public void windowIconified(WindowEvent e) {}
-						public void windowDeiconified(WindowEvent e) {}
-						public void windowDeactivated(WindowEvent e) {}
-						public void windowActivated(WindowEvent e) {}
-						public void windowClosed(WindowEvent e) {}
-					});
-				}
-
-				//don't care
-				public void mouseEntered(MouseEvent e) {}
-				public void mouseExited(MouseEvent e) {}
-				public void mousePressed(MouseEvent e) {}
-				public void mouseReleased(MouseEvent e) {}
-			});
-		}
-		
 		JScrollPane scrollMain = new JScrollPane(mainPanel);
 		this.add(scrollMain, BorderLayout.CENTER);
 
@@ -347,7 +357,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				long start = (Long)startText.getValue();
 				long len = (Long)lenText.getValue();
-				for(int i = 0; i < graphs.size(); i++) {
+				for(int i = 0; i < views.size(); i++) {
 					((XYPlot)graphs.get(i).getPanel().getChart().getPlot()).getDomainAxis()
 																 .setAutoRange(true);
 					((XYPlot)graphs.get(i).getPanel().getChart().getPlot()).getDomainAxis()

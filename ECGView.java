@@ -40,7 +40,6 @@ public class ECGView {
 	private ECGDataSet data;
 	private String title;
 
-	private boolean trim;
 	private final ECGView thisView = this;
 
 	private boolean canPlace = false;
@@ -57,8 +56,6 @@ public class ECGView {
 				   int index,
 				   String title, 
 				   boolean withLabels) {
-		trim = false;
-
 		this.handler = handler;
 		this.title = title;
 		this.index = index;
@@ -107,11 +104,11 @@ public class ECGView {
 						   UIManager.getColor("Panel.background") : 
 						   new Color(233, 174, 174));
 
-		for(int i = 0; i < data.getAnnotations().size(); i++) {
+		for(int i = 0; i < handler.getAnnotations().size(); i++) {
 			plot.addDomainMarker(
-				new ValueMarker(data.getAnnotations().get(i).getLoc(), 
+				new ValueMarker(handler.getAnnotations().get(i).getLoc(), 
 			 	this.handler.getAnnotationColor(
-					data.getAnnotations().get(i).getType()), 
+					handler.getAnnotations().get(i).getType()), 
 				 	new BasicStroke()));
 		}
 
@@ -125,13 +122,8 @@ public class ECGView {
 					double x = plot.getDomainAxis().java2DToValue(p.getX(),
 																  panel.getScreenDataArea(),
 																  plot.getDomainAxisEdge());
-					if(trim) {
-						thisView.setTrim(false);
-						thisView.handler.trimAnnotations(thisView.index, x, 
-												thisView.handler.getSelectedAnnotationType());
-						thisView.revalidate();
-					} else if(canPlace) {
-						thisView.handler.addAnnotation(thisView.index,
+					if(canPlace) {
+						thisView.handler.addAnnotation(
 										thisView.handler.getSelectedAnnotationType(), x);
 						plot.addDomainMarker(new ValueMarker(x, 
 												 thisView.handler.getSelectedAnnotationColor(), 
@@ -156,20 +148,11 @@ public class ECGView {
 	}
 
 	/**
-	 * setTrim - sets the flag whether clicking the chart will trim the data
-	 *
-	 * @param b the value of the flag
-	 */
-	public void setTrim(boolean b) {
-		trim = b;
-	}
-
-	/**
 	 * clearAnnotations - clears annotations from the view
 	 */
 	public void clearAnnotations() {
 		plot.clearDomainMarkers();
-		this.handler.clearAnnotations(index);
+		this.handler.clearAnnotations();
 	}
 
 	/**

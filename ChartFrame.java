@@ -196,15 +196,8 @@ public class ChartFrame extends JFrame {
 				thisFrame.view.clearAnnotations();
 			}
 		});
-		JMenuItem annotations_trim = new JMenuItem("Trim");
-		annotations_trim.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				thisFrame.view.setTrim(true);
-			}
-		});
 		annotations.add(anno_enable);
 		annotations.add(annotations_clear);
-		annotations.add(annotations_trim);
 		annotations.addSeparator();
 		ButtonGroup annoGroup = new ButtonGroup();
 		JRadioButtonMenuItem[] annotations_colors = new JRadioButtonMenuItem[4];

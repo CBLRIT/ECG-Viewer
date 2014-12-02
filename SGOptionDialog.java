@@ -37,7 +37,7 @@ public class SGOptionDialog extends FilterDialog {
 
 		this.setLayout(new BorderLayout());
 
-		ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
+		final ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
 																id, 
 																new Number[]{25, 25, 6}, 
 																true)};

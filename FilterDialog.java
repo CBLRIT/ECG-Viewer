@@ -3,7 +3,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 public abstract class FilterDialog extends JDialog {
-	public final int id;
+	public final int id = -1;
 
 	public FilterDialog(final JFrame thisFrame, 
 								 String title, 
