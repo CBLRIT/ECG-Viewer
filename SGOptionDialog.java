@@ -22,14 +22,12 @@ public class SGOptionDialog extends FilterDialog {
 	private int degree;
 	private boolean retVal = false;
 
-	public final int id = 0;
-
 	public SGOptionDialog(final JFrame thisFrame, 
 						  String title, 
 						  boolean modal, 
 						  final ECGViewHandler handler,
 						  final int index) {
-		super(thisFrame, title, modal, handler, index);
+		super(thisFrame, title, modal, handler, index, 0);
 
 		left = 25;
 		right = 25;
@@ -164,6 +162,10 @@ public class SGOptionDialog extends FilterDialog {
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);
+	}
+
+	public int Id() {
+		return id;
 	}
 
 	public boolean accepted() {

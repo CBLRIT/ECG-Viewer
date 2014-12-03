@@ -26,8 +26,6 @@ public class DetrendOptionDialog extends FilterDialog {
 	private int degree;
 	private boolean retVal = false;
 
-	public final int id = 4;
-
 	/**
 	 * Constructor - creates the dialog
 	 *
@@ -41,7 +39,7 @@ public class DetrendOptionDialog extends FilterDialog {
 							   boolean modal, 
 							   final ECGViewHandler handler,
 							   final int index) {
-		super(thisFrame, title, modal, handler, index);
+		super(thisFrame, title, modal, handler, index, 4);
 
 		degree = 6;
 
@@ -124,6 +122,10 @@ public class DetrendOptionDialog extends FilterDialog {
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);
+	}
+
+	public int Id() {
+		return id;
 	}
 
 	/**

@@ -20,14 +20,12 @@ public class FFTOptionDialog extends FilterDialog {
 	private double freq;
 	private boolean retVal = false;
 
-	public final int id = 3;
-
 	public FFTOptionDialog(final JFrame thisFrame, 
 						   String title, 
 						   boolean modal, 
 						   final ECGViewHandler handler,
 						   final int index) {
-		super(thisFrame, title, modal, handler, index);
+		super(thisFrame, title, modal, handler, index, 3);
 
 		freq = 60;
 
@@ -110,6 +108,10 @@ public class FFTOptionDialog extends FilterDialog {
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);
+	}
+
+	public int Id() {
+		return id;
 	}
 
 	public boolean accepted() {

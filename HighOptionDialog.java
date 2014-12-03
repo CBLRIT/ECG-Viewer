@@ -20,14 +20,12 @@ public class HighOptionDialog extends FilterDialog {
 	private double freq;
 	private boolean retVal = false;
 
-	public final int id = 1;
-
 	public HighOptionDialog(final JFrame thisFrame, 
 							String title, 
 							boolean modal, 
 							final ECGViewHandler handler,
 							final int index) {
-		super(thisFrame, title, modal, handler, index);
+		super(thisFrame, title, modal, handler, index, 1);
 
 		freq = 0.25;
 
@@ -110,6 +108,10 @@ public class HighOptionDialog extends FilterDialog {
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
 		this.setVisible(true);
+	}
+
+	public int Id() {
+		return id;
 	}
 
 	public boolean accepted() {

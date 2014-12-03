@@ -3,15 +3,19 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 public abstract class FilterDialog extends JDialog {
-	public final int id = -1;
+	protected final int id;
 
 	public FilterDialog(final JFrame thisFrame, 
 								 String title, 
 								 boolean modal, 
 								 final ECGViewHandler handler,
-								 final int index) {
+								 final int index,
+								 int idNum) {
 		super(thisFrame, title, modal);
+		id = idNum;
 	}
+
+	public abstract int Id();
 
 	public abstract boolean accepted();
 

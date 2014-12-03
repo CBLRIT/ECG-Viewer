@@ -40,7 +40,7 @@ public class Annotation {
 	/**
 	 * toString - string representation of the data
 	 *
-	 * @return a string of the form "([type], [location])"
+	 * @return a string of the form "[type] [location]"
 	 */
 	public String toString() {
 		return (double)type + " " + location;

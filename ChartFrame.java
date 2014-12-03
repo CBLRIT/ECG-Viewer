@@ -256,7 +256,6 @@ public class ChartFrame extends JFrame {
 		add(statusBar, BorderLayout.SOUTH);
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setResizable(false);
 		setVisible(true);
 	}
 }

@@ -1,10 +1,12 @@
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import org.jfree.chart.axis.NumberAxis;
@@ -32,8 +34,8 @@ public class ECGView {
 	private NumberAxis yaxis;
 	private XYLineAndShapeRenderer renderer;
 
-	private final int defaultWidth = 100;
-	private final int defaultHeight = 100;
+	private final int defaultWidth = 200;
+	private final int defaultHeight = 200;
 
 	private final ECGViewHandler handler;
 	private int index;
@@ -80,14 +82,15 @@ public class ECGView {
 		}
 		this.chart = new JFreeChart(title, plot);
 		this.chart.removeLegend();
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.panel = new ChartPanel(
 			chart,
 			defaultWidth,
 			defaultHeight,
-			100,
-			100,
-			500,
-			500,
+			0,
+			0,
+			screenSize.width,
+			screenSize.height,
 			true, //buffer
 			false,//properties
 			false,//copy

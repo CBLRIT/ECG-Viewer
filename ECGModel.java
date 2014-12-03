@@ -25,8 +25,8 @@ public class ECGModel {
 	private ECGDataSet[] points; //size 120; this one actually matters
 	private ECGDataSet[] tempPoints; //size 120, all changes go here
 	private ECGDataSet[] mysteriousLeads; //size 5
-	private final int tupleLength = 154;
-	private final int actualSize = 130;
+	private int tupleLength = 154;
+	private int actualSize = 130;
 	private double sampleFreq = 0;
 	private HashSet<Annotation> annotations;	
 
@@ -152,7 +152,7 @@ public class ECGModel {
 	}
 
 	/**
-	 * writeDataCSV - creates a Comma Separated Value file with the data 
+	 * writeDataCSV - creates a Tab Separated Value file with the data 
 	 *					contained in this model
 	 *
 	 * @param filename the name of the file to write to
@@ -197,7 +197,7 @@ public class ECGModel {
 
 		for(int i = 0; i < points.length; i++) {
 			if(points[i].isBad()) {
-				out.println(i);
+				out.println((i+4));
 			}
 		}
 
@@ -235,15 +235,26 @@ public class ECGModel {
 			throws IOException, FileNotFoundException {
 		this.clear();
 
-		ECGFile file = new ECGFile();
-		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Integer>>> raw
-			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Integer>>>();
+		ECGFile file;
+		if(filename.endsWith(".dat")) {
+			file = new DATFile();
+			actualSize = 130;
+			tupleLength = 154;
+		} else if (filename.endsWith(".123")) {
+			file = new _123File();
+			actualSize = 130;
+			tupleLength = 120;
+		} else {
+			throw new IOException("Not a valid file extension, supported: .dat, .123");
+		}
+		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> raw
+			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>>();
 		int retval = file.read(filename, tupleLength, raw);
 		if(retval < 0) {
 			return;
 		}
 
-		sampleFreq = file.finfo.sint;
+		sampleFreq = file.getSampleInterval();
 
 	//	System.out.println(raw.get(raw.size()-1).getKey().toString() + ", " + raw.get(raw.size()-1).getValue().toString());
 	//	return;
@@ -269,7 +280,7 @@ public class ECGModel {
 					temp[j-offset] = new ECGDataSet();
 				}
 				temp[j-offset].addTuple(raw.get(i).getKey(), 
-									   (double)raw.get(i).getValue().get(j)*0.125);
+									   (double)raw.get(i).getValue().get(j));
 			}
 		}
 
@@ -315,7 +326,8 @@ public class ECGModel {
 	 * @param i the index of the dataset
 	 */
 	public ECGDataSet getDataset(int i) {
-		return points[i];
+		tempPoints[i].copyFrom(points[i]);
+		return tempPoints[i];
 	}
 
 	/**
