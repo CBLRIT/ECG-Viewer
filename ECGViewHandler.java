@@ -121,6 +121,9 @@ public class ECGViewHandler {
 			case 4:
 				data.detrend((int)params[0]);
 				break;
+			case 5:
+				data.waveletfilt((double)params[0]);
+				break;
 			default:
 				break;
 		}

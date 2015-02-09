@@ -1,6 +1,10 @@
 
 import java.util.ArrayList;
 import java.util.List;
+import math.jwave.Transform;
+import math.jwave.transforms.AncientEgyptianDecomposition;
+import math.jwave.transforms.FastWaveletTransform;
+import math.jwave.transforms.wavelets.daubechies.Daubechies10;
 import mr.go.sgfilter.ContinuousPadder;
 import mr.go.sgfilter.SGFilter;
 import org.apache.commons.math3.complex.Complex;
@@ -115,7 +119,30 @@ public class Filters {
 		}
 	} 
 
+	public static void waveletfilt(List<Double[]> set, double threshold) {
+		Transform waveTrans = new Transform(new AncientEgyptianDecomposition(
+												new FastWaveletTransform(new Daubechies10())));
+		double[][] data = toArray(set);
+		double[] forward = waveTrans.forward(data[1]);
+
+		//filter magic
+		for(int i = 0; i < forward.length; i++) {
+			if(Math.abs(forward[i]) < threshold) {
+				forward[i] = 1;
+			}
+		}
+
+		double[] inverse = waveTrans.reverse(forward);
+		for(int i = 0; i < inverse.length; i++) {
+			set.set(i, new Double[]{data[0][i], inverse[i]});
+		}
+	}
+
 	private static int findNextLargestPower2(int n) {
+		if(n < 0) {
+			return 0;
+		}
+
 		int i = 0;
 		for(; i < 32; i++ ) {
 			if(n >> i == 0) {

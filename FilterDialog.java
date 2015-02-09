@@ -4,6 +4,14 @@ import javax.swing.JFrame;
 
 public abstract class FilterDialog extends JDialog {
 	protected final int id;
+	/*
+	 * 0 - Savitsky-Golay
+	 * 1 - High Pass
+	 * 2 - Low Pass
+	 * 3 - FFT
+	 * 4 - Detrend
+	 * 5 - Wavelet
+	 */
 
 	public FilterDialog(final JFrame thisFrame, 
 								 String title, 

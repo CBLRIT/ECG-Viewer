@@ -15,26 +15,26 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
-public class LowOptionDialog extends FilterDialog {
-	private final LowOptionDialog thisDialog = this;
+public class WaveletOptionDialog extends FilterDialog {
+	private final WaveletOptionDialog thisDialog = this;
 	private double freq;
 	private boolean retVal = false;
 
-	public LowOptionDialog(final JFrame thisFrame, 
-						   String title, 
-						   boolean modal, 
-						   final ECGViewHandler handler,
-						   final int index) {
+	public WaveletOptionDialog(final JFrame thisFrame, 
+							   String title, 
+							   boolean modal, 
+							   final ECGViewHandler handler,
+							   final int index) {
+		
+		super(thisFrame, title, modal, handler, index, 5);
 
-		super(thisFrame, title, modal, handler, index, 2);
-
-		freq = 40;
+		freq = 1.0;
 
 		this.setLayout(new BorderLayout());
 
 		final ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
 																id, 
-																new Number[]{40.0}, 
+																new Number[]{1.0}, 
 																true)};
 		JPanel controls = new JPanel(new GridBagLayout());
 
@@ -63,9 +63,9 @@ public class LowOptionDialog extends FilterDialog {
 		});
 
 		controls.add(new JLabel("Frequency Threshold"), labels);
-		final JLabel leftNum = new JLabel("40.0");
+		final JLabel leftNum = new JLabel("1.0");
 		controls.add(leftNum, values);
-		final JSlider leftSlide = new JSlider(3000, 7000, 4000);
+		final JSlider leftSlide = new JSlider(000, 100000, 100);
 		leftSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
@@ -122,3 +122,4 @@ public class LowOptionDialog extends FilterDialog {
 		return new Number[]{freq};
 	}
 }
+

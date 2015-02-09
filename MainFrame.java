@@ -329,11 +329,28 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+		JMenuItem filter_wave = new JMenuItem("Wavelet");
+		filter_wave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				WaveletOptionDialog dialog = new WaveletOptionDialog(thisFrame, "Wavelet Filter", true, views, 35);
+				if(!dialog.accepted()) {
+					return;
+				}
+
+				for(int i = 0; i < views.size(); i++) {
+					views.applyFilter(dialog, i);
+				}
+				for(int i = 0; i < subPanels.length; i++) {
+					subPanels[i].revalidate();
+				}
+			}
+		});
 		filter.add(filter_detrend);
 		filter.add(filter_savitzky);
 		filter.add(filter_high);
 		filter.add(filter_highfft);
 		filter.add(filter_low);
+		filter.add(filter_wave);
 		menubar.add(filter);
 
 		this.setJMenuBar(menubar);

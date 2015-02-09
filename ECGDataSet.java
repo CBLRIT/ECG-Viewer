@@ -173,4 +173,13 @@ public class ECGDataSet {
 	public void highpassfftfilt(double lowfreq, double highfreq) {
 		Filters.highpassfftfilt(set, lowfreq, highfreq);
 	}
+
+	/**
+	 * waveletfilt - applies a wavelet filter to the dataset
+	 *
+	 * @param threshold the threshold value to cut off
+	 */
+	 public void waveletfilt(double threshold) {
+		Filters.waveletfilt(set, threshold);
+	 }
 }

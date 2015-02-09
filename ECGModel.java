@@ -402,6 +402,9 @@ public class ECGModel {
 			case 4:
 				tempPoints[index].detrend((int)params[0]);
 				break;
+			case 5:
+				tempPoints[index].waveletfilt((double)params[0]);
+				break;
 			default:
 				return;
 		}
