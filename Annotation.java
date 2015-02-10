@@ -20,6 +20,16 @@ public class Annotation {
 	}
 
 	/**
+	 * Copy Constructor - creates a copy of a given object
+	 *
+	 * @param anno the object to copy
+	 * @return a copy of anno
+	 */
+	public Annotation(Annotation anno) {
+		this(anno.getType(), anno.getLoc());
+	}
+
+	/**
 	 * getLoc - returns the location of this annotation
 	 *
 	 * @return the location of this annotation

@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 public class ECGViewHandler {
 	private ECGModel model;	
+	private UndoStack history;
 
 	private int currAnnoType = 0;
 	private HashMap<Integer, Color> annoColors = new HashMap<Integer, Color>();

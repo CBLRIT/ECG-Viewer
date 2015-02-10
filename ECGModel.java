@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 //import org.jfree.data.xy.DefaultXYDataset;
 
 /**
@@ -46,6 +47,37 @@ public class ECGModel {
 		tempPoints = new ECGDataSet[120];
 		mysteriousLeads = new ECGDataSet[5];
 		annotations = new HashSet<Annotation>();
+	}
+
+	/**
+	 * clone - deep copy of the model
+	 *
+	 * @return a copy of the model
+	 */
+	public ECGModel clone() {
+		ECGModel newModel = new ECGModel();
+
+		newModel.tupleLength = this.tupleLength;
+		newModel.actualSize = this.actualSize;
+		newModel.sampleFreq = this.sampleFreq;
+
+		for(int i = 0; i < this.first2CrapLeads.length; i++) {
+			newModel.first2CrapLeads[i] = (ECGDataSet)this.first2CrapLeads[i].clone();
+		}
+		for(int i = 0; i < this.limbLeads.length; i++) {
+			newModel.limbLeads[i] = (ECGDataSet)this.limbLeads[i].clone();
+		}
+		for(int i = 0; i < this.points.length; i++) {
+			newModel.points[i] = (ECGDataSet)this.points[i].clone();
+		}
+		for(Iterator<Annotation> i = this.annotations.iterator(); i.hasNext(); ) {
+			newModel.annotations.add(new Annotation(i.next()));
+		}
+		for(int i = 0; i < this.mysteriousLeads.length; i++) {
+			newModel.mysteriousLeads[i] = (ECGDataSet)this.mysteriousLeads[i].clone();
+		}
+
+		return newModel;
 	}
 
 	/**
