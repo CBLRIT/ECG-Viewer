@@ -94,6 +94,7 @@ public class MainFrame extends JFrame {
 													  JOptionPane.ERROR_MESSAGE);
 						return;
 					}
+
 					graphs.clear();
 					for(int i = 0; i < views.size(); i++) {
 						int index = dataSetPlacement[i+5][0]*xnum + dataSetPlacement[i+5][1];
@@ -263,8 +264,29 @@ public class MainFrame extends JFrame {
 					views.applyFilter(dialog, i);
 				}
 
-				for(int i = 0; i < subPanels.length; i++) {
-					subPanels[i].revalidate();
+				views.applyAllChanges();
+				
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
+				}
+			}
+		});
+		JMenuItem filter_constant = new JMenuItem("Constant Offset");
+		filter_constant.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ConstantOptionDialog dialog = new ConstantOptionDialog(thisFrame, "Constant Offset", true, views, 35);
+				if(!dialog.accepted()) {
+					return;
+				}
+
+				for(int i = 0; i < views.size(); i++) {
+					views.applyFilter(dialog, i);
+				}
+
+				views.applyAllChanges();
+
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
@@ -278,8 +300,9 @@ public class MainFrame extends JFrame {
 				for(int i = 0; i < views.size(); i++) {
 					views.applyFilter(dialog, i);
 				}
-				for(int i = 0; i < subPanels.length; i++) {
-					subPanels[i].revalidate();
+				views.applyAllChanges();
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
@@ -293,8 +316,9 @@ public class MainFrame extends JFrame {
 				for(int i = 0; i < views.size(); i++) {
 					views.applyFilter(dialog, i);
 				}
-				for(int i = 0; i < subPanels.length; i++) {
-					subPanels[i].revalidate();
+				views.applyAllChanges();
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
@@ -308,8 +332,9 @@ public class MainFrame extends JFrame {
 				for(int i = 0; i < views.size(); i++) {
 					views.applyFilter(dialog, i);
 				}
-				for(int i = 0; i < subPanels.length; i++) {
-					subPanels[i].revalidate();
+				views.applyAllChanges();
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
@@ -324,8 +349,9 @@ public class MainFrame extends JFrame {
 				for(int i = 0; i < views.size(); i++) {
 					views.applyFilter(dialog, i);
 				}
-				for(int i = 0; i < subPanels.length; i++) {
-					subPanels[i].revalidate();
+				views.applyAllChanges();
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
@@ -340,12 +366,15 @@ public class MainFrame extends JFrame {
 				for(int i = 0; i < views.size(); i++) {
 					views.applyFilter(dialog, i);
 				}
-				for(int i = 0; i < subPanels.length; i++) {
-					subPanels[i].revalidate();
+				views.applyAllChanges();
+				for(int i = 0; i < graphs.size(); i++) {
+					graphs.get(i).revalidate();
 				}
 			}
 		});
 		filter.add(filter_detrend);
+		filter.add(filter_constant);
+		filter.addSeparator();
 		filter.add(filter_savitzky);
 		filter.add(filter_high);
 		filter.add(filter_highfft);
@@ -387,8 +416,7 @@ public class MainFrame extends JFrame {
 		lenText.setColumns(10);
 		lenText.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				long start = (Long)startText.getValue();
-				long len = (Long)lenText.getValue();
+				long start = (Long)startText.getValue(); long len = (Long)lenText.getValue();
 				for(int i = 0; i < graphs.size(); i++) {
 					((XYPlot)graphs.get(i).getPanel().getChart().getPlot()).getDomainAxis()
 																 .setAutoRange(true);
@@ -407,4 +435,5 @@ public class MainFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 	}
+
 }

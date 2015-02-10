@@ -96,6 +96,10 @@ public class ECGViewHandler {
 		model.commitChanges(index);
 	}
 
+	public void applyAllChanges() {
+		model.commitChanges();
+	}
+
 	public void resetChanges(int index) {
 		model.resetChanges(index);
 	}
@@ -123,6 +127,9 @@ public class ECGViewHandler {
 				break;
 			case 5:
 				data.waveletfilt((double)params[0]);
+				break;
+			case 6:
+				data.constofffilt((double)params[0]);
 				break;
 			default:
 				break;

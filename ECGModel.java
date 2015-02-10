@@ -405,6 +405,9 @@ public class ECGModel {
 			case 5:
 				tempPoints[index].waveletfilt((double)params[0]);
 				break;
+			case 6:
+				tempPoints[index].constofffilt((double)params[0]);
+				break;
 			default:
 				return;
 		}

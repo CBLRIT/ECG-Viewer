@@ -138,6 +138,18 @@ public class Filters {
 		}
 	}
 
+	/**
+	 * constofffilt - detrend by constant offset
+	 *
+	 * @param set the dataset to augment
+	 * @param offset how much to offset the data
+	 */
+	public static void constofffilt(List<Double[]> set, double offset) {
+		for(int i = 0; i < set.size(); i++) {
+			set.set(i, new Double[]{set.get(i)[0], set.get(i)[1] + offset});
+		}
+	}
+
 	private static int findNextLargestPower2(int n) {
 		if(n < 0) {
 			return 0;

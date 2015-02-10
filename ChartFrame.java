@@ -187,7 +187,24 @@ public class ChartFrame extends JFrame {
 				thisFrame.view.revalidate();
 			}
 		});
+		JMenuItem filter_constant = new JMenuItem("Constant Offset");
+		filter_constant.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ConstantOptionDialog dialog = new ConstantOptionDialog(thisFrame,
+																	   "Constant Offset",
+																	   true,
+																	   thisFrame.handler,
+																	   thisFrame.index);
+				if(dialog.accepted()) {
+					handler.applyFilter(dialog, thisFrame.index);
+				}
+				thisFrame.view.revalidate();
+			}
+		});
+
 		filter.add(filter_detrend);
+		filter.add(filter_constant);
+		filter.addSeparator();
 		filter.add(filter_savitzky);
 		filter.add(filter_high);
 		filter.add(filter_ffthigh);

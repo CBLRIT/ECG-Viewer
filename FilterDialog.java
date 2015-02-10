@@ -11,6 +11,7 @@ public abstract class FilterDialog extends JDialog {
 	 * 3 - FFT
 	 * 4 - Detrend
 	 * 5 - Wavelet
+	 * 6 - Constant Detrend
 	 */
 
 	public FilterDialog(final JFrame thisFrame, 

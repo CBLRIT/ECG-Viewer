@@ -179,7 +179,16 @@ public class ECGDataSet {
 	 *
 	 * @param threshold the threshold value to cut off
 	 */
-	 public void waveletfilt(double threshold) {
+	public void waveletfilt(double threshold) {
 		Filters.waveletfilt(set, threshold);
-	 }
+	}
+
+	/**
+	 * constofffilt - applies a constant offset to the dataset
+	 *
+	 * @param offset the offset value
+	 */
+	public void constofffilt(double offset) {
+		Filters.constofffilt(set, offset);
+	}
 }
