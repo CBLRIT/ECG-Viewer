@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class ECGViewHandler {
 	private ECGModel model;	
-	private UndoStack history;
+	private UndoStack<ECGModel> history;
 
 	private int currAnnoType = 0;
 	private HashMap<Integer, Color> annoColors = new HashMap<Integer, Color>();
@@ -15,6 +15,7 @@ public class ECGViewHandler {
 
 	public ECGViewHandler(ECGModel model) {
 		this.model = model;
+		this.history = new UndoStack<ECGModel>();
 
 		annoColors.put(0, Color.BLACK);
 		annoColors.put(1, Color.ORANGE);
@@ -94,10 +95,12 @@ public class ECGViewHandler {
 	}
 
 	public void applyChanges(int index) {
+		history.pushChange(model.clone());
 		model.commitChanges(index);
 	}
 
 	public void applyAllChanges() {
+		history.pushChange(model.clone());
 		model.commitChanges();
 	}
 
@@ -143,19 +146,38 @@ public class ECGViewHandler {
 	}
 
 	public void addAnnotation(int type, double i) {
+		history.pushChange(model.clone());
 		model.addAnnotation(type, i);
 	}
 
 	public void clearAnnotations() {
+		history.pushChange(model.clone());
 		model.clearAnnotations();
 	}
 
 	public void setBad(int index, boolean isBad) {
+		history.pushChange(model.clone());
 		model.setBad(index, isBad);
 	}
 
 	public boolean isBad(int index) {
 		return model.isBad(index);
+	}
+
+	public void undo() {
+		this.model = history.undo(this.model);
+	}
+
+	public void redo() {
+		this.model = history.redo(this.model);
+	}
+
+	public boolean canUndo() {
+		return history.canUndo();
+	}
+
+	public boolean canRedo() {
+		return history.canRedo();
 	}
 }
 

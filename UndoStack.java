@@ -30,6 +30,15 @@ import java.util.Stack;
 	}
 
 	/**
+	 * canUndo - determines if it's possible to undo
+	 *
+	 * @return true if possible to undo
+	 */
+	public boolean canUndo() {
+		return !undoStack.empty();
+	}
+
+	/**
 	 * undo - reverts the state back to the previous change
 	 *
 	 * @param state the current state
@@ -38,6 +47,15 @@ import java.util.Stack;
 	public E undo(E state) {
 		redoStack.push(state);
 		return undoStack.pop();
+	}
+
+	/**
+	 * canRedo - determines if it's possible to redo
+	 *
+	 * @return true if possible to redo
+	 */
+	public boolean canRedo() {
+		return !redoStack.empty();
 	}
 
 	/**

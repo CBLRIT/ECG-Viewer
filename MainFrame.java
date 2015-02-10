@@ -11,6 +11,8 @@ import java.awt.GridLayout;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
@@ -250,6 +252,33 @@ public class MainFrame extends JFrame {
 		menu.add(export_badleads);
 		menu.add(exit);
 		menubar.add(menu);
+
+		JMenu edit = new JMenu("Edit");
+		final JMenuItem edit_undo = new JMenuItem("Undo");
+		edit_undo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				views.undo();
+			}
+		});
+		final JMenuItem edit_redo = new JMenuItem("Redo");
+		edit_redo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				views.redo();
+			}
+		});
+		edit.addMenuListener(new MenuListener() {
+			public void menuSelected(MenuEvent e) {
+				edit_undo.setEnabled(views.canUndo());
+				edit_redo.setEnabled(views.canRedo());
+			}
+
+			//don't care
+			public void menuDeselected(MenuEvent e) {}
+			public void menuCanceled(MenuEvent e) {}
+		});
+		edit.add(edit_undo);
+		edit.add(edit_redo);
+		menubar.add(edit);
 
 		JMenu filter = new JMenu("Filter All");
 		JMenuItem filter_detrend = new JMenuItem("Detrend");
