@@ -75,15 +75,10 @@ public class SGOptionDialog extends FilterDialog {
 		leftSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				leftNum.setText("" + leftSlide.getValue());
-				thisDialog.remove(preview[0].getPanel());
-				preview[0] = handler.shallowFilter(
-										index, 
-										id, 
-										new Number[]{leftSlide.getValue(),
-													 rightSlide.getValue(),
-													 degreeSlide.getValue()}, 
-										true);
-				thisDialog.add(preview[0].getPanel());
+				preview[0].filter(id, new Number[]{leftSlide.getValue(),
+												   rightSlide.getValue(),
+												   degreeSlide.getValue()});
+				preview[0].revalidate();
 			}
 		});
 		controls.add(leftSlide, slider);
@@ -96,15 +91,10 @@ public class SGOptionDialog extends FilterDialog {
 		rightSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				rightNum.setText("" + rightSlide.getValue());
-				thisDialog.remove(preview[0].getPanel());
-				preview[0] = handler.shallowFilter(
-										index, 
-										id, 
-										new Number[]{leftSlide.getValue(),
-													 rightSlide.getValue(),
-													 degreeSlide.getValue()}, 
-										true);
-				thisDialog.add(preview[0].getPanel());
+				preview[0].filter(id, new Number[]{leftSlide.getValue(),
+												   rightSlide.getValue(),
+												   degreeSlide.getValue()});
+				preview[0].revalidate();
 			}
 		});
 		slider.gridy = 1;
@@ -118,15 +108,10 @@ public class SGOptionDialog extends FilterDialog {
 		degreeSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				degreeNum.setText("" + degreeSlide.getValue());
-				thisDialog.remove(preview[0].getPanel());
-				preview[0] = handler.shallowFilter(
-										index, 
-										id, 
-										new Number[]{leftSlide.getValue(),
-													 rightSlide.getValue(),
-													 degreeSlide.getValue()}, 
-										true);
-				thisDialog.add(preview[0].getPanel());
+				preview[0].filter(id, new Number[]{leftSlide.getValue(),
+												   rightSlide.getValue(),
+												   degreeSlide.getValue()});
+				preview[0].revalidate();
 			}
 		});
 		slider.gridy = 2;

@@ -83,13 +83,8 @@ public class DetrendOptionDialog extends FilterDialog {
 		degreeSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				degreeNum.setText("" + degreeSlide.getValue());
-				thisDialog.remove(preview[0].getPanel());
-				preview[0] = handler.shallowFilter(index, 
-												   id, 
-												   new Number[]{degreeSlide.getValue()}, 
-												   true);
-				thisDialog.add(preview[0].getPanel());
-				thisDialog.revalidate();
+				preview[0].filter(id, new Number[]{degreeSlide.getValue()});
+				preview[0].revalidate();
 			}
 		});
 		controls.add(degreeSlide, slider);

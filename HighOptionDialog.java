@@ -69,13 +69,8 @@ public class HighOptionDialog extends FilterDialog {
 		leftSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
-				thisDialog.remove(preview[0].getPanel());
-				preview[0] = handler.shallowFilter(
-										index, 
-										id, 
-										new Number[]{((double)(int)leftSlide.getValue())/100.0}, 
-										true);
-				thisDialog.add(preview[0].getPanel());
+				preview[0].filter(id, new Number[]{((double)(int)leftSlide.getValue())/100.0});
+				preview[0].revalidate();
 			}
 		});
 		controls.add(leftSlide, slider);

@@ -46,6 +46,8 @@ public class ECGView {
 
 	private boolean canPlace = false;
 
+	private boolean labels;
+
 	/**
 	 * Constructor - initializes the view
 	 *
@@ -62,6 +64,7 @@ public class ECGView {
 		this.title = title;
 		this.index = index;
 		this.data = data;
+		this.labels = withLabels;
 
 		DefaultXYDataset dataset = new DefaultXYDataset();
 		dataset.addSeries(1, data.toArray());
@@ -221,6 +224,16 @@ public class ECGView {
 	public void setViewingDomain(double start, double end) {
 		this.plot.getDomainAxis().setAutoRange(true);
 		this.plot.getDomainAxis().setRange(start, end);
+	}
+
+	/**
+	 * filter - filters the current view
+	 *
+	 * @param filterid the type of filter to apply
+	 * @param params the arguments to the filter
+	 */
+	public void filter(int filterid, Number[] params) {
+		this.data = handler.shallowFilter(index, filterid, params, labels).data;
 	}
 }
 
