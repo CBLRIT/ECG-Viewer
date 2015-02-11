@@ -69,6 +69,7 @@ public class ECGModel {
 		}
 		for(int i = 0; i < this.points.length; i++) {
 			newModel.points[i] = (ECGDataSet)this.points[i].clone();
+			newModel.tempPoints[i] = (ECGDataSet)this.points[i].clone(); //???
 		}
 		for(Iterator<Annotation> i = this.annotations.iterator(); i.hasNext(); ) {
 			newModel.annotations.add(new Annotation(i.next()));

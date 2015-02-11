@@ -97,46 +97,7 @@ public class MainFrame extends JFrame {
 						return;
 					}
 
-					graphs.clear();
-					for(int i = 0; i < views.size(); i++) {
-						int index = dataSetPlacement[i+5][0]*xnum + dataSetPlacement[i+5][1];
-						final ECGView graph = views.getView(i, false);
-						subPanels[index].removeAll();
-
-						final int count = i;
-						graph.getPanel().addMouseListener(new MouseListener() {
-							public void mouseClicked(MouseEvent e) {
-								ChartFrame cf = new ChartFrame(views, count, ""+(count+4));
-								cf.addWindowListener(new WindowListener() {
-									public void windowClosing(WindowEvent e) {
-										graph.setBackground(!graph.isBad() ? 
-														UIManager.getColor("Panel.background") : 
-														new Color(233, 174, 174));
-										graph.revalidate();
-									}
-
-									//don't care
-									public void windowOpened(WindowEvent e) {}
-									public void windowIconified(WindowEvent e) {}
-									public void windowDeiconified(WindowEvent e) {}
-									public void windowDeactivated(WindowEvent e) {}
-									public void windowActivated(WindowEvent e) {}
-									public void windowClosed(WindowEvent e) {}
-								});
-							}
-
-							//don't care
-							public void mouseEntered(MouseEvent e) {}
-							public void mouseExited(MouseEvent e) {}
-							public void mousePressed(MouseEvent e) {}
-							public void mouseReleased(MouseEvent e) {}
-						});
-
-						graphs.add(graph);
-						subPanels[index].add(graph.getPanel());
-					}
-		
-					thisFrame.revalidate();
+					thisFrame.relink();
 				}
 			}
 		});
@@ -258,12 +219,14 @@ public class MainFrame extends JFrame {
 		edit_undo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				views.undo();
+				thisFrame.relink();
 			}
 		});
 		final JMenuItem edit_redo = new JMenuItem("Redo");
 		edit_redo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				views.redo();
+				thisFrame.relink();
 			}
 		});
 		edit.addMenuListener(new MenuListener() {
@@ -295,9 +258,7 @@ public class MainFrame extends JFrame {
 
 				views.applyAllChanges();
 				
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
-				}
+				thisFrame.revalidateAll();
 			}
 		});
 		JMenuItem filter_constant = new JMenuItem("Constant Offset");
@@ -314,9 +275,7 @@ public class MainFrame extends JFrame {
 
 				views.applyAllChanges();
 
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
-				}
+				thisFrame.revalidateAll();
 			}
 		});
 		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
@@ -330,9 +289,8 @@ public class MainFrame extends JFrame {
 					views.applyFilter(dialog, i);
 				}
 				views.applyAllChanges();
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
-				}
+				
+				thisFrame.revalidateAll();
 			}
 		});
 		JMenuItem filter_high = new JMenuItem("High Pass");
@@ -346,9 +304,8 @@ public class MainFrame extends JFrame {
 					views.applyFilter(dialog, i);
 				}
 				views.applyAllChanges();
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
-				}
+				
+				thisFrame.revalidateAll();
 			}
 		});
 		JMenuItem filter_highfft = new JMenuItem("FFT");
@@ -362,9 +319,8 @@ public class MainFrame extends JFrame {
 					views.applyFilter(dialog, i);
 				}
 				views.applyAllChanges();
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
-				}
+				
+				thisFrame.revalidateAll();
 			}
 		});
 		JMenuItem filter_low = new JMenuItem("Low Pass");
@@ -379,9 +335,8 @@ public class MainFrame extends JFrame {
 					views.applyFilter(dialog, i);
 				}
 				views.applyAllChanges();
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
-				}
+				
+				thisFrame.revalidateAll();
 			}
 		});
 		JMenuItem filter_wave = new JMenuItem("Wavelet");
@@ -396,9 +351,8 @@ public class MainFrame extends JFrame {
 					views.applyFilter(dialog, i);
 				}
 				views.applyAllChanges();
-				for(int i = 0; i < graphs.size(); i++) {
-					graphs.get(i).revalidate();
-				}
+
+				thisFrame.revalidateAll();
 			}
 		});
 		filter.add(filter_detrend);
@@ -465,4 +419,52 @@ public class MainFrame extends JFrame {
 		this.setVisible(true);
 	}
 
+	private void revalidateAll() {
+		for(int i = 0; i < graphs.size(); i++) {
+			graphs.get(i).revalidate();
+		}
+	}
+
+	private void relink() {
+		graphs.clear();
+		for(int i = 0; i < views.size(); i++) {
+			int index = dataSetPlacement[i+5][0]*xnum + dataSetPlacement[i+5][1];
+			final ECGView graph = views.getView(i, false);
+			subPanels[index].removeAll();
+
+			final int count = i;
+			graph.getPanel().addMouseListener(new MouseListener() {
+				public void mouseClicked(MouseEvent e) {
+					ChartFrame cf = new ChartFrame(views, count, ""+(count+4));
+					cf.addWindowListener(new WindowListener() {
+						public void windowClosing(WindowEvent e) {
+							graph.setBackground(!graph.isBad() ? 
+											UIManager.getColor("Panel.background") : 
+											new Color(233, 174, 174));
+							graph.revalidate();
+						}
+
+						//don't care
+						public void windowOpened(WindowEvent e) {}
+						public void windowIconified(WindowEvent e) {}
+						public void windowDeiconified(WindowEvent e) {}
+						public void windowDeactivated(WindowEvent e) {}
+						public void windowActivated(WindowEvent e) {}
+						public void windowClosed(WindowEvent e) {}
+					});
+				}
+
+				//don't care
+				public void mouseEntered(MouseEvent e) {}
+				public void mouseExited(MouseEvent e) {}
+				public void mousePressed(MouseEvent e) {}
+				public void mouseReleased(MouseEvent e) {}
+			});
+
+			graphs.add(graph);
+			subPanels[index].add(graph.getPanel());
+		}
+
+		thisFrame.revalidate();
+	}
 }
