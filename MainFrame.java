@@ -232,7 +232,9 @@ public class MainFrame extends JFrame {
 		edit.addMenuListener(new MenuListener() {
 			public void menuSelected(MenuEvent e) {
 				edit_undo.setEnabled(views.canUndo());
+				edit_undo.setText("Undo " + (views.canUndo()?views.undoMessage():""));
 				edit_redo.setEnabled(views.canRedo());
+				edit_redo.setText("Redo " + (views.canRedo()?views.redoMessage():""));
 			}
 
 			//don't care
@@ -252,11 +254,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				for(int i = 0; i < views.size(); i++) {
-					views.applyFilter(dialog, i);
-				}
-
-				views.applyAllChanges();
+				views.applyFilterAll(dialog);
 				
 				thisFrame.revalidateAll();
 			}
@@ -269,11 +267,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				for(int i = 0; i < views.size(); i++) {
-					views.applyFilter(dialog, i);
-				}
-
-				views.applyAllChanges();
+				views.applyFilterAll(dialog);
 
 				thisFrame.revalidateAll();
 			}
@@ -285,10 +279,8 @@ public class MainFrame extends JFrame {
 				if(!dialog.accepted()) {
 					return;
 				}
-				for(int i = 0; i < views.size(); i++) {
-					views.applyFilter(dialog, i);
-				}
-				views.applyAllChanges();
+
+				views.applyFilterAll(dialog);
 				
 				thisFrame.revalidateAll();
 			}
@@ -300,10 +292,8 @@ public class MainFrame extends JFrame {
 				if(!dialog.accepted()) {
 					return;
 				}
-				for(int i = 0; i < views.size(); i++) {
-					views.applyFilter(dialog, i);
-				}
-				views.applyAllChanges();
+
+				views.applyFilterAll(dialog);
 				
 				thisFrame.revalidateAll();
 			}
@@ -315,10 +305,8 @@ public class MainFrame extends JFrame {
 				if(!dialog.accepted()) {
 					return;
 				}
-				for(int i = 0; i < views.size(); i++) {
-					views.applyFilter(dialog, i);
-				}
-				views.applyAllChanges();
+
+				views.applyFilterAll(dialog);
 				
 				thisFrame.revalidateAll();
 			}
@@ -331,10 +319,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				for(int i = 0; i < views.size(); i++) {
-					views.applyFilter(dialog, i);
-				}
-				views.applyAllChanges();
+				views.applyFilterAll(dialog);
 				
 				thisFrame.revalidateAll();
 			}
@@ -347,10 +332,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				for(int i = 0; i < views.size(); i++) {
-					views.applyFilter(dialog, i);
-				}
-				views.applyAllChanges();
+				views.applyFilterAll(dialog);
 
 				thisFrame.revalidateAll();
 			}

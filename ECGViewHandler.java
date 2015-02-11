@@ -6,7 +6,8 @@ import java.util.HashMap;
 
 public class ECGViewHandler {
 	private ECGModel model;	
-	private UndoStack<ECGModel> history;
+	private String message;
+	private UndoStack<Change<ECGModel, String>> history;
 
 	private int currAnnoType = 0;
 	private HashMap<Integer, Color> annoColors = new HashMap<Integer, Color>();
@@ -15,7 +16,8 @@ public class ECGViewHandler {
 
 	public ECGViewHandler(ECGModel model) {
 		this.model = model;
-		this.history = new UndoStack<ECGModel>();
+		this.message = "Recent State";
+		this.history = new UndoStack<Change<ECGModel, String>>();
 
 		annoColors.put(0, Color.BLACK);
 		annoColors.put(1, Color.ORANGE);
@@ -91,21 +93,17 @@ public class ECGViewHandler {
 	}
 
 	public void applyFilter(FilterDialog f, int index) {
-		model.applyFilter(index, f.id, f.returnVals());
+		history.pushChange(new Change<ECGModel, String>(model.clone(), 
+								"Apply filter " + f.Id() + " to lead " + index));
+		model.applyFilter(index, f.Id(), f.returnVals());
 	}
 
-	public void applyChanges(int index) {
-		history.pushChange(model.clone());
-		model.commitChanges(index);
-	}
-
-	public void applyAllChanges() {
-		history.pushChange(model.clone());
-		model.commitChanges();
-	}
-
-	public void resetChanges(int index) {
-		model.resetChanges(index);
+	public void applyFilterAll(FilterDialog f) {
+		history.pushChange(new Change<ECGModel, String>(model.clone(), 
+									"Apply filter " + f.Id() + " to all leads"));
+		for(int i = 0; i < model.size(); i++) {
+			model.applyFilter(i, f.Id(), f.returnVals());
+		}
 	}
 
 	public ECGView shallowFilter(int index, 
@@ -146,17 +144,20 @@ public class ECGViewHandler {
 	}
 
 	public void addAnnotation(int type, double i) {
-		history.pushChange(model.clone());
+		history.pushChange(new Change<ECGModel, String>(model.clone(), 
+					"Add type " + type + " annotation at time " + i));
 		model.addAnnotation(type, i);
 	}
 
 	public void clearAnnotations() {
-		history.pushChange(model.clone());
+		history.pushChange(new Change<ECGModel, String>(model.clone(), 
+					"Clear annotations"));
 		model.clearAnnotations();
 	}
 
 	public void setBad(int index, boolean isBad) {
-		history.pushChange(model.clone());
+		history.pushChange(new Change<ECGModel, String>(model.clone(), 
+					(isBad?"Set":"Unset") + " bad lead " + index));
 		model.setBad(index, isBad);
 	}
 
@@ -165,11 +166,25 @@ public class ECGViewHandler {
 	}
 
 	public void undo() {
-		this.model = history.undo(this.model);
+		Change<ECGModel, String> c = history.undo(
+				new Change<ECGModel, String>(this.model, this.message));
+		this.model = c.getData();
+		this.message = c.getMessage();
 	}
 
 	public void redo() {
-		this.model = history.redo(this.model);
+		Change<ECGModel, String> c = history.redo(
+				new Change<ECGModel, String>(this.model, this.message));
+		this.model = c.getData();
+		this.message = c.getMessage();
+	}
+
+	public String undoMessage() {
+		return history.peekUndo().getMessage();
+	}
+
+	public String redoMessage() {
+		return history.peekRedo().getMessage();
 	}
 
 	public boolean canUndo() {

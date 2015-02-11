@@ -76,5 +76,23 @@ import java.util.Stack;
 		undoStack.clear();
 		redoStack.clear();
 	}
+
+	/**
+	 * peekUndo - gets the undo without popping
+	 *
+	 * @return the previous state
+	 */
+	public E peekUndo() {
+		return undoStack.peek();
+	}
+
+	/**
+	 * peekRedo - gets the redo without popping
+	 *
+	 * @return the next state
+	 */
+	public E peekRedo() {
+		return redoStack.peek();
+	}
 }
 

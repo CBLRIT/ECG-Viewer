@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-//import org.jfree.data.xy.DefaultXYDataset;
 
 /**
  * class ECGModel - class for holding all datasets
@@ -20,11 +19,9 @@ import java.util.Iterator;
  * @author Dakota Williams
  */
 public class ECGModel {
-	//private DefaultXYDataset points; //x is time, y is value
 	private ECGDataSet[] first2CrapLeads; //size 2
 	private ECGDataSet[] limbLeads; //size 3
 	private ECGDataSet[] points; //size 120; this one actually matters
-	private ECGDataSet[] tempPoints; //size 120, all changes go here
 	private ECGDataSet[] mysteriousLeads; //size 5
 	private int tupleLength = 154;
 	private int actualSize = 130;
@@ -44,7 +41,6 @@ public class ECGModel {
 		first2CrapLeads = new ECGDataSet[2];
 		limbLeads = new ECGDataSet[3];
 		points = new ECGDataSet[120];
-		tempPoints = new ECGDataSet[120];
 		mysteriousLeads = new ECGDataSet[5];
 		annotations = new HashSet<Annotation>();
 	}
@@ -69,7 +65,6 @@ public class ECGModel {
 		}
 		for(int i = 0; i < this.points.length; i++) {
 			newModel.points[i] = (ECGDataSet)this.points[i].clone();
-			newModel.tempPoints[i] = (ECGDataSet)this.points[i].clone(); //???
 		}
 		for(Iterator<Annotation> i = this.annotations.iterator(); i.hasNext(); ) {
 			newModel.annotations.add(new Annotation(i.next()));
@@ -88,7 +83,6 @@ public class ECGModel {
 		first2CrapLeads = new ECGDataSet[2];
 		limbLeads = new ECGDataSet[3];
 		points = new ECGDataSet[120];
-		tempPoints = new ECGDataSet[120];
 		mysteriousLeads = new ECGDataSet[5];
 	}
 
@@ -303,7 +297,7 @@ public class ECGModel {
 					temp = limbLeads;
 				} else if (j < 125) {
 					offset = 5;
-					temp = tempPoints;
+					temp = points;
 				} else {
 					offset = 125;
 					temp = mysteriousLeads;
@@ -317,10 +311,10 @@ public class ECGModel {
 			}
 		}
 
-		for(int i = 0; i < tempPoints.length; i++) {
+		for(int i = 0; i < points.length; i++) {
 			ArrayList<Double> values = new ArrayList<Double>();
-			for(int j = 0; j < tempPoints[i].size(); j++) {
-				values.add(new Double(tempPoints[i].getAt(j)[1]));
+			for(int j = 0; j < points[i].size(); j++) {
+				values.add(new Double(points[i].getAt(j)[1]));
 			}
 
 			Collections.sort(values);
@@ -340,15 +334,13 @@ public class ECGModel {
 	*/
 
 
-			for(int j = 0; j < tempPoints[i].size(); j++) {
-				tempPoints[i].getAt(j)[1] -= median;
+			for(int j = 0; j < points[i].size(); j++) {
+				points[i].getAt(j)[1] -= median;
 			}
 
 	//		System.out.println(i + ": " + points[i].toArray()[1][0]);
 		}
 
-		this.commitChanges();
-		
 	//	printArrayList(points[4]);
 	//	System.out.println(Arrays.toString(points[4].get(0)));
 	}
@@ -359,8 +351,7 @@ public class ECGModel {
 	 * @param i the index of the dataset
 	 */
 	public ECGDataSet getDataset(int i) {
-		tempPoints[i].copyFrom(points[i]);
-		return tempPoints[i];
+		return points[i];
 	}
 
 	/**
@@ -379,7 +370,7 @@ public class ECGModel {
 	 * @param isBad whether the lead should be set as bad
 	 */
 	public void setBad(int i, boolean isBad) {
-		tempPoints[i].setBad(isBad);
+		points[i].setBad(isBad);
 	}
 
 	/**
@@ -389,7 +380,7 @@ public class ECGModel {
 	 * @return the badness of the lead
 	 */
 	public boolean isBad(int i) {
-		return tempPoints[i].isBad();
+		return points[i].isBad();
 	}
 
 	/**
@@ -421,68 +412,29 @@ public class ECGModel {
 	public void applyFilter(int index, int filterNum, Number[] params) {
 		switch(filterNum) {
 			case 0:
-				tempPoints[index].sgolayfilt((int)params[0], (int)params[1], (int)params[2]);
+				points[index].sgolayfilt((int)params[0], (int)params[1], (int)params[2]);
 				break;
 			case 1:
-				tempPoints[index].highpassfilt((double)params[0]);
+				points[index].highpassfilt((double)params[0]);
 				break;
 			case 2:
-				tempPoints[index].lowpassfilt((double)params[0]);
+				points[index].lowpassfilt((double)params[0]);
 				break;
 			case 3: 
-				tempPoints[index].highpassfftfilt((double)params[0], 0);
+				points[index].highpassfftfilt((double)params[0], 0);
 				break;
 			case 4:
-				tempPoints[index].detrend((int)params[0]);
+				points[index].detrend((int)params[0]);
 				break;
 			case 5:
-				tempPoints[index].waveletfilt((double)params[0]);
+				points[index].waveletfilt((double)params[0]);
 				break;
 			case 6:
-				tempPoints[index].constofffilt((double)params[0]);
+				points[index].constofffilt((double)params[0]);
 				break;
 			default:
 				return;
 		}
-	}
-
-	/**
-	 * commitChanges - applies temporary changes to the permanent data set
-	 */
-	public void commitChanges() {
-		for(int i = 0; i < tempPoints.length; i++) {
-			this.commitChanges(i);
-		}
-	}
-
-	/**
-	 * commitChanges - applies temporary changes to one of the leads
-	 *
-	 * @param index the lead to apply changes
-	 */
-	public void commitChanges(int index) {
-		if(points[index] == null) {
-			points[index] = new ECGDataSet();
-		}
-		points[index].copyFrom(tempPoints[index]);
-	}
-
-	/**
-	 * resetChanges - resets the temporary changes back to the original
-	 */
-	public void resetChanges() {
-		for(int i = 0; i < points.length; i++) {
-			this.resetChanges(i);
-		}
-	}
-
-	/**
-	 * resetChanges - resets the temporary changes for one lead
-	 * 
-	 * @param index the lead to reset
-	 */
-	public void resetChanges(int index) {
-		tempPoints[index].copyFrom(points[index]);
 	}
 }
 

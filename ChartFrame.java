@@ -64,20 +64,6 @@ public class ChartFrame extends JFrame {
 
 		//dataset menu
 		JMenu file = new JMenu("Dataset");
-		JMenuItem file_apply = new JMenuItem("Apply Changes");
-		file_apply.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				thisFrame.handler.applyChanges(thisFrame.index);
-			}
-		});
-		file.add(file_apply);
-		JMenuItem file_reset = new JMenuItem("Reset Changes");
-		file_reset.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				thisFrame.handler.resetChanges(thisFrame.index);
-			}
-		});
-		file.add(file_reset);
 		file_badlead = new JCheckBoxMenuItem("Bad Lead");
 		file_badlead.setState(view.isBad());
 		file_badlead.addActionListener(new ActionListener() {
