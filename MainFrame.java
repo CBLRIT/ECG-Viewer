@@ -423,7 +423,7 @@ public class MainFrame extends JFrame {
 							graph.setBackground(!graph.isBad() ? 
 											UIManager.getColor("Panel.background") : 
 											new Color(233, 174, 174));
-							graph.revalidate();
+							graph.update();
 						}
 
 						//don't care

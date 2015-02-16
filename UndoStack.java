@@ -46,7 +46,8 @@ import java.util.Stack;
 	 */
 	public E undo(E state) {
 		redoStack.push(state);
-		return undoStack.pop();
+		E obj = undoStack.pop();
+		return obj;
 	}
 
 	/**
@@ -66,7 +67,8 @@ import java.util.Stack;
 	 */
 	public E redo(E state) {
 		undoStack.push(state);
-		return redoStack.pop();
+		E obj = redoStack.pop();
+		return obj;
 	}
 
 	/**
@@ -93,6 +95,14 @@ import java.util.Stack;
 	 */
 	public E peekRedo() {
 		return redoStack.peek();
+	}
+
+	/**
+	 * print - prints a string representation of the stacks
+	 */
+	public void print() {
+		System.out.println("Undo stack: " + undoStack.toString());
+		System.out.println("Redo stack: " + redoStack.toString());
 	}
 }
 

@@ -11,6 +11,8 @@ import java.text.NumberFormat;
 import javax.swing.ButtonGroup;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
@@ -34,7 +36,7 @@ import org.jfree.chart.plot.XYPlot;
  */
 public class ChartFrame extends JFrame {
 	private ECGViewHandler handler;
-	private final ECGView view;
+	private ECGView view;
 	private int index;
 	private final JFormattedTextField startText 
 		= new JFormattedTextField(NumberFormat.getIntegerInstance());
@@ -86,6 +88,38 @@ public class ChartFrame extends JFrame {
 		});
 		file.add(file_exit);
 		menu.add(file);
+
+		//edit menu
+		JMenu edit = new JMenu("Edit");
+		final JMenuItem edit_undo = new JMenuItem("Undo");
+		edit_undo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				handler.undo();
+				thisFrame.view.update();
+			}
+		});
+		final JMenuItem edit_redo = new JMenuItem("Redo");
+		edit_redo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				handler.redo();
+				thisFrame.view.update();
+			}
+		});
+		edit.addMenuListener(new MenuListener() {
+			public void menuSelected(MenuEvent e) {
+				edit_undo.setEnabled(handler.canUndo());
+				edit_undo.setText("Undo " + (handler.canUndo()?handler.undoMessage():""));
+				edit_redo.setEnabled(handler.canRedo());
+				edit_redo.setText("Redo " + (handler.canRedo()?handler.redoMessage():""));
+			}
+
+			//don't care
+			public void menuDeselected(MenuEvent e) {}
+			public void menuCanceled(MenuEvent e) {}
+		});
+		edit.add(edit_undo);
+		edit.add(edit_redo);
+		menu.add(edit);
 
 		//filter menu
 		JMenu filter = new JMenu("Filter");

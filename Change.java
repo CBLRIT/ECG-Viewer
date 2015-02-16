@@ -21,5 +21,9 @@
 	public M getMessage() {
 		return message;
 	}
+
+	public String toString() {
+		return message.toString() + "\n";
+	}
  }
 

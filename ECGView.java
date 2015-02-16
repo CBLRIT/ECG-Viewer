@@ -216,6 +216,15 @@ public class ECGView {
 	}
 
 	/**
+	 * update - updates data inside of the ECGView
+	 */
+	public void update() {
+		ECGView newData = handler.getView(this.index, this.labels);
+		this.data = newData.data;
+		this.revalidate();
+	}
+
+	/**
 	 * setViewingDomain - scales the view between two x values
 	 *
 	 * @param start the left value

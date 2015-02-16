@@ -16,7 +16,6 @@ public class ECGViewHandler {
 
 	public ECGViewHandler(ECGModel model) {
 		this.model = model;
-		this.message = "Recent State";
 		this.history = new UndoStack<Change<ECGModel, String>>();
 
 		annoColors.put(0, Color.BLACK);
@@ -93,12 +92,14 @@ public class ECGViewHandler {
 	}
 
 	public void applyFilter(FilterDialog f, int index) {
+		this.message = "Apply filter " + f.Id() + " to lead " + (index+4);
 		history.pushChange(new Change<ECGModel, String>(model.clone(), 
-								"Apply filter " + f.Id() + " to lead " + index));
+								"Apply filter " + f.Id() + " to lead " + (index+4)));
 		model.applyFilter(index, f.Id(), f.returnVals());
 	}
 
 	public void applyFilterAll(FilterDialog f) {
+		this.message = "Apply filter " + f.Id() + " to all leads";
 		history.pushChange(new Change<ECGModel, String>(model.clone(), 
 									"Apply filter " + f.Id() + " to all leads"));
 		for(int i = 0; i < model.size(); i++) {
@@ -144,18 +145,21 @@ public class ECGViewHandler {
 	}
 
 	public void addAnnotation(int type, double i) {
+		this.message = "Add type " + type + " annotation at time " + i;
 		history.pushChange(new Change<ECGModel, String>(model.clone(), 
 					"Add type " + type + " annotation at time " + i));
 		model.addAnnotation(type, i);
 	}
 
 	public void clearAnnotations() {
+		this.message = "Clear annotations";
 		history.pushChange(new Change<ECGModel, String>(model.clone(), 
 					"Clear annotations"));
 		model.clearAnnotations();
 	}
 
 	public void setBad(int index, boolean isBad) {
+		this.message = (isBad?"Set":"Unset") + " bad lead " + index;
 		history.pushChange(new Change<ECGModel, String>(model.clone(), 
 					(isBad?"Set":"Unset") + " bad lead " + index));
 		model.setBad(index, isBad);
