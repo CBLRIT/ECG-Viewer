@@ -101,6 +101,28 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+		JMenuItem open_subset = new JMenuItem("Open Subset...");
+		open_subset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SubsetFileChooser fc = new SubsetFileChooser();
+				int ret = fc.showOpenDialog(thisFrame);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try {
+						views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
+											 fc.getStartTime(),
+											 fc.getLengthTime());
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null,
+													  "Could not load file",
+													  "Error",
+													  JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					thisFrame.relink();
+				}
+			}
+		});
 		JMenuItem export = new JMenuItem("Export...");
 		export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -207,6 +229,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 		menu.add(open);
+		menu.add(open_subset);
 		menu.add(export);
 		menu.add(export_subset);
 		menu.add(export_annos);
@@ -381,7 +404,8 @@ public class MainFrame extends JFrame {
 		lenText.setColumns(10);
 		lenText.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				long start = (Long)startText.getValue(); long len = (Long)lenText.getValue();
+				long start = (Long)startText.getValue(); 
+				long len = (Long)lenText.getValue();
 				for(int i = 0; i < graphs.size(); i++) {
 					((XYPlot)graphs.get(i).getPanel().getChart().getPlot()).getDomainAxis()
 																 .setAutoRange(true);

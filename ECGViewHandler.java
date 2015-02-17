@@ -46,6 +46,12 @@ public class ECGViewHandler {
 		history.reset();
 	}
 
+	public void loadFileSubset(String file, double start, double end) 
+			throws IOException {
+		model.readSubsetData(file, start, end);
+		history.reset();
+	}
+
 	public void writeDataCSV(String file) 
 			throws IOException {
 		model.writeDataCSV(file);

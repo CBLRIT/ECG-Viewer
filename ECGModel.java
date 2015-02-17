@@ -155,6 +155,7 @@ public class ECGModel {
 	 * @param start the time before the first sample in the subset
 	 * @param end the time after the last sample in the subset
 	 */
+	@Deprecated
 	public double[][][] subsetToArray(double start, double end) {
 		long s = System.currentTimeMillis();
 		double[][][] arr = new double[points.length][2][points[0].subset(start, end).size()];
@@ -289,9 +290,6 @@ public class ECGModel {
 
 		sampleFreq = file.getSampleInterval();
 
-	//	System.out.println(raw.get(raw.size()-1).getKey().toString() + ", " + raw.get(raw.size()-1).getValue().toString());
-	//	return;
-
 		for(int i = 0; i < raw.size(); i++) {
 			for(int j = 0; j < actualSize; j++) {
 				ECGDataSet[] temp;
@@ -332,23 +330,27 @@ public class ECGModel {
 				median = values.get(values.size() / 2);
 			}
 
-	/*		if (i == 4) {
-				printArrayList(points[i]);
-				System.out.println(values.toString());
-				System.out.println(median);
-			}
-	*/
-
-
 			for(int j = 0; j < points[i].size(); j++) {
 				points[i].getAt(j)[1] -= median;
 			}
-
-	//		System.out.println(i + ": " + points[i].toArray()[1][0]);
 		}
+	}
 
-	//	printArrayList(points[4]);
-	//	System.out.println(Arrays.toString(points[4].get(0)));
+	/**
+	 * readSubsetData - reads a subset of raw data in from a file
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 *
+	 * @param filename the name of the file to read
+	 * @param start the start time to read from
+	 * @param end the end time to read to
+	 */
+	public void readSubsetData(String filename, double start, double end) 
+			throws IOException, FileNotFoundException {
+		readData(filename);
+		for(int i = 0; i < points.length; i++) {
+			points[i] = points[i].subset(start, end);
+		}
 	}
 
 	/**
