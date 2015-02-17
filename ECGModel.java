@@ -156,6 +156,7 @@ public class ECGModel {
 	 * @param end the time after the last sample in the subset
 	 */
 	public double[][][] subsetToArray(double start, double end) {
+		long s = System.currentTimeMillis();
 		double[][][] arr = new double[points.length][2][points[0].subset(start, end).size()];
 		
 		for(int i = 0; i < points.length; i++) {
@@ -164,7 +165,8 @@ public class ECGModel {
 				arr[i][1][j] = points[i].subset(start, end).getAt(j)[1];
 			}
 		}
-
+		long e = System.currentTimeMillis();
+		System.out.println("Subset time (ms): " + (e - s));
 		return arr;
 	}
 
@@ -175,7 +177,7 @@ public class ECGModel {
 	 */
 	public void writeDataMat(String filename) 
 			throws IOException {
-		(new MatFile(filename)).write(this.toArray());
+		(new MatFile(filename)).write(points);
 	}
 
 	/**
@@ -186,7 +188,7 @@ public class ECGModel {
 	 */
 	public void writeDataCSV(String filename)
 			throws IOException {
-		(new CSVFile(filename)).write(this.toArray());
+		(new CSVFile(filename)).write(points);
 	}
 
 	/**
@@ -198,7 +200,9 @@ public class ECGModel {
 	 */
 	public void writeDataSubsetMat(String filename, double start, double end) 
 			throws IOException {
-		(new MatFile(filename)).write(this.subsetToArray(start, end));
+		(new MatFile(filename)).writeSubset(points, 
+											points[0].indexBefore(start), 
+											points[0].indexBefore(end));
 	}
 
 	/**
@@ -210,7 +214,9 @@ public class ECGModel {
 	 */
 	public void writeDataSubsetCSV(String filename, double start, double end)
 			throws IOException {
-		(new CSVFile(filename)).write(this.subsetToArray(start, end));
+		(new CSVFile(filename)).writeSubset(points, 
+											points[0].indexBefore(start), 
+											points[0].indexBefore(end));
 	}
 
 	/**

@@ -127,6 +127,32 @@ public class ECGDataSet {
 	}
 
 	/**
+	 * indexBefore - gets the index before a certain time
+	 *
+	 * @param time the time to find
+	 * @return the index of an element directly before that time
+	 */
+	public int indexBefore(double time) {
+		int min = 0;
+		int max = set.size() - 1;
+
+		while(max >= min) {
+			int mid = (max + min)/2;
+			if((set.get(mid)[0].compareTo(time) != 1) && 
+			   (set.get(mid+1)[0].compareTo(time) == 1)) {
+				return mid+1;
+			}
+			else if(set.get(mid)[0].compareTo(time) == -1) {
+				min = mid+1;
+			}
+			else {
+				max = mid-1;
+			}
+		}
+		return set.size() - 1;
+	}
+
+	/**
 	 * detrend - applies a polynomial fit detrending on the dataset
 	 *
 	 * @param detrendPolynomial the degree of the fitting polynomial

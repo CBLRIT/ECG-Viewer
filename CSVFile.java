@@ -32,7 +32,7 @@ public class CSVFile implements ECGOutputFile {
 	 *			2. x (0) or y (1)
 	 *			3. sample number
 	 */
-	public void write(double data[][][]) 
+	public void write(ECGDataSet[] data) 
 			throws IOException {
 		for(int i = 0; i < data.length; i++) {
 			out.write(",\t\t", 0, 3);
@@ -41,11 +41,41 @@ public class CSVFile implements ECGOutputFile {
 		out.write("\n", 0, 1);
 	
 		String s;
-		for(int i = 0; i < data[0][0].length; i++) {
-			s = String.format("%f", data[0][0][i]);
+		for(int i = 0; i < data[0].size(); i++) {
+			s = String.format("%f", data[0].getAt(i)[0]);
 			out.write("" + s, 0, s.length());
 			for(int j = 0; j < data.length; j++) {
-				s = String.format("%f", data[j][0][i]);
+				s = String.format("%f", data[j].getAt(i)[1]);
+				out.write(",\t" + s, 0, s.length() + 2);
+			}
+			out.write("\n", 0, 1);
+		}
+
+		out.flush();
+		out.close();
+	}
+
+	/**
+	 * writeSubset - writes part of the data to a file
+	 *
+	 * @param data the data to write. See write() for more detail
+	 * @param start the index to start at
+	 * @param end the index to end at
+	 */
+	public void writeSubset(ECGDataSet[] data, int start, int end)
+			throws IOException {
+		for(int i = 0; i < data.length; i++) {
+			out.write(",\t\t", 0, 3);
+			out.write("" + (i+4), 0, new Integer(i+4).toString().length());
+		}
+		out.write("\n", 0, 1);
+	
+		String s;
+		for(int i = start; i < end; i++) {
+			s = String.format("%f", data[0].getAt(i)[0]);
+			out.write("" + s, 0, s.length());
+			for(int j = 0; j < data.length; j++) {
+				s = String.format("%f", data[j].getAt(i)[1]);
 				out.write(",\t" + s, 0, s.length() + 2);
 			}
 			out.write("\n", 0, 1);

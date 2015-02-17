@@ -2,6 +2,7 @@
 public class MatTest {
 	public static void main(String args[]) 
 			throws Exception {
+			/**
 		double[][][] test = new double[][][] {
 												{ {1.1, 2.2, 3.3},
 												  {4.4, 5.5, 6.6} },
@@ -11,5 +12,6 @@ public class MatTest {
 
 		MatFile m = new MatFile("test.mat");
 		m.write(test);
+		*/
 	}
 }

@@ -14,5 +14,15 @@ public interface ECGOutputFile {
 	 *
 	 * @param data the data to write
 	 */
-	public void write(double[][][] data) throws IOException;
+	public void write(ECGDataSet[] data) throws IOException;
+
+	/**
+	 * writeSubset - writes part of the data
+	 * @throws IOException when an IOException occurs
+	 *
+	 * @param data the data to write
+	 * @param start the index to start at
+	 * @param end the index to end at
+	 */
+	public void writeSubset(ECGDataSet[] data, int start, int end) throws IOException;
 }
