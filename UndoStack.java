@@ -101,7 +101,7 @@ import java.util.Stack;
 	 * print - prints a string representation of the stacks
 	 */
 	public void print() {
-		System.out.println("Undo stack: " + undoStack.toString());
+		System.out.println("\nUndo stack: " + undoStack.toString());
 		System.out.println("Redo stack: " + redoStack.toString());
 	}
 }

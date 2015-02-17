@@ -43,6 +43,7 @@ public class ECGViewHandler {
 	public void loadFile(String file) 
 			throws IOException {
 		model.readData(file);
+		history.reset();
 	}
 
 	public void writeDataCSV(String file) 
@@ -170,6 +171,7 @@ public class ECGViewHandler {
 	}
 
 	public void undo() {
+		this.message = history.peekUndo().getMessage();
 		Change<ECGModel, String> c = history.undo(
 				new Change<ECGModel, String>(this.model, this.message));
 		this.model = c.getData();
@@ -177,6 +179,7 @@ public class ECGViewHandler {
 	}
 
 	public void redo() {
+		this.message = history.peekRedo().getMessage();
 		Change<ECGModel, String> c = history.redo(
 				new Change<ECGModel, String>(this.model, this.message));
 		this.model = c.getData();

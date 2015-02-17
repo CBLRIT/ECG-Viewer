@@ -23,7 +23,7 @@
 	}
 
 	public String toString() {
-		return message.toString() + "\n";
+		return message.toString();
 	}
  }
 
