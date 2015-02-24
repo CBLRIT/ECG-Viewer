@@ -150,6 +150,46 @@ public class Filters {
 		}
 	}
 
+	/**
+	 * butterworthfilt - butterworth filter using bilinear transformation
+	 *
+	 * @param set the dataset to filter
+	 * @param mode the mode (low pass, high pass, band pass) to use
+	 * @param rate the sampling frequency
+	 * @param freq the cutoff frequency
+	 * @param gain the gain of the filter (dB)
+	 * @param n the order of the filter
+	 */
+	public static void butterworthfilt(List<Double[]> set,
+									   int mode,
+									   double rate,
+									   double freq,
+									   double gain,
+									   int n) {
+		double T = 1.0/rate; //sampling period
+		double wd = 2*Math.PI * freq;
+		double wc = 2.0/T * Math.tan(wd*T/2.0);
+
+		//generate butterworth coefficients
+		int upperBound = n/2; //even=n/2 odd=(n-1)/2 -> Wooo Integer Division!
+		double[] coeffs;
+		if(n % 2 == 0) { //even
+			coeffs = new double[]{wc};
+		} else { //odd 
+			coeffs = new double[]{1,wc};
+		}
+		int k = 1;
+		do {
+			coeffs = convolve(coeffs, 
+							  new double[]{1, 
+							  			   -2.0*Math.cos((2.0*k+n-1.0)/(2.0*n) * Math.PI), 
+										   wc});
+			k++;
+		} while(k <= upperBound);
+
+		
+	}
+
 	private static int findNextLargestPower2(int n) {
 		if(n < 0) {
 			return 0;
@@ -173,5 +213,20 @@ public class Filters {
 			ret[1][j] = set.get(j)[1];
 		}
 		return ret;
+	}
+
+	private static double[] convolve(double[] a1, double[] a2) {
+		double[] out = new double[a1.length + a2.length - 1];
+		double[] lower = (a1.length<a2.length)?a1:a2;
+		double[] higher = (lower == a1)?a2:a1;
+		for(int i = 0; i < out.length; i++) {
+			for(int j = 0; j < lower.length; j++) {
+				if(i < j || i-j >= higher.length) {
+					continue;
+				}
+				out[i] += lower[j] * higher[i-j];
+			}
+		}
+		return out;
 	}
 }
