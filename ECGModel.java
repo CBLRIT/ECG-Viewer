@@ -440,6 +440,13 @@ public class ECGModel {
 			case 6:
 				points[index].constofffilt((double)params[0]);
 				break;
+			case 7:
+				points[index].butterworthfilt((int)params[0],
+											  sampleFreq,
+											  (double)params[1],
+											  (double)params[2],
+											  (int)params[3]);
+				break;
 			default:
 				return;
 		}

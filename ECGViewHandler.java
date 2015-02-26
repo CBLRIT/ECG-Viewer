@@ -141,6 +141,13 @@ public class ECGViewHandler {
 			case 6:
 				data.constofffilt((double)params[0]);
 				break;
+			case 7:
+				data.butterworthfilt((int)params[0],
+									 model.getSamplePerSecond(),
+									 (double)params[1],
+									 (double)params[2],
+								 	 (int)params[3]);
+				break;
 			default:
 				break;
 		}

@@ -217,4 +217,17 @@ public class ECGDataSet {
 	public void constofffilt(double offset) {
 		Filters.constofffilt(set, offset);
 	}
+
+	/**
+	 * butterworthfilt - applies a butterworth filter to the dataset
+	 *
+	 * @param mode lpf, hpf, bpf
+	 * @param rate the sample rate
+	 * @param freq the cutoff frequency
+	 * @param gain the signal gain
+	 * @param order the order of the butterworth filter
+	 */
+	public void butterworthfilt(int mode, double rate, double freq, double gain, int order) {
+		Filters.butterworthfilt(set, mode, rate, freq, gain, order);
+	}
 }

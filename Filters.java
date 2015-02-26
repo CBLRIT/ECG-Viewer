@@ -168,26 +168,87 @@ public class Filters {
 									   int n) {
 		double T = 1.0/rate; //sampling period
 		double wd = 2*Math.PI * freq;
-		double wc = 2.0/T * Math.tan(wd*T/2.0);
+		double wc = /*2.0/T **/ Math.tan(wd*T/2.0);
+		double wc2 = wc*wc;
 
 		//generate butterworth coefficients
 		int upperBound = n/2; //even=n/2 odd=(n-1)/2 -> Wooo Integer Division!
 		double[] coeffs;
 		if(n % 2 == 0) { //even
-			coeffs = new double[]{wc};
+			coeffs = new double[]{1};
 		} else { //odd 
 			coeffs = new double[]{1,wc};
 		}
 		int k = 1;
 		do {
+		//see https://en.wikipedia.org/wiki/Butterworth_filter#Normalized_Butterworth_polynomials
 			coeffs = convolve(coeffs, 
 							  new double[]{1, 
-							  			   -2.0*Math.cos((2.0*k+n-1.0)/(2.0*n) * Math.PI), 
-										   wc});
+							  			   wc*-2.0*Math.cos((2.0*k+n-1.0)/(2.0*n) * Math.PI), 
+										   wc2});
 			k++;
 		} while(k <= upperBound);
-
 		
+		//math stuff, see: http://www.robots.ox.ac.uk/~sjrob/Teaching/SP/l6.pdf section 6.4.1
+		double[][] metaCoeffs = new double[coeffs.length][coeffs.length];
+		double[] num = new double[]{1, -1};
+		double[] denom = new double[]{1, 1};
+		double[] denomPower = new double[]{1};
+		for(int i = 0; i < coeffs.length; i++) {
+			double[] numPower = new double[]{1};
+			for(int j = 0; j < coeffs.length-i-1; j++) {
+				numPower = convolve(num, numPower);
+			}
+			metaCoeffs[i] = convolve(numPower, denomPower);
+			metaCoeffs[i] = convolve(metaCoeffs[i], new double[]{coeffs[i]});
+			if(coeffs.length != i+1) {
+				denomPower = convolve(denomPower, denom);
+			}
+		}
+		
+		//sum columns
+		for(int i = 0; i < metaCoeffs[0].length; i++) {
+			coeffs[i] = 0;
+			for(int j = 0; j < metaCoeffs.length; j++) {
+				coeffs[i] += metaCoeffs[j][i];
+			}
+		}
+
+		//normalize denominator
+		double norm = coeffs[0];
+		wc2 /= norm;
+		for(int i = 0; i < coeffs.length; i++) {
+			coeffs[i] /= norm;
+		}
+
+		System.out.println(java.util.Arrays.toString(denomPower));
+
+		double[] diffCoeffs = new double[denomPower.length + coeffs.length - 1];
+		int i = 0;
+		for(; i < denomPower.length; i++) {
+			diffCoeffs[i] = denomPower[i] * wc2;
+		}
+		for(; i < coeffs.length-1+denomPower.length; i++) {
+			diffCoeffs[i] = 0-(coeffs[i-denomPower.length+1]);
+		}
+		//finally have difference equation, apply to dataset
+		ArrayList<Double[]> prev = new ArrayList<Double[]>();
+		for(int j = 0; j < set.size(); j++) {
+			Double[] point = set.get(j);
+			prev.add(point);
+			double newVal = 0;
+			//diffCoeffs will always be odd
+			for(k = 0; k < diffCoeffs.length/2+1 && k < prev.size(); k++) {
+				newVal += diffCoeffs[k]*prev.get(k)[0];
+			}
+			for(k = 1; k < diffCoeffs.length/2 && k < prev.size(); k++) {
+				newVal += diffCoeffs[diffCoeffs.length/2 + k]*prev.get(k)[1];
+			}
+			if(prev.size() > n+1) {
+				prev.remove(0);
+			}
+			set.set(j, new Double[]{set.get(j)[0], newVal});
+		}
 	}
 
 	private static int findNextLargestPower2(int n) {
