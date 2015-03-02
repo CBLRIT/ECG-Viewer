@@ -444,8 +444,7 @@ public class ECGModel {
 				points[index].butterworthfilt((int)params[0],
 											  sampleFreq,
 											  (double)params[1],
-											  (double)params[2],
-											  (int)params[3]);
+											  (int)params[2]);
 				break;
 			default:
 				return;

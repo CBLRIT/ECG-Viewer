@@ -157,14 +157,12 @@ public class Filters {
 	 * @param mode the mode (low pass, high pass, band pass) to use
 	 * @param rate the sampling frequency
 	 * @param freq the cutoff frequency
-	 * @param gain the gain of the filter (dB)
 	 * @param n the order of the filter
 	 */
 	public static void butterworthfilt(List<Double[]> set,
 									   int mode,
 									   double rate,
 									   double freq,
-									   double gain,
 									   int n) {
 		double T = 1.0/rate; //sampling period
 		double wd = 2*Math.PI * freq;
@@ -220,8 +218,6 @@ public class Filters {
 		for(int i = 0; i < coeffs.length; i++) {
 			coeffs[i] /= norm;
 		}
-
-		System.out.println(java.util.Arrays.toString(denomPower));
 
 		double[] diffCoeffs = new double[denomPower.length + coeffs.length - 1];
 		int i = 0;

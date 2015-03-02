@@ -221,6 +221,20 @@ public class ChartFrame extends JFrame {
 				thisFrame.view.revalidate();
 			}
 		});
+		JMenuItem filter_butter = new JMenuItem("Butterworth");
+		filter_butter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ButterOptionDialog dialog = new ButterOptionDialog(thisFrame,
+																   "Butterworth",
+																   true,
+																   thisFrame.handler,
+																   thisFrame.index);
+				if(dialog.accepted()) {
+					handler.applyFilter(dialog, thisFrame.index);
+				}
+				thisFrame.view.revalidate();
+			}
+		});
 
 		filter.add(filter_detrend);
 		filter.add(filter_constant);
@@ -230,6 +244,7 @@ public class ChartFrame extends JFrame {
 		filter.add(filter_ffthigh);
 		filter.add(filter_low);
 		filter.add(filter_wave);
+		filter.add(filter_butter);
 		
 		menu.add(filter);
 

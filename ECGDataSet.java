@@ -227,7 +227,7 @@ public class ECGDataSet {
 	 * @param gain the signal gain
 	 * @param order the order of the butterworth filter
 	 */
-	public void butterworthfilt(int mode, double rate, double freq, double gain, int order) {
-		Filters.butterworthfilt(set, mode, rate, freq, gain, order);
+	public void butterworthfilt(int mode, double rate, double freq, int order) {
+		Filters.butterworthfilt(set, mode, rate, freq, order);
 	}
 }
