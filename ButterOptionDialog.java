@@ -69,7 +69,7 @@ public class ButterOptionDialog extends FilterDialog {
 		controls.add(new JLabel("Frequency Threshold"), labels);
 		final JLabel leftNum = new JLabel("60.0");
 		controls.add(leftNum, values);
-		final JSlider leftSlide = new JSlider(2000, 13000, 6000);
+		final JSlider leftSlide = new JSlider(2000, 200000, 6000);
 		final JSlider orderSlide = new JSlider(1, 10, 2);
 		leftSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {

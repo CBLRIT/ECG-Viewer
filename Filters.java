@@ -219,6 +219,8 @@ public class Filters {
 			coeffs[i] /= norm;
 		}
 
+//PROBLEM
+		/*
 		double[] diffCoeffs = new double[denomPower.length + coeffs.length - 1];
 		int i = 0;
 		for(; i < denomPower.length; i++) {
@@ -227,6 +229,9 @@ public class Filters {
 		for(; i < coeffs.length-1+denomPower.length; i++) {
 			diffCoeffs[i] = 0-(coeffs[i-denomPower.length+1]);
 		}
+		System.out.println("difCoeffs " + java.util.Arrays.toString(diffCoeffs));
+		*/
+//END PROBLEM
 		//finally have difference equation, apply to dataset
 		ArrayList<Double[]> prev = new ArrayList<Double[]>();
 		for(int j = 0; j < set.size(); j++) {
@@ -234,16 +239,18 @@ public class Filters {
 			prev.add(point);
 			double newVal = 0;
 			//diffCoeffs will always be odd
-			for(k = 0; k < diffCoeffs.length/2+1 && k < prev.size(); k++) {
-				newVal += diffCoeffs[k]*prev.get(k)[0];
+			for(k = 0; k < denomPower.length && k < prev.size(); k++) {
+				newVal += denomPower[k]*wc2*prev.get(k)[0];
 			}
-			for(k = 1; k < diffCoeffs.length/2 && k < prev.size(); k++) {
-				newVal += diffCoeffs[diffCoeffs.length/2 + k]*prev.get(k)[1];
+			double denomVal = 1.0;
+			for(k = 1; k < coeffs.length && k < prev.size(); k++) {
+				newVal -= coeffs[k]*prev.get(k)[1];
 			}
+			newVal /= denomVal;
 			if(prev.size() > n+1) {
 				prev.remove(0);
 			}
-			set.set(j, new Double[]{set.get(j)[0], newVal});
+			set.set(j, new Double[]{set.get(j)[0], set.get(j)[1] - newVal/(set.get(j)[0]==0.0?1:set.get(j)[0])});
 		}
 	}
 
