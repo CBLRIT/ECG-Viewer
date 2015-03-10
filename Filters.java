@@ -164,9 +164,10 @@ public class Filters {
 									   double rate,
 									   double freq,
 									   int n) {
+									   /*
 		double T = 1.0/rate; //sampling period
 		double wd = 2*Math.PI * freq;
-		double wc = /*2.0/T **/ Math.tan(wd*T/2.0);
+		double wc = /*2.0/T **//* Math.tan(wd*T/2.0);
 		double wc2 = wc*wc;
 
 		//generate butterworth coefficients
@@ -233,6 +234,7 @@ public class Filters {
 		*/
 //END PROBLEM
 		//finally have difference equation, apply to dataset
+		/*
 		ArrayList<Double[]> prev = new ArrayList<Double[]>();
 		for(int j = 0; j < set.size(); j++) {
 			Double[] point = set.get(j);
@@ -251,6 +253,35 @@ public class Filters {
 				prev.remove(0);
 			}
 			set.set(j, new Double[]{set.get(j)[0], set.get(j)[1] - newVal/(set.get(j)[0]==0.0?1:set.get(j)[0])});
+		}
+			*/
+//other soln
+		double a = Math.tan(Math.PI*freq/rate);
+		double a2 = a*a;
+		double[] A  = new double[n];
+		double[] d1 = new double[n];
+		double[] d2 = new double[n];
+		double[] w0 = new double[n];
+		double[] w1 = new double[n];
+		double[] w2 = new double[n];
+
+		for(int i = 0; i < n; i++) {
+			double r = Math.sin(Math.PI*(2.0*i+1.0)/(4.0*n));
+			double s = a2 + 2.0*a*r + 1.0;
+			A[i] = a2/s;
+			d1[i] = 2.0*(1-a2)/s;
+			d2[i] = -(a2-2.0*a*r + 1.0)/s;
+		}
+
+		for(int i = 0; i < set.size(); i++) {
+			double x = 0;
+			for(int j = 0; j < n; j++) {
+				w0[j] = d1[j]*w1[j] + d2[j]*w2[j] + set.get(i)[1];
+				x = A[j]*(w0[j] + 2.0*w1[j] + w2[j]);
+				w2[j] = w1[j];
+				w1[j] = w0[j];
+			}
+			set.set(i, new Double[]{set.get(i)[0], x});
 		}
 	}
 
