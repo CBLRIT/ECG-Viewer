@@ -18,5 +18,7 @@ public abstract class ECGFile {
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points);
 					
 	public abstract double getSampleInterval();
+
+	public abstract int[][] getLayout();
 }
 

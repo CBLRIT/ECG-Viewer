@@ -17,7 +17,8 @@ import java.util.Arrays;
 public class DATFile extends ECGFile {
 	private final int MAX_NL = 282;
 
-	public final int leadLayout[][] =  {
+	public int[][] getLayout() {
+		return new int[][]{
 		{-1, -1}, // // first two are junk
 		{-1, -1}, // //
 		{-1, -1}, // 1-3 unhelpful (limb leads)
@@ -44,57 +45,48 @@ public class DATFile extends ECGFile {
 		{0, 16},	{1, 16},	{2, 16},	{3, 16},	{4, 16},	{5, 16},	{6, 16},//109-
 					{7, 16},															//	 -116
 		{1, 17},	{2, 17},	{3, 17},	{4, 17},	{5, 17},	{6, 17},	{7, 17},//117-123
-	};
+		};
 
-	public class fileinfo { //struct
-		public double sint; // msec between samples in 1 lead
-		public long[] ifbuf; // modes 4-9: 72192, 78848, 92160, 118784, 0, 157696
-		public short ifbufh; //pointer
-		public byte[] hdrbuf; //latest data record header
-		
-		public RandomAccessFile fh;
-		public int recstride;
-		public int drecsizeb;
-		public int varian;
-		public int grid2lead;	//pointer
-		public int ir3sz;		//size of 3rd header
-		public int icdsz;		//size of channel desc in 2nd header
-		public int ir2sz;		//size of 2nd header
-		public int idrsz;		//size of data recs
-		public int jsamp;		//#samples/second/lead
-		public int nbits;		//#bits per sample
-		public int nspcpr;		//#samples/channel/data record
-		public int nch;		//#channels
-		public int frecsz;
-
-		public int ifendn;
-		public int ifholo;
-
-		public int plot_newmag;
-
-		public int[] mcalib;	//counts per millivolt
-		public byte[] header_badleads;
-
-		public int ifbps;
-		public int ifbpr;
-		public int ifsbs;
-		public int ifcrsk;
-		public int ifbips;
-		public int ifnhdr;
-
-		public double secs;
-		public double secskip;
-		public int numtuples;
-
-		public fileinfo() {
-			hdrbuf = new byte[32];
-			ifbuf = new long[158000];
-			mcalib = new int[MAX_NL];
-			header_badleads = new byte[MAX_NL];
-		}
 	}
 
-	public fileinfo finfo;
+	public double sint; // msec between samples in 1 lead
+	public long[] ifbuf = new long[158000]; // modes 4-9: 72192, 78848, 92160, 118784, 0, 157696
+	public short ifbufh; //pointer
+	public byte[] hdrbuf = new byte[32]; //latest data record header
+	
+	public RandomAccessFile fh;
+	public int recstride;
+	public int drecsizeb;
+	public int varian;
+	public int grid2lead;	//pointer
+	public int ir3sz;		//size of 3rd header
+	public int icdsz;		//size of channel desc in 2nd header
+	public int ir2sz;		//size of 2nd header
+	public int idrsz;		//size of data recs
+	public int jsamp;		//#samples/second/lead
+	public int nbits;		//#bits per sample
+	public int nspcpr;		//#samples/channel/data record
+	public int nch;		//#channels
+	public int frecsz;
+
+	public int ifendn;
+	public int ifholo;
+
+	public int plot_newmag;
+
+	public int[] mcalib = new int[MAX_NL];	//counts per millivolt
+	public byte[] header_badleads = new byte[MAX_NL];
+
+	public int ifbps;
+	public int ifbpr;
+	public int ifsbs;
+	public int ifcrsk;
+	public int ifbips;
+	public int ifnhdr;
+
+	public double secs;
+	public double secskip;
+	public int numtuples;
 
 	/**
 	 * read - opens a file and reads it
@@ -106,14 +98,12 @@ public class DATFile extends ECGFile {
 	public int read(String fileName, 
 					int numLeads, 
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) {
-		finfo = new fileinfo();
-		
 		if(numLeads < 0) {
 			numLeads = 8;
 		}
 		 
 		try {
-			finfo.fh = new RandomAccessFile(fileName, "r");
+			fh = new RandomAccessFile(fileName, "r");
 		} catch (FileNotFoundException e) {
 			System.err.println("Open error on " + fileName + "\n" + e.getMessage());
 			return -1;
@@ -121,8 +111,8 @@ public class DATFile extends ECGFile {
 
 		int numMSecs;
 		try {
-			numMSecs = (int)((double)finfo.fh.length()/(double)1024/1.115);
-			//System.out.println(finfo.fh.length());
+			numMSecs = (int)((double)fh.length()/(double)1024/1.115);
+			//System.out.println(fh.length());
 		} catch (IOException e) {
 			System.out.println("Length error\n" + e.getMessage());
 			return -3;
@@ -131,45 +121,45 @@ public class DATFile extends ECGFile {
 			numMSecs = 100;
 		}
 
-		if(readBspmHeaders(finfo) != 0) {
+		if(readBspmHeaders() != 0) {
 			return -2;
 		}
 
-		if(numLeads > finfo.nch) {
-			numLeads = finfo.nch;
+		if(numLeads > nch) {
+			numLeads = nch;
 		}
 
-		int tuplesPerRecord = finfo.nspcpr;
+		int tuplesPerRecord = nspcpr;
 
-		int[] samps = new int[finfo.frecsz-32];
+		int[] samps = new int[frecsz-32];
 		int tupleNum = 0;
 
 		int i;
-		for(int recordNum = finfo.ifnhdr+1; ; recordNum++) {
-			if(readBspmRecord(finfo, recordNum, samps) < 0) {
+		for(int recordNum = ifnhdr+1; ; recordNum++) {
+			if(readBspmRecord(recordNum, samps) < 0) {
 				break;
 			}
 
 			for(i = 0; i < tuplesPerRecord; i++) {
 				//printing stuff here
-				//System.out.printf("%10d %10.3f ms:", tupleNum, (double)tupleNum*finfo.sint);
+				//System.out.printf("%10d %10.3f ms:", tupleNum, (double)tupleNum*sint);
 				points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
-					(double)tupleNum*finfo.sint, new ArrayList<Double>()));
+					(double)tupleNum*sint, new ArrayList<Double>()));
 
 				for(int j = 0; j < numLeads; j++) {
 					if (j < 2) {
-						//System.out.printf(" %8x", samps[8+i*finfo.nch+j]);
-						points.get(tupleNum).getValue().add(samps[8+i*finfo.nch+j]*0.125);
+						//System.out.printf(" %8x", samps[8+i*nch+j]);
+						points.get(tupleNum).getValue().add(samps[8+i*nch+j]*0.125);
 					} else {
-						//System.out.printf(" %8d", samps[8+i*finfo.nch+j]>>8);
-						points.get(tupleNum).getValue().add((samps[8+i*finfo.nch+j]>>8)*0.125);
+						//System.out.printf(" %8d", samps[8+i*nch+j]>>8);
+						points.get(tupleNum).getValue().add((samps[8+i*nch+j]>>8)*0.125);
 					}
 				}
 
 				//System.out.println("");
 
 				tupleNum++;
-				if(tupleNum*finfo.sint > numMSecs) {
+				if(tupleNum*sint > numMSecs) {
 					break;
 				}
 			}
@@ -180,18 +170,18 @@ public class DATFile extends ECGFile {
 		}
 
 		try { 
-			finfo.fh.close();
+			fh.close();
 		} catch (IOException e) {
 			System.err.println("Error on close");
 		}
 
-	//	System.out.println(Arrays.toString(finfo.header_badleads));
+	//	System.out.println(Arrays.toString(header_badleads));
 
 		return 0;
 	}
 
 	public double getSampleInterval() {
-		return finfo.sint;
+		return sint;
 	}
 
 	private ByteBuffer longArrToBytes(long[] arr) {
@@ -202,22 +192,22 @@ public class DATFile extends ECGFile {
 		return bb;
 	}
 
-	private int readBspmHeaders(fileinfo finfo) {
+	private int readBspmHeaders() {
 		//need to write this back later - also USE java.nio.Buffer SUBCLASSES
 		//not really, not used anywhere else, not even sure why it's in the structure
-		//ByteBuffer ibuf = longArrToBytes(finfo.ifbuf);
+		//ByteBuffer ibuf = longArrToBytes(ifbuf);
 		ByteBuffer ibuf = ByteBuffer.allocate(158000 * 8);
 		byte[] wbuf;
 		int nbread;
 		try {
-			finfo.fh.seek(0);
+			fh.seek(0);
 		} catch (IOException e) {
 			System.err.println("Seek error (readBspmHeaders)\n" + e.getMessage());
 			return -1;
 		}
 
 		try {
-			nbread = (int)finfo.fh.read(ibuf.array(), 0, 32760);
+			nbread = (int)fh.read(ibuf.array(), 0, 32760);
 			ibuf.rewind();
 		} catch (IOException e) {
 			System.err.println("Read error (readBspmHeaders)\n" + e.getMessage());
@@ -230,39 +220,39 @@ public class DATFile extends ECGFile {
 		}
 
 		short shortp = ibuf.getShort();
-		finfo.ifendn = ((shortp & 255) == (short)'H') ? 0 : 1;
+		ifendn = ((shortp & 255) == (short)'H') ? 0 : 1;
 		try {
-			finfo.ifholo = "IBM2".equals(new String(ibuf.array(), 550, 4, "US-ASCII").trim()) ? 1 : 0;
+			ifholo = "IBM2".equals(new String(ibuf.array(), 550, 4, "US-ASCII").trim()) ? 1 : 0;
 
-			finfo.ir3sz = Integer.parseInt(new String(ibuf.array(), 568, 6, "US-ASCII").trim());
-			finfo.icdsz = Integer.parseInt(new String(ibuf.array(), 566, 2, "US-ASCII").trim());
+			ir3sz = Integer.parseInt(new String(ibuf.array(), 568, 6, "US-ASCII").trim());
+			icdsz = Integer.parseInt(new String(ibuf.array(), 566, 2, "US-ASCII").trim());
 
-			finfo.ir2sz = Integer.parseInt(new String(ibuf.array(), 560, 6, "US-ASCII").trim());
-			finfo.idrsz = Integer.parseInt(new String(ibuf.array(), 554, 6, "US-ASCII").trim());
+			ir2sz = Integer.parseInt(new String(ibuf.array(), 560, 6, "US-ASCII").trim());
+			idrsz = Integer.parseInt(new String(ibuf.array(), 554, 6, "US-ASCII").trim());
 			int is2s = Integer.parseInt(new String(ibuf.array(), 412, 6, "US-ASCII").trim());
 		
 			switch(is2s) {
 				case 488:
-					finfo.jsamp = 2048;
+					jsamp = 2048;
 					break;
 				case 244:
-					finfo.jsamp = 4096;
+					jsamp = 4096;
 					break;
 				case 122:
-					finfo.jsamp = 8192;
+					jsamp = 8192;
 					break;
 				case 61:
-					finfo.jsamp = 16384;
+					jsamp = 16384;
 					break;
 				default:
-					finfo.jsamp = 10000000/is2s;
+					jsamp = 10000000/is2s;
 					break;
 			}
 
-			finfo.nbits = Integer.parseInt(new String(ibuf.array(), 410, 2, "US-ASCII").trim());
-			finfo.nspcpr = Integer.parseInt(new String(ibuf.array(), 406, 4, "US-ASCII").trim());
-			finfo.nch = Integer.parseInt(new String(ibuf.array(), 402, 4, "US-ASCII").trim());
-			finfo.sint = 1000.0/(double)finfo.jsamp;
+			nbits = Integer.parseInt(new String(ibuf.array(), 410, 2, "US-ASCII").trim());
+			nspcpr = Integer.parseInt(new String(ibuf.array(), 406, 4, "US-ASCII").trim());
+			nch = Integer.parseInt(new String(ibuf.array(), 402, 4, "US-ASCII").trim());
+			sint = 1000.0/(double)jsamp;
 		} catch (UnsupportedEncodingException e) {
 			System.err.println("Wow, it looks like java doesn't support \"US-ASCII\" encoding");
 			return -1;
@@ -280,14 +270,14 @@ public class DATFile extends ECGFile {
 		if(i >= nbread-1) {
 			for(h2off+=nbread-1; h2off<1000000; h2off+=nbread-1) {
 				try {
-					finfo.fh.seek(h2off);
+					fh.seek(h2off);
 				} catch (IOException e) {
 					System.err.println("Seek error 2 (readBspmHeaders)\n" + e.getMessage());
 					return -1;
 				}
 
 				try {
-					nbread = (int)finfo.fh.read(ibuf.array(), 0, 32760);
+					nbread = (int)fh.read(ibuf.array(), 0, 32760);
 					ibuf.rewind();
 				} catch (IOException e) {
 					System.err.println("Read error 2 (readBspmHeaders)\n" + e.getMessage());
@@ -307,14 +297,14 @@ public class DATFile extends ECGFile {
 		i += h2off;
 
 		try {
-			finfo.fh.seek(finfo.frecsz=i);
+			fh.seek(frecsz=i);
 		} catch(IOException e) {
 			System.err.println("Seek error 3 (readBspmHeaders)");
 			return -1;
 		}
 
 		try {
-			nbread = (int)finfo.fh.read(ibuf.array(), 0, 32+finfo.icdsz*finfo.nch);
+			nbread = (int)fh.read(ibuf.array(), 0, 32+icdsz*nch);
 			ibuf.rewind();
 		} catch (IOException e) {
 			System.err.println("Read error 3 (readBspmHeaders)");
@@ -327,9 +317,9 @@ public class DATFile extends ECGFile {
 		}
 
 		int firstu = 9999;
-		int icdoff = 32 - finfo.icdsz;
-		for(int j = 0; j < finfo.nch; j++) {
-			icdoff += finfo.icdsz;
+		int icdoff = 32 - icdsz;
+		for(int j = 0; j < nch; j++) {
+			icdoff += icdsz;
 			double resol;
 			try {
 				resol = Double.parseDouble(
@@ -340,49 +330,49 @@ public class DATFile extends ECGFile {
 				return -1;
 			}
 			long i1mv = (long)(1.0/(resol*1000.0) + .5);
-			finfo.mcalib[j] = (int)i1mv;
-			finfo.header_badleads[j] = ibuf.get(icdoff+31);
+			mcalib[j] = (int)i1mv;
+			header_badleads[j] = ibuf.get(icdoff+31);
 
-			if((finfo.header_badleads[j] == 'U') && (j < firstu)) {
+			if((header_badleads[j] == 'U') && (j < firstu)) {
 				firstu = j;
 			}
 		}
 
-		finfo.ifbps = 4;
-		finfo.ifbpr = finfo.nspcpr * finfo.nch * finfo.ifbps + 32;
-		finfo.ifbips = 24;
-		finfo.ifnhdr = 2;
-		if(finfo.ir3sz > 0) {
-			finfo.ifnhdr = 3;
+		ifbps = 4;
+		ifbpr = nspcpr * nch * ifbps + 32;
+		ifbips = 24;
+		ifnhdr = 2;
+		if(ir3sz > 0) {
+			ifnhdr = 3;
 		}
 
 		long fs3;
 		try {
-			fs3 = finfo.fh.length();
+			fs3 = fh.length();
 		} catch (IOException e) {
 			System.err.println("Length error\n" + e.getMessage());
 			return -1;
 		}
 
-		finfo.numtuples = (int)(fs3 / finfo.frecsz - finfo.ifnhdr) * finfo.nspcpr;
-		finfo.secs = (double)(finfo.numtuples) / (double)(finfo.jsamp);
+		numtuples = (int)(fs3 / frecsz - ifnhdr) * nspcpr;
+		secs = (double)(numtuples) / (double)(jsamp);
 		
 		return 0;
 	}
 
-	private int readBspmRecord(fileinfo finfo, int recordNum, int[] samps) {
+	private int readBspmRecord(int recordNum, int[] samps) {
 		try {
-		//	System.out.println("("+finfo.ifnhdr+"+"+recordNum+"-1)*"+finfo.frecsz+"="
-		//						+(finfo.ifnhdr+recordNum-1)*finfo.frecsz);
-			finfo.fh.seek((finfo.ifnhdr+recordNum-1)*finfo.frecsz);
+		//	System.out.println("("+ifnhdr+"+"+recordNum+"-1)*"+frecsz+"="
+		//						+(ifnhdr+recordNum-1)*frecsz);
+			fh.seek((ifnhdr+recordNum-1)*frecsz);
 		} catch (IOException e) {
 			System.err.println("Seek error (readBspmRecord)\n" + e.getMessage());
 			return -1;
 		}
 
 		try {
-			for (int bytes = 0; bytes < finfo.frecsz / 4; bytes++) {
-				samps[bytes] = Integer.reverseBytes(finfo.fh.readInt());
+			for (int bytes = 0; bytes < frecsz / 4; bytes++) {
+				samps[bytes] = Integer.reverseBytes(fh.readInt());
 			}
 		} catch (EOFException e) {
 		//	System.err.println("EOF");
@@ -394,10 +384,5 @@ public class DATFile extends ECGFile {
 
 		return 0;
 	}
-
-	public int[][] getLayout() {
-		return null;
-	}
 }
-
 

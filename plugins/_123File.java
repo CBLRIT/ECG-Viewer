@@ -14,7 +14,8 @@ import java.util.Arrays;
 public class _123File extends ECGFile {
 	private double sint;
 
-	public final int leadLayout[][] =  {
+	public int[][] getLayout() {
+		return new int[][]{
 		{-1, -1}, // // first two are junk
 		{-1, -1}, // //
 		{-1, -1}, // 1-3 unhelpful (limb leads)
@@ -41,7 +42,8 @@ public class _123File extends ECGFile {
 		{0, 16},	{1, 16},	{2, 16},	{3, 16},	{4, 16},	{5, 16},	{6, 16},//109-
 					{7, 16},															//	 -116
 		{1, 17},	{2, 17},	{3, 17},	{4, 17},	{5, 17},	{6, 17},	{7, 17},//117-123
-	};
+		};
+	}
 
 	/**
 	* read - opens a file and reads it
@@ -110,10 +112,6 @@ public class _123File extends ECGFile {
 
 	public double getSampleInterval() {
 		return sint;
-	}
-
-	public int[][] getLayout() {
-		return null;
 	}
 }
 
