@@ -17,6 +17,10 @@ import java.util.Arrays;
 public class DATFile extends ECGFile {
 	private final int MAX_NL = 282;
 
+	public String getExtension() {
+		return "dat";
+	}
+
 	public int[][] getLayout() {
 		return new int[][]{
 		{-1, -1}, // // first two are junk
@@ -91,16 +95,12 @@ public class DATFile extends ECGFile {
 	/**
 	 * read - opens a file and reads it
 	 * @param fileName the file to open
-	 * @param numLeads the number of leads, can be less than 0 (assumes default value of 8)
 	 * @param points (mutable) a place for data to be read into
 	 * @return 0 on success, failure otherwise 
 	 */
 	public int read(String fileName, 
-					int numLeads, 
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) {
-		if(numLeads < 0) {
-			numLeads = 8;
-		}
+		int numLeads = 154;
 		 
 		try {
 			fh = new RandomAccessFile(fileName, "r");

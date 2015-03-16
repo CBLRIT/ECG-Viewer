@@ -7,7 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import javax.swing.JOptionPane;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -17,10 +17,10 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 public class ECGFileManager {
-	private HashSet<Class<? extends ECGFile>> classes;
+	private HashMap<String, Class<? extends ECGFile>> classes;
 
 	public ECGFileManager() {
-		classes = new HashSet<Class<? extends ECGFile>>();
+		classes = new HashMap<String, Class<? extends ECGFile>>();
 	}
 
 	public void load() {
@@ -62,11 +62,16 @@ public class ECGFileManager {
 		try {
 			ClassLoader loader = new URLClassLoader(new URL[]{folder.toURI().toURL()});
 			for(int i = 0; i < classfiles.length; i++) {
+				Class<? extends ECGFile> _class = null;
 				try {
-					Class<? extends ECGFile> _class = loader.loadClass(classfiles[i].getName().substring(0, classfiles[i].getName().indexOf(".class"))).asSubclass(ECGFile.class);
-					classes.add(_class);
+					_class = loader.loadClass(classfiles[i].getName().substring(0, classfiles[i].getName().indexOf(".class"))).asSubclass(ECGFile.class);
+					classes.put(_class.newInstance().getExtension(), _class);
 				} catch (ClassNotFoundException e) {
 					JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (InstantiationException e) {
+					JOptionPane.showMessageDialog(null, "Could not instantiate object of type " + _class.getName(), "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (IllegalAccessException e) {
+					JOptionPane.showMessageDialog(null, "Could not access type " + _class.getName(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		} catch (MalformedURLException e) {
@@ -78,8 +83,29 @@ public class ECGFileManager {
 		return classes.toString();
 	}
 
-	/*public ECGFile getECGFile(String filename) {
+	public boolean isTypeSupported(String extension) {
+		return classes.keySet().contains(extension);
+	}
+
+	public ECGFile getECGFile(String filename) {
+		String[] splits = filename.split("\\.");
+		String extension = splits[splits.length-1];
 		
-	}*/
+		if(!isTypeSupported(extension)) {
+			//error condition here
+		}
+		ECGFile file;
+		Class c = classes.get(extension);
+		try {
+			file = (ECGFile)c.newInstance();
+		} catch (InstantiationException e) {
+			JOptionPane.showMessageDialog(null, "Could not instantiate object of type " + c.getName(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		} catch (IllegalAccessException e) {
+			JOptionPane.showMessageDialog(null, "Could not access type " + c.getName(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		return file;
+	}
 }
 

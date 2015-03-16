@@ -14,11 +14,13 @@ import java.util.Arrays;
  * @author Dakota Williams
  */
 public abstract class ECGFile {
-	public abstract int read(String fileName, int numLeads,
+	public abstract int read(String fileName,
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points);
 					
 	public abstract double getSampleInterval();
 
 	public abstract int[][] getLayout();
+
+	public abstract String getExtension();
 }
 

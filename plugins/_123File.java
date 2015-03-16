@@ -14,6 +14,10 @@ import java.util.Arrays;
 public class _123File extends ECGFile {
 	private double sint;
 
+	public String getExtension() {
+		return "123";
+	}
+
 	public int[][] getLayout() {
 		return new int[][]{
 		{-1, -1}, // // first two are junk
@@ -48,12 +52,12 @@ public class _123File extends ECGFile {
 	/**
 	* read - opens a file and reads it
 	* @param fileName the file to open
-	* @param numLeads the number of leads, can be less than 0 (assumes default value of 8)
 	* @param points (mutable) a place for data to be read into
 	* @return 0 on success, failure otherwise
 	*/
-	public int read(String fileName, int numLeads,
+	public int read(String fileName,
 			ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) {
+		int numLeads = 120;
 		BufferedReader reader;
 		try {
 			reader = new BufferedReader(new FileReader(fileName));
