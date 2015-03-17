@@ -1,5 +1,6 @@
 RnD/*
 *.swp
 *.class
+!plugins/*.class
 data/*
 ECGViewer/*

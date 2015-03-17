@@ -94,6 +94,14 @@ public class ECGViewHandler {
 		return model.getSamplesPerSecond();
 	}
 
+	public int[][] getLayout() {
+		return model.getLayout();
+	}
+
+	public int getOffset() {
+		return model.getOffset();
+	}
+
 	public ECGView getView(int i, boolean withLabels) {
 		return new ECGView(this, model.getDataset(i), i, ""+(i+4), withLabels);
 	}

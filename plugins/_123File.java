@@ -66,10 +66,6 @@ public class _123File extends ECGFile {
 			return -1;
 		}
 
-		if(numLeads < 0) {
-			numLeads = 8;
-		}
-
 		//loop over header info
 		String line;
 		try {

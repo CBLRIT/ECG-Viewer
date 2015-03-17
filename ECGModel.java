@@ -19,10 +19,10 @@ import java.util.Iterator;
  * @author Dakota Williams
  */
 public class ECGModel {
-	private ECGDataSet[] first2CrapLeads; //size 2
-	private ECGDataSet[] limbLeads; //size 3
-	private ECGDataSet[] points; //size 120; this one actually matters
-	private ECGDataSet[] mysteriousLeads; //size 5
+	private ECGDataSet[] ignoredLeads;
+	private ECGDataSet[] points;
+	private int layout[][];
+	private int dataOffset = 0;
 	private int actualSize = 130;
 	private double sampleFreq = 0;
 	private HashSet<Annotation> annotations;	
@@ -38,10 +38,9 @@ public class ECGModel {
 	 * Constructor - initializes the model
 	 */
 	public ECGModel() {
-		first2CrapLeads = new ECGDataSet[2];
-		limbLeads = new ECGDataSet[3];
-		points = new ECGDataSet[120];
-		mysteriousLeads = new ECGDataSet[5];
+		ignoredLeads = new ECGDataSet[]{};
+		points = new ECGDataSet[]{};
+		layout = new int[][]{};
 		annotations = new HashSet<Annotation>();
 		filePlugins = new ECGFileManager();
 		filePlugins.load();
@@ -57,12 +56,12 @@ public class ECGModel {
 
 		newModel.actualSize = this.actualSize;
 		newModel.sampleFreq = this.sampleFreq;
+		newModel.ignoredLeads = new ECGDataSet[this.ignoredLeads.length];
+		newModel.points = new ECGDataSet[this.points.length];
+		newModel.layout = new int[this.layout.length][this.layout[0].length];
 
-		for(int i = 0; i < this.first2CrapLeads.length; i++) {
-			newModel.first2CrapLeads[i] = (ECGDataSet)this.first2CrapLeads[i].clone();
-		}
-		for(int i = 0; i < this.limbLeads.length; i++) {
-			newModel.limbLeads[i] = (ECGDataSet)this.limbLeads[i].clone();
+		for(int i = 0; i < this.ignoredLeads.length; i++) {
+			newModel.ignoredLeads[i] = (ECGDataSet)this.ignoredLeads[i].clone();
 		}
 		for(int i = 0; i < this.points.length; i++) {
 			newModel.points[i] = (ECGDataSet)this.points[i].clone();
@@ -70,8 +69,8 @@ public class ECGModel {
 		for(Iterator<Annotation> i = this.annotations.iterator(); i.hasNext(); ) {
 			newModel.annotations.add(new Annotation(i.next()));
 		}
-		for(int i = 0; i < this.mysteriousLeads.length; i++) {
-			newModel.mysteriousLeads[i] = (ECGDataSet)this.mysteriousLeads[i].clone();
+		for(int i = 0; i < this.layout.length; i++) {
+			System.arraycopy(this.layout[i], 0, newModel.layout[i], 0, this.layout[0].length);
 		}
 
 		return newModel;
@@ -81,10 +80,10 @@ public class ECGModel {
 	 * clear - clears all datasets from the model
 	 */
 	public void clear() {
-		first2CrapLeads = new ECGDataSet[2];
-		limbLeads = new ECGDataSet[3];
-		points = new ECGDataSet[120];
-		mysteriousLeads = new ECGDataSet[5];
+		ignoredLeads = new ECGDataSet[]{};
+		points = new ECGDataSet[]{};
+		layout = new int[][]{};
+		dataOffset = 0;
 	}
 
 	/**
@@ -275,38 +274,59 @@ public class ECGModel {
 			throw new IOException("Not a supported file extension");
 		}
 
-		actualSize = 130;
 		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> raw
 			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>>();
 		int retval = file.read(filename, raw);
-		if(retval < 0) {
+		if(retval != 0) {
 			return;
 		}
+		int tempLayout[][] = file.getLayout();
+		ArrayList<int[]> found = new ArrayList<int[]>();
+		int numGoodLeads = 0;
+		int numIgnoreLeads = 0;
+		boolean stop = false;
+		for(int i = 0; i < tempLayout.length; i++) {
+			if(tempLayout[i][0] < 0 || tempLayout[i][1] < 0) {
+				numIgnoreLeads++;
+				if(!stop) {
+					dataOffset++;
+				}
+				continue;
+			}
+			numGoodLeads++;
+			found.add(tempLayout[i]);
+		}
 
+		layout = new int[found.size()][2];
+		for(int i = 0; i < found.size(); i++) {
+			layout[i] = new int[]{found.get(i)[0], found.get(i)[1]};
+		}
+		ignoredLeads = new ECGDataSet[numIgnoreLeads];
+		points = new ECGDataSet[numGoodLeads];
+
+		actualSize = tempLayout.length;
 		sampleFreq = file.getSampleInterval();
 
 		for(int i = 0; i < raw.size(); i++) {
+			int igoff = 0;
+			int normoff = 0;
 			for(int j = 0; j < actualSize; j++) {
-				ECGDataSet[] temp;
-				int offset = 0;
-				if(j < 2) {
-					temp = first2CrapLeads;
-				} else if (j < 5) {
-					offset = 2;
-					temp = limbLeads;
-				} else if (j < 125) {
-					offset = 5;
-					temp = points;
+				if(tempLayout[j][0] < 0 || tempLayout[j][1] < 0) {
+					normoff++;
+					if(i == 0) {
+						ignoredLeads[j-igoff] = new ECGDataSet();
+					}
+					ignoredLeads[j-igoff].addTuple(raw.get(i).getKey(), 
+										   (double)raw.get(i).getValue().get(j));
 				} else {
-					offset = 125;
-					temp = mysteriousLeads;
+					igoff++;
+					if(i == 0) {
+						points[j-normoff] = new ECGDataSet();
+					}
+					points[j-normoff].addTuple(raw.get(i).getKey(), 
+										   (double)raw.get(i).getValue().get(j));
 				}
 
-				if(i == 0) {
-					temp[j-offset] = new ECGDataSet();
-				}
-				temp[j-offset].addTuple(raw.get(i).getKey(), 
-									   (double)raw.get(i).getValue().get(j));
 			}
 		}
 
@@ -393,6 +413,22 @@ public class ECGModel {
 	 */
 	public double getSamplesPerSecond() {
 		return sampleFreq;
+	}
+
+	/**
+	 * getLayout - gets the layout of leads specified by the file
+	 * @return an array of coordinates
+	 */
+	public int[][] getLayout() {
+		return layout;
+	}
+
+	/**
+	 * getOffset - the number of leads before the data leads start
+	 * @return the offset
+	 */
+	public int getOffset() {
+		return dataOffset;
 	}
 
 	/** 
