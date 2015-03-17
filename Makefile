@@ -20,11 +20,10 @@ release:
 	make -i realclean
 	mkdir ECGViewer
 	mkdir ECGViewer/libs
-	mkdir ECGViewer/plugins
 	for lib in $(LIBS); do \
 		cp $$lib ECGViewer/libs/ ; \
 	done
-	cp -R plugins/ ECGViewer/plugins/
+	cp -R plugins/ ECGViewer/
 	cp manifest.txt ECGViewer/
 	cd ECGViewer; \
 	javac -cp .:$(shell cd ECGViewer; ls -1 libs/*.jar | sed -e ':a;N;$$!ba;s/\s/:/g') ../*.java -d ./; \
