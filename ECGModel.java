@@ -23,10 +23,10 @@ public class ECGModel {
 	private ECGDataSet[] limbLeads; //size 3
 	private ECGDataSet[] points; //size 120; this one actually matters
 	private ECGDataSet[] mysteriousLeads; //size 5
-	private int tupleLength = 154;
 	private int actualSize = 130;
 	private double sampleFreq = 0;
 	private HashSet<Annotation> annotations;	
+	private ECGFileManager filePlugins;
 
 	private <T> void printArrayList(ArrayList<T[]> arr) {
 		for(int i = 0; i < arr.size(); i++) {
@@ -43,6 +43,8 @@ public class ECGModel {
 		points = new ECGDataSet[120];
 		mysteriousLeads = new ECGDataSet[5];
 		annotations = new HashSet<Annotation>();
+		filePlugins = new ECGFileManager();
+		filePlugins.load();
 	}
 
 	/**
@@ -53,7 +55,6 @@ public class ECGModel {
 	public ECGModel clone() {
 		ECGModel newModel = new ECGModel();
 
-		newModel.tupleLength = this.tupleLength;
 		newModel.actualSize = this.actualSize;
 		newModel.sampleFreq = this.sampleFreq;
 
@@ -269,21 +270,15 @@ public class ECGModel {
 			throws IOException, FileNotFoundException {
 		this.clear();
 
-		ECGFile file;
-		if(filename.endsWith(".dat")) {
-			file = new DATFile();
-			actualSize = 130;
-			tupleLength = 154;
-		} else if (filename.endsWith(".123")) {
-			file = new _123File();
-			actualSize = 130;
-			tupleLength = 120;
-		} else {
-			throw new IOException("Not a valid file extension, supported: .dat, .123");
+		ECGFile file = filePlugins.getECGFile(filename);
+		if(file==null) {
+			throw new IOException("Not a supported file extension");
 		}
+
+		actualSize = 130;
 		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> raw
 			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>>();
-		int retval = file.read(filename, tupleLength, raw);
+		int retval = file.read(filename, raw);
 		if(retval < 0) {
 			return;
 		}
