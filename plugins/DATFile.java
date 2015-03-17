@@ -12,7 +12,6 @@ import java.util.Arrays;
 /**
  * DATFile - opens and reads a .dat file with ECG data
  * Translation of dumpBspmSamples by Dr Horacek of Halifax, Nova Scotia
- * Translated by Dakota Williams
  */
 public class DATFile extends ECGFile {
 	private final int MAX_NL = 282;
