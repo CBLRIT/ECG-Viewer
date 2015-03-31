@@ -103,13 +103,13 @@ public class ECGViewHandler {
 	}
 
 	public ECGView getView(int i, boolean withLabels) {
-		return new ECGView(this, model.getDataset(i), i, ""+(i+4), withLabels);
+		return new ECGView(this, model.getDataset(i), i, ""+(i+model.getOffset()-1), withLabels);
 	}
 
 	public void applyFilter(FilterDialog f, int index) {
-		this.message = "Apply filter " + f.Id() + " to lead " + (index+4);
+		this.message = "Apply filter " + f.Id() + " to lead " + (index+model.getOffset()-1);
 		history.pushChange(new Change<ECGModel, String>(model.clone(), 
-								"Apply filter " + f.Id() + " to lead " + (index+4)));
+								"Apply filter " + f.Id() + " to lead " + (index+model.getOffset()-1)));
 		model.applyFilter(index, f.Id(), f.returnVals());
 	}
 
@@ -171,6 +171,13 @@ public class ECGViewHandler {
 		history.pushChange(new Change<ECGModel, String>(model.clone(), 
 					"Clear annotations"));
 		model.clearAnnotations();
+	}
+
+	public void extractFeatures(int lead) {
+		this.message = "Auto Annotations";
+		history.pushChange(new Change<ECGModel, String>(model.clone(),
+					"Auto Annotations"));
+		model.extractFeatures(lead);
 	}
 
 	public void setBad(int index, boolean isBad) {

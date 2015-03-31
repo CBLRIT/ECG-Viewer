@@ -150,8 +150,7 @@ public class ECGModel {
 	}
 
 	/**
-	 * subsetToArray - creates an array representation of data between to times
-	 *
+	 * subsetToArray - creates an array representation of data between to times *
 	 * @param start the time before the first sample in the subset
 	 * @param end the time after the last sample in the subset
 	 */
@@ -429,6 +428,47 @@ public class ECGModel {
 	 */
 	public int getOffset() {
 		return dataOffset;
+	}
+
+	/**
+	 * extractFeatures - finds the peak of the R waves in a signal
+	 * @param index the index of the lead to use
+	 */
+	public void extractFeatures(int index) {
+		ECGDataSet lead = points[index];
+		final double range = 0.25; //50% of it's value north and south
+		java.util.PriorityQueue<Double[]> maxima = //ordered by >, of 2-tuples: time and value
+				new java.util.PriorityQueue<Double[]>(32, 
+			 		new java.util.Comparator<Double[]>() {
+			public int compare(Double[] o1, Double[] o2) { //compares values
+				return -Double.compare(o1[1], o2[1]); //get the largest value
+			}
+			public boolean equals(Object obj) {
+				return super.equals(obj);
+			}
+		});
+
+		maxima.add(new Double[]{0.0,0.0});
+		for(int i = 0; i < lead.size(); i++) {
+			if (lead.getAt(i)[1] > maxima.peek()[1] * (1+range)) {
+				maxima.clear();
+			}
+			if(maxima.size() == 0 || (lead.getAt(i)[1] < maxima.peek()[1] * (1+range)
+									 && lead.getAt(i)[1] > maxima.peek()[1] * (1-range))) {
+				int entryVal = i;
+				int localMax = i;
+				for(; lead.getAt(i)[1] > lead.getAt(entryVal)[1] * (1-range); i++) {
+					if(lead.getAt(i)[1] > lead.getAt(localMax)[1]) {
+						localMax = i;
+					}
+				}
+				maxima.add(lead.getAt(localMax));
+			}
+		}
+
+		for(Double[] p : maxima) {
+			this.annotations.add(new Annotation(2, p[0]));
+		}
 	}
 
 	/** 
