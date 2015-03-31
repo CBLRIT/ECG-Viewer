@@ -157,131 +157,60 @@ public class Filters {
 	 * @param mode the mode (low pass, high pass, band pass) to use
 	 * @param rate the sampling frequency
 	 * @param freq the cutoff frequency
-	 * @param n the order of the filter
+	 * @param n the order of the filter. Precondition: n is even
 	 */
 	public static void butterworthfilt(List<Double[]> set,
 									   int mode,
 									   double rate,
 									   double freq,
 									   int n) {
-									   /*
-		double T = 1.0/rate; //sampling period
-		double wd = 2*Math.PI * freq;
-		double wc = /*2.0/T **//* Math.tan(wd*T/2.0);
-		double wc2 = wc*wc;
+		double c = Math.pow(Math.pow(2.0, 1.0/((double)n)) - 1.0, -0.25);
+		double g = 1.0;
+		double p = Math.sqrt(2.0);
+		double f0 = 1/rate*1000;
+		double f = 0.0;
 
-		//generate butterworth coefficients
-		int upperBound = n/2; //even=n/2 odd=(n-1)/2 -> Wooo Integer Division!
-		double[] coeffs;
-		if(n % 2 == 0) { //even
-			coeffs = new double[]{1};
-		} else { //odd 
-			coeffs = new double[]{1,wc};
-		}
-		int k = 1;
-		do {
-		//see https://en.wikipedia.org/wiki/Butterworth_filter#Normalized_Butterworth_polynomials
-			coeffs = convolve(coeffs, 
-							  new double[]{1, 
-							  			   wc*-2.0*Math.cos((2.0*k+n-1.0)/(2.0*n) * Math.PI), 
-										   wc2});
-			k++;
-		} while(k <= upperBound);
-		
-		//math stuff, see: http://www.robots.ox.ac.uk/~sjrob/Teaching/SP/l6.pdf section 6.4.1
-		double[][] metaCoeffs = new double[coeffs.length][coeffs.length];
-		double[] num = new double[]{1, -1};
-		double[] denom = new double[]{1, 1};
-		double[] denomPower = new double[]{1};
-		for(int i = 0; i < coeffs.length; i++) {
-			double[] numPower = new double[]{1};
-			for(int j = 0; j < coeffs.length-i-1; j++) {
-				numPower = convolve(num, numPower);
+		if(mode == 0) {  //low pass
+			f = c * freq / f0;
+			System.out.println("c:"+c+" rate:"+f0+" freq:"+freq+" f:"+f);
+			if(!(0 < f && f < 0.125)) {
+				// will not work
+				return;
 			}
-			metaCoeffs[i] = convolve(numPower, denomPower);
-			metaCoeffs[i] = convolve(metaCoeffs[i], new double[]{coeffs[i]});
-			if(coeffs.length != i+1) {
-				denomPower = convolve(denomPower, denom);
+		} else if (mode == 1) { //high pass
+			f = 0.5 - c * freq / f0;
+			if(!(0.375 < f && f < 0.5)) {
+				// will not work
+				return;
 			}
 		}
 		
-		//sum columns
-		for(int i = 0; i < metaCoeffs[0].length; i++) {
-			coeffs[i] = 0;
-			for(int j = 0; j < metaCoeffs.length; j++) {
-				coeffs[i] += metaCoeffs[j][i];
-			}
+		double omega = Math.tan(Math.PI * f);
+		double k1 = p * omega;
+		double k2 = g * omega * omega;
+		double a0 = k2 / (1.0 + k1 + k2);
+		double a1 = 2.0*a0;
+		double a2 = a0;
+		double b1 = 2.0*a0 * (1.0 / k2 - 1.0);
+		double b2 = 1.0 - (a0 + a1 + a2 + b1);
+		if(mode == 1) {
+			a1 = -a1;
+			b1 = -b1;
 		}
+		System.out.println("w:"+omega+" a0:"+a0+" a1:"+a1+" a2:"+a2+" b1:"+b1+" b2:"+b2);
 
-		//normalize denominator
-		double norm = coeffs[0];
-		wc2 /= norm;
-		for(int i = 0; i < coeffs.length; i++) {
-			coeffs[i] /= norm;
-		}
-
-//PROBLEM
-		/*
-		double[] diffCoeffs = new double[denomPower.length + coeffs.length - 1];
-		int i = 0;
-		for(; i < denomPower.length; i++) {
-			diffCoeffs[i] = denomPower[i] * wc2;
-		}
-		for(; i < coeffs.length-1+denomPower.length; i++) {
-			diffCoeffs[i] = 0-(coeffs[i-denomPower.length+1]);
-		}
-		System.out.println("difCoeffs " + java.util.Arrays.toString(diffCoeffs));
-		*/
-//END PROBLEM
-		//finally have difference equation, apply to dataset
-		/*
-		ArrayList<Double[]> prev = new ArrayList<Double[]>();
-		for(int j = 0; j < set.size(); j++) {
-			Double[] point = set.get(j);
-			prev.add(point);
-			double newVal = 0;
-			//diffCoeffs will always be odd
-			for(k = 0; k < denomPower.length && k < prev.size(); k++) {
-				newVal += denomPower[k]*wc2*prev.get(k)[0];
-			}
-			double denomVal = 1.0;
-			for(k = 1; k < coeffs.length && k < prev.size(); k++) {
-				newVal -= coeffs[k]*prev.get(k)[1];
-			}
-			newVal /= denomVal;
-			if(prev.size() > n+1) {
-				prev.remove(0);
-			}
-			set.set(j, new Double[]{set.get(j)[0], set.get(j)[1] - newVal/(set.get(j)[0]==0.0?1:set.get(j)[0])});
-		}
-			*/
-//other soln
-		double a = Math.tan(Math.PI*freq/rate);
-		double a2 = a*a;
-		double[] A  = new double[n];
-		double[] d1 = new double[n];
-		double[] d2 = new double[n];
-		double[] w0 = new double[n];
-		double[] w1 = new double[n];
-		double[] w2 = new double[n];
-
-		for(int i = 0; i < n; i++) {
-			double r = Math.sin(Math.PI*(2.0*i+1.0)/(4.0*n));
-			double s = a2 + 2.0*a*r + 1.0;
-			A[i] = a2/s;
-			d1[i] = 2.0*(1-a2)/s;
-			d2[i] = -(a2-2.0*a*r + 1.0)/s;
-		}
-
-		for(int i = 0; i < set.size(); i++) {
-			double x = 0;
-			for(int j = 0; j < n; j++) {
-				w0[j] = d1[j]*w1[j] + d2[j]*w2[j] + set.get(i)[1];
-				x = A[j]*(w0[j] + 2.0*w1[j] + w2[j]);
-				w2[j] = w1[j];
-				w1[j] = w0[j];
-			}
-			set.set(i, new Double[]{set.get(i)[0], x});
+		double x1 = set.get(1)[1];
+		double x2 = set.get(0)[1];
+		double y1 = x1;
+		double y2 = x2;
+		for(int i = 2; i < set.size(); i++) {
+			double x = set.get(i)[1];
+			double y = a0*x + a1*x1 + a2*x2 + b1*y1 + b2*y2;
+			x2 = x1;
+			x1 = x;
+			y2 = y1;
+			y1 = y;
+			set.set(i, new Double[]{set.get(i)[0], y});
 		}
 	}
 

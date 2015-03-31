@@ -30,14 +30,14 @@ public class ButterOptionDialog extends FilterDialog {
 		super(thisFrame, title, modal, handler, index, 7);
 
 		mode = 0;
-		freq = Math.log(.125);
+		freq = 60;
 		order = 2;
 
 		this.setLayout(new BorderLayout());
 
 		final ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
 																id, 
-																new Number[]{0, Math.log(.125), 2}, 
+																new Number[]{0, 60.0, 2}, 
 																true)};
 
 		JPanel controls = new JPanel(new GridBagLayout());
@@ -67,9 +67,9 @@ public class ButterOptionDialog extends FilterDialog {
 		});
 
 		controls.add(new JLabel("Frequency Threshold"), labels);
-		final JLabel leftNum = new JLabel("" + Math.log(0.125));
+		final JLabel leftNum = new JLabel("60.0");
 		controls.add(leftNum, values);
-		final JSlider leftSlide = new JSlider(00001, 2500, 1250);
+		final JSlider leftSlide = new JSlider(00000, 1500000, 600000);
 		final JSlider orderSlide = new JSlider(1, 10, 2);
 		leftSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
