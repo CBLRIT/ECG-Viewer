@@ -110,13 +110,7 @@ public class ECGView {
 						   UIManager.getColor("Panel.background") : 
 						   new Color(233, 174, 174));
 
-		for(int i = 0; i < handler.getAnnotations().size(); i++) {
-			plot.addDomainMarker(
-				new ValueMarker(handler.getAnnotations().get(i).getLoc(), 
-			 	this.handler.getAnnotationColor(
-					handler.getAnnotations().get(i).getType()), 
-				 	new BasicStroke()));
-		}
+		this.redrawAnnotations();
 
 		if(withLabels) {
 			panel.addChartMouseListener(new ChartMouseListener() {
@@ -159,6 +153,20 @@ public class ECGView {
 	public void clearAnnotations() {
 		plot.clearDomainMarkers();
 		this.handler.clearAnnotations();
+	}
+
+	/**
+	 * redrawAnnotations - refreshes the displayed annotations
+	 */
+	public void redrawAnnotations() {
+		plot.clearDomainMarkers();
+		for(int i = 0; i < handler.getAnnotations().size(); i++) {
+			plot.addDomainMarker(
+				new ValueMarker(handler.getAnnotations().get(i).getLoc(), 
+			 	this.handler.getAnnotationColor(
+					handler.getAnnotations().get(i).getType()), 
+				 	new BasicStroke()));
+		}
 	}
 
 	/**

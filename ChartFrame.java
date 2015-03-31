@@ -263,8 +263,17 @@ public class ChartFrame extends JFrame {
 				thisFrame.view.clearAnnotations();
 			}
 		});
+		JMenuItem annotations_auto = new JMenuItem("Find R-Waves");
+		annotations_auto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.handler.extractFeatures(thisFrame.index);
+				thisFrame.view.redrawAnnotations();
+				thisFrame.view.revalidate();
+			}
+		});
 		annotations.add(anno_enable);
 		annotations.add(annotations_clear);
+		annotations.add(annotations_auto);
 		annotations.addSeparator();
 		ButtonGroup annoGroup = new ButtonGroup();
 		JRadioButtonMenuItem[] annotations_colors = new JRadioButtonMenuItem[4];
