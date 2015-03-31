@@ -172,7 +172,6 @@ public class Filters {
 
 		if(mode == 0) {  //low pass
 			f = c * freq / f0;
-			System.out.println("c:"+c+" rate:"+f0+" freq:"+freq+" f:"+f);
 			if(!(0 < f && f < 0.125)) {
 				// will not work
 				return;
@@ -197,7 +196,6 @@ public class Filters {
 			a1 = -a1;
 			b1 = -b1;
 		}
-		System.out.println("w:"+omega+" a0:"+a0+" a1:"+a1+" a2:"+a2+" b1:"+b1+" b2:"+b2);
 
 		double x1 = set.get(1)[1];
 		double x2 = set.get(0)[1];
