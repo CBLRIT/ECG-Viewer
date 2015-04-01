@@ -9,35 +9,9 @@ public class ECGViewHandler {
 	private String message;
 	private UndoStack<Change<ECGModel, String>> history;
 
-	private int currAnnoType = 0;
-	private HashMap<Integer, Color> annoColors = new HashMap<Integer, Color>();
-
-	private final int titleOffset = 4;
-
 	public ECGViewHandler(ECGModel model) {
 		this.model = model;
 		this.history = new UndoStack<Change<ECGModel, String>>();
-
-		annoColors.put(0, Color.BLACK);
-		annoColors.put(1, Color.ORANGE);
-		annoColors.put(2, Color.GREEN);
-		annoColors.put(3, Color.BLUE);
-	}
-
-	public int getSelectedAnnotationType() {
-		return currAnnoType;
-	}
-
-	public void setSelectedAnnotationType(int type) {
-		currAnnoType = type;
-	}
-
-	public Color getAnnotationColor(int type) {
-		return annoColors.get(type);
-	}
-
-	public Color getSelectedAnnotationColor() {
-		return annoColors.get(currAnnoType);
 	}
 
 	public void loadFile(String file) 
