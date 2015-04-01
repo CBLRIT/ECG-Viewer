@@ -276,18 +276,17 @@ public class ChartFrame extends JFrame {
 		annotations.add(annotations_auto);
 		annotations.addSeparator();
 		ButtonGroup annoGroup = new ButtonGroup();
-		JRadioButtonMenuItem[] annotations_colors = new JRadioButtonMenuItem[4];
-		String[] desc = {"T-wave", "R-wave", "QRS-complex", "P-wave"};
+		JRadioButtonMenuItem[] annotations_colors = new JRadioButtonMenuItem[Settings.numAnnoTypes()];
 		for(int i = 0; i < annotations_colors.length; i++) {
 			final int count = i;
 			annotations_colors[i] = new JRadioButtonMenuItem("Annotation " + (i+1) 
-														+ " (" + desc[i] + ")", 
-														handler.getSelectedAnnotationType()==i);
+											+ " (" + Settings.getAnnotationTitle(i) + ")", 
+											Settings.getSelectedAnnotationType()==i);
 			annotations_colors[i].addActionListener(new ActionListener() {
 				private final int changeNum = count;
 
 				public void actionPerformed(ActionEvent e) {
-					handler.setSelectedAnnotationType(changeNum);
+					Settings.setSelectedAnnotationType(changeNum);
 				}
 			});
 			annotations.add(annotations_colors[i]);

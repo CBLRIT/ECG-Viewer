@@ -124,9 +124,9 @@ public class ECGView {
 																  plot.getDomainAxisEdge());
 					if(canPlace) {
 						thisView.handler.addAnnotation(
-										thisView.handler.getSelectedAnnotationType(), x);
+										Settings.getSelectedAnnotationType(), x);
 						plot.addDomainMarker(new ValueMarker(x, 
-												 thisView.handler.getSelectedAnnotationColor(), 
+												 Settings.getSelectedAnnotationColor(), 
 												 new BasicStroke()));
 					}
 				}
@@ -163,7 +163,7 @@ public class ECGView {
 		for(int i = 0; i < handler.getAnnotations().size(); i++) {
 			plot.addDomainMarker(
 				new ValueMarker(handler.getAnnotations().get(i).getLoc(), 
-			 	this.handler.getAnnotationColor(
+			 	Settings.getAnnotationColor(
 					handler.getAnnotations().get(i).getType()), 
 				 	new BasicStroke()));
 		}

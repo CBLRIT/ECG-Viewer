@@ -2,23 +2,20 @@
 import java.awt.Color;
 import java.util.HashMap;
 
-public class Settings {
-	private class StringColor {
+public final class Settings {
+	private static class StringColor {
 		public String title;
 		public Color color;
 	}
 
-	private HashMap<Integer, StringColor> annoColors = new HashMap<Integer, StringColor>();
-	private int currAnnoType = 0;
+	private static HashMap<Integer, StringColor> annoColors = new HashMap<Integer, StringColor>();
+	private static int currAnnoType = 0;
 
-	private boolean badLeadInterp;
+	private static boolean badLeadInterp = false;
 
-	public Settings() {
-		annoColors = new HashMap<Integer, StringColor>();
-	}
+	private Settings() {} //no instantiation
 
-	public static Settings makeDefaultSettings() {
-		Settings settings = new Settings();
+	public static void makeDefaultSettings() {
 		String[] desc = {"P-wave", "QRS-complex", "R-wave", "T-wave"};
 		Color[] colors = {Color.BLACK, Color.ORANGE, Color.GREEN, Color.BLUE};
 
@@ -26,46 +23,58 @@ public class Settings {
 			StringColor s = new StringColor();
 			s.title = desc[i];
 			s.color = colors[i];
-			settings.annoColors.add(i, s);
+			annoColors.put(i, s);
 		}
 
-		settings.badLeadInterp=false;
-		return settings;
+		badLeadInterp=false;
 	}
 
-	public void load() {
+	public static void load() {
+		
+	}
+
+	public static void save() {
 
 	}
 
-	public void save() {
-
+	public static int numAnnoTypes() {
+		return annoColors.size();
 	}
 
-	public int getSelectedAnnotationType() {
+	public static int getSelectedAnnotationType() {
 		return currAnnoType;
 	}
 
-	public void setSelectedAnnotationType(int type) {
+	public static void setSelectedAnnotationType(int type) {
 		currAnnoType = type;
 	}
 	
-	public Color getAnnotationColor(int type) {
+	public static Color getAnnotationColor(int type) {
 		return annoColors.get(type).color;
 	}
 
-	public Color getSelectedAnnotationColor() {
+	public static Color getSelectedAnnotationColor() {
 		return annoColors.get(currAnnoType).color;
 	}
 
-	public String getAnnotationTitle(int type) {
+	public static String getAnnotationTitle(int type) {
 		return annoColors.get(type).title;
 	}
 
-	public String getSelectedAnnotationColor() {
+	public static String getSelectedAnnotationTitle() {
 		return annoColors.get(currAnnoType).title;
 	}
 
-	public boolean isBadInterp() {	
+	public static boolean isBadInterp() {	
 		return badLeadInterp;
 	}
+
+	public static void setInterp(boolean interp) {
+		badLeadInterp = interp;
+	}
+
+	public static void edit() {
+		
+	}
 }
+
