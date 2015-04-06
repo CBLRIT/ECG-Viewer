@@ -192,6 +192,12 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+		JMenuItem settings = new JMenuItem("Settings");
+		settings.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Settings.edit();
+			}
+		});
 		JMenuItem exit = new JMenuItem("Exit");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -205,6 +211,8 @@ public class MainFrame extends JFrame {
 		menu.add(export_subset);
 		menu.add(export_annos);
 		menu.add(export_badleads);
+		menu.addSeparator();
+		menu.add(settings);
 		menu.add(exit);
 		menubar.add(menu);
 

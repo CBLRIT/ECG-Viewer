@@ -22,5 +22,83 @@ public abstract class ECGFile {
 	public abstract int[][] getLayout();
 
 	public abstract String getExtension();
+
+	public int getNorth(int index) {
+		int[][] leads = this.getLayout();
+
+		int currX = leads[index][1];
+		int currY = leads[index][0];
+		int ret = -1;
+		for(int i = 0; i < leads.length; i++) {
+			if(leads[i][1] == currX && leads[i][0] == currY-1) {
+				ret = i;
+			}
+		}
+		
+		return ret;
+	}
+
+	public int getSouth(int index) {
+		int[][] leads = this.getLayout();
+
+		int currX = leads[index][1];
+		int currY = leads[index][0];
+		int ret = -1;
+		for(int i = 0; i < leads.length; i++) {
+			if(leads[i][1] == currX && leads[i][0] == currY+1) {
+				ret = i;
+			}
+		}
+		
+		return ret;
+	}
+
+	public int getEast(int index) {
+		int[][] leads = this.getLayout();
+
+		int currX = leads[index][1];
+		int currY = leads[index][0];
+		int ret = -1;
+		int min = Integer.MAX_VALUE;
+		int max = -1;
+
+		for(int i = 0; i < leads.length; i++) {
+			if(leads[i][0] == currY && leads[i][1] == currX+1) {
+				ret = i;
+			}
+			if(leads[i][0] == currY && leads[i][1] < min) {
+				min = leads[i][1];
+			}
+			if(leads[i][0] == currY && leads[i][1] > max) {
+				max = leads[i][1];
+			}
+		}
+		if(currY == max) { //wrap around
+			return min;
+		}
+		return ret;
+	}
+
+	public int getWest(int index) {
+		int[][] leads = this.getLayout();
+
+		int currX = leads[index][1];
+		int currY = leads[index][0];
+		int ret = -1;
+		int max = -1;
+
+		for(int i = 0; i < leads.length; i++) {
+			if(leads[i][0] == currY && leads[i][1] < currX-1) {
+				ret = leads[i][1];
+			}
+			if(leads[i][0] == currY && leads[i][1] > max) {
+				max = leads[i][1];
+			}
+		}
+		if(currX == 0) { //wrap around
+			return max;
+		}
+		return ret;
+	}
 }
 

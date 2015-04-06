@@ -1,6 +1,17 @@
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.Frame;
 import java.util.HashMap;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public final class Settings {
 	private static class StringColor {
@@ -74,7 +85,42 @@ public final class Settings {
 	}
 
 	public static void edit() {
+		JDialog frame = new JDialog((Frame)null, "Settings", true);
+		frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 		
+		JPanel annotation = new JPanel();
+		for(final StringColor sc : annoColors.values()) {
+			JPanel p = new JPanel();
+			JLabel label = new JLabel(sc.title);
+			JButton color = new JButton();
+			color.setBackground(sc.color);
+			color.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Color c = JColorChooser.showDialog((JButton) e.getSource(), "Choose Color", sc.color);
+					if(c != null) {
+						sc.color = c;
+					}
+				}
+			});
+			p.add(label);
+			p.add(color);
+			p.revalidate();
+			annotation.add(p);
+			annotation.revalidate();
+		}
+		annotation.setBorder(BorderFactory.createTitledBorder("Annotations"));
+		frame.add(annotation);
+
+		JCheckBox interp = new JCheckBox("Interpolate bad leads?", badLeadInterp);
+		interp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				badLeadInterp = !badLeadInterp;
+			}
+		});
+		frame.add(interp);
+
+		frame.pack();
+		frame.setVisible(true);
 	}
 }
 
