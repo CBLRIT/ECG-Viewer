@@ -61,6 +61,7 @@ public abstract class ECGFile {
 		int ret = -1;
 		int min = Integer.MAX_VALUE;
 		int max = -1;
+		int minInd = Integer.MAX_VALUE;
 
 		for(int i = 0; i < leads.length; i++) {
 			if(leads[i][0] == currY && leads[i][1] == currX+1) {
@@ -68,13 +69,14 @@ public abstract class ECGFile {
 			}
 			if(leads[i][0] == currY && leads[i][1] < min) {
 				min = leads[i][1];
+				minInd = i;
 			}
 			if(leads[i][0] == currY && leads[i][1] > max) {
 				max = leads[i][1];
 			}
 		}
-		if(currY == max) { //wrap around
-			return min;
+		if(currX == max) { //wrap around
+			return minInd;
 		}
 		return ret;
 	}
@@ -86,17 +88,19 @@ public abstract class ECGFile {
 		int currY = leads[index][0];
 		int ret = -1;
 		int max = -1;
+		int maxInd = -1;
 
 		for(int i = 0; i < leads.length; i++) {
-			if(leads[i][0] == currY && leads[i][1] < currX-1) {
-				ret = leads[i][1];
+			if(leads[i][0] == currY && leads[i][1] == currX-1) {
+				ret = i;
 			}
 			if(leads[i][0] == currY && leads[i][1] > max) {
 				max = leads[i][1];
+				maxInd = i;
 			}
 		}
 		if(currX == 0) { //wrap around
-			return max;
+			return maxInd;
 		}
 		return ret;
 	}

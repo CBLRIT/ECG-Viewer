@@ -11,7 +11,6 @@ import java.util.List;
 public class ECGDataSet {
 	private List<Double[]> set;
 	private boolean bad;
-	private double sampleFreq;
 
 	/**
 	 * Constructor - initializes an ECGDataSet
@@ -76,7 +75,6 @@ public class ECGDataSet {
 									  (double)this.set.get(i)[1]});
 		}
 		eds.bad = this.bad;
-		eds.sampleFreq = this.sampleFreq;
 		return eds;
 	}
 
@@ -88,7 +86,6 @@ public class ECGDataSet {
 	public void copyFrom(ECGDataSet e) {
 		this.set = new ArrayList<Double[]>(e.set);
 		this.bad = e.bad;
-		this.sampleFreq = e.sampleFreq;
 	}
 
 	/**

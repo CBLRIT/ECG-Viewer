@@ -12,11 +12,13 @@ public class ECGFileTest {
 		String filename = "data/CF091714/4917c43b.dat";
 		ECGFile file = e.getECGFile(filename);
 		file.read(filename, points);
+		int lead = 64;
 		int leads[][] = file.getLayout();
-		int north = file.getNorth(120+1);
-		int south = file.getSouth(120+1);
-		int east = file.getEast(120+1);
-		int west = file.getWest(120+1);
+		System.out.println("Lead: " + lead + " (" + leads[lead+1][0] + "," + leads[lead+1][1] + ")");
+		int north = file.getNorth(lead+1);
+		int south = file.getSouth(lead+1);
+		int east = file.getEast(lead+1);
+		int west = file.getWest(lead+1);
 		System.out.println("North: "+(north-1)+(north==-1?"":" ("+leads[north][0]+","+leads[north][1]+")"));
 		System.out.println("South: "+(south-1)+(south==-1?"":" ("+leads[south][0]+","+leads[south][1]+")"));
 		System.out.println("East: "+(east-1)+(east==-1?"":" ("+leads[east][0]+","+leads[east][1]+")"));

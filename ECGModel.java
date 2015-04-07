@@ -27,6 +27,7 @@ public class ECGModel {
 	private double sampleFreq = 0;
 	private HashSet<Annotation> annotations;	
 	private ECGFileManager filePlugins;
+	private ECGFile file;
 
 	private <T> void printArrayList(ArrayList<T[]> arr) {
 		for(int i = 0; i < arr.size(); i++) {
@@ -44,6 +45,7 @@ public class ECGModel {
 		annotations = new HashSet<Annotation>();
 		filePlugins = new ECGFileManager();
 		filePlugins.load();
+		file = null;
 	}
 
 	/**
@@ -268,7 +270,7 @@ public class ECGModel {
 			throws IOException, FileNotFoundException {
 		this.clear();
 
-		ECGFile file = filePlugins.getECGFile(filename);
+		file = filePlugins.getECGFile(filename);
 		if(file==null) {
 			throw new IOException("Not a supported file extension");
 		}
@@ -393,6 +395,8 @@ public class ECGModel {
 	 */
 	public void setBad(int i, boolean isBad) {
 		points[i].setBad(isBad);
+		if(Settings.isBadInterp())
+			interpolateBadLead(i);
 	}
 
 	/**
@@ -471,6 +475,40 @@ public class ECGModel {
 		}
 	}
 
+	/**
+	 * interpolateBadLeads - finds bad leads and interpolates it with it's neighbors
+	 */
+	public void interpolateBadLead(int i) {
+		if(!isBad(i)) {
+			return;
+		}
+		ECGDataSet newLead = new ECGDataSet();
+		newLead.setBad(points[i].isBad());
+		ArrayList<ECGDataSet> neighbors = new ArrayList<ECGDataSet>();
+		int north = file.getNorth(i+dataOffset);
+		int south = file.getSouth(i+dataOffset);
+		int east = file.getEast(i+dataOffset);
+		int west = file.getWest(i+dataOffset);
+		if(north >= dataOffset && !points[north-dataOffset].isBad())
+			neighbors.add(points[north-dataOffset]);
+		if(south >= dataOffset && !points[south-dataOffset].isBad())
+			neighbors.add(points[south-dataOffset]);
+		if(east >= dataOffset && !points[east-dataOffset].isBad())
+			neighbors.add(points[east-dataOffset]);
+		if(west >= dataOffset && !points[west-dataOffset].isBad())
+			neighbors.add(points[west-dataOffset]);
+		
+		double sum;
+		for(int j = 0; j < points[i].size(); j++) {
+			sum = 0.0;
+			for(int k = 0; k < neighbors.size(); k++) {
+				sum += neighbors.get(k).getAt(j)[1];
+			}
+			newLead.addTuple(neighbors.get(0).getAt(j)[0], sum/((double)neighbors.size()));
+		}
+		points[i] = newLead;
+	}
+
 	/** 
 	 * applyFilter - applies a filter to the data
 	 *
@@ -520,6 +558,8 @@ public class ECGModel {
 			default:
 				return;
 		}
+		if(Settings.isBadInterp())
+			interpolateBadLead(index);
 	}
 }
 
