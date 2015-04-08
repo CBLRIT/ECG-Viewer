@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author Dakota Williams
  */
-public class ECGDataSet {
+public class ECGDataSet implements Undoable {
 	private List<Double[]> set;
 	private boolean bad;
 

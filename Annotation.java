@@ -4,7 +4,7 @@
  *
  * @author Dakota Williams
  */
-public class Annotation {
+public class Annotation implements Undoable {
 	private int type;
 	private double location;
 
