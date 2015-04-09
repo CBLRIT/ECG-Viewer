@@ -339,6 +339,19 @@ public class MainFrame extends JFrame {
 				thisFrame.revalidateAll();
 			}
 		});
+		JMenuItem filter_butter = new JMenuItem("Butterworth");
+		filter_butter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ButterOptionDialog dialog = new ButterOptionDialog(thisFrame, "Butterworth Filter", true, views, 35);
+				if(!dialog.accepted()) {
+					return;
+				}
+
+				views.applyFilterAll(dialog);
+
+				thisFrame.revalidateAll();
+			}
+		});
 		filter.add(filter_detrend);
 		filter.add(filter_constant);
 		filter.addSeparator();
@@ -347,6 +360,7 @@ public class MainFrame extends JFrame {
 		filter.add(filter_highfft);
 		filter.add(filter_low);
 		filter.add(filter_wave);
+		filter.add(filter_butter);
 		menubar.add(filter);
 
 		this.setJMenuBar(menubar);

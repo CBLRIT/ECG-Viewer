@@ -6,24 +6,19 @@ import java.util.HashMap;
 
 public class ECGViewHandler {
 	private ECGModel model;	
-	private String message;
-	private UndoStack<Change<HashMap<Integer, Undoable>, String>> history;
 
 	public ECGViewHandler(ECGModel model) {
 		this.model = model;
-		this.history = new UndoStack<Change<HashMap<Integer, Undoable>, String>>();
 	}
 
 	public void loadFile(String file) 
 			throws IOException {
 		model.readData(file);
-		history.reset();
 	}
 
 	public void loadFileSubset(String file, double start, double end) 
 			throws IOException {
 		model.readSubsetData(file, start, end);
-		history.reset();
 	}
 
 	public void writeDataCSV(String file) 
@@ -81,20 +76,22 @@ public class ECGViewHandler {
 	}
 
 	public void applyFilter(FilterDialog f, int index) {
-		this.message = "Apply filter " + f.Id() + " to lead " + (index+model.getOffset()-1);
-		history.pushChange(new Change<HashMap<Integer, Undoable>, String>(
-				(new HashMap<Integer, Undoable>()).put(index, model.getDataset(index).clone()), 
-				"Apply filter " + f.Id() + " to lead " + (index+model.getOffset()-1)));
+		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
+		changes.put(
+				index, 
+				(ECGDataSet)model.getDataset(index).clone());
+		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+			changes, 
+			"Apply filter " + f.Id() + " to lead " + (index+model.getOffset()-1)));
 		model.applyFilter(index, f.Id(), f.returnVals());
 	}
 
 	public void applyFilterAll(FilterDialog f) {
-		this.message = "Apply filter " + f.Id() + " to all leads";
 		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>(model.size());
 		for(int i = 0; i < model.size(); i++) {
-			changes.put(i, model.getDataset(i).clone());
+			changes.put(i, (ECGDataSet)model.getDataset(i).clone());
 		}
-		history.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
 						changes, 
 						"Apply filter " + f.Id() + " to all leads"));
 		for(int i = 0; i < model.size(); i++) {
@@ -146,22 +143,20 @@ public class ECGViewHandler {
 	}
 
 	public void addAnnotation(int type, double i) {
-		this.message = "Add type " + type + " annotation at time " + i;
 		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
 		ArrayList<Annotation> annotations = model.getAnnotations();
-		int i = 0;
+		int j = 0;
 		for(Annotation a : annotations) {
-			changes.put(i, a);
-			i++;
+			changes.put(j, a);
+			j++;
 		}
-		history.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
 					changes,
 					"Add type " + type + " annotation at time " + i));
 		model.addAnnotation(type, i);
 	}
 
 	public void clearAnnotations() {
-		this.message = "Clear annotations";
 		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
 		ArrayList<Annotation> annotations = model.getAnnotations();
 		int i = 0;
@@ -169,14 +164,13 @@ public class ECGViewHandler {
 			changes.put(i, a);
 			i++;
 		}
-		history.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
 					changes,
 					"Clear annotations"));
 		model.clearAnnotations();
 	}
 
 	public void extractFeatures(int lead) {
-		this.message = "Auto Annotations";
 		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
 		ArrayList<Annotation> annotations = model.getAnnotations();
 		int i = 0;
@@ -184,17 +178,18 @@ public class ECGViewHandler {
 			changes.put(i, a);
 			i++;
 		}
-		history.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
 					changes,
 					"Auto Annotations"));
 		model.extractFeatures(lead);
 	}
 
 	public void setBad(int index, boolean isBad) {
-		this.message = (isBad?"Set":"Unset") + " bad lead " + index;
-		history.pushChange(new Change<HashMap<Integer, Undoable>, String>(
-				(new HashMap<Integer, Undoable>()).put(index, model.getDataset(index).clone()), 
-				(isBad?"Set":"Unset") + " bad lead " + index));
+		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
+		changes.put(index, (ECGDataSet)model.getDataset(index).clone());
+		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+				changes,
+				(isBad?"Set":"Unset") + " bad lead " + (index+model.getOffset())));
 		model.setBad(index, isBad);
 	}
 
@@ -203,35 +198,27 @@ public class ECGViewHandler {
 	}
 
 	public void undo() {
-		this.message = history.peekUndo().getMessage();
-		Change<HashMap<Integer, Undoable>, String> c = history.undo(
-				new Change<HashMap<Integer, Undoable>, String>(this.model, this.message));
-		this.model = c.getData();
-		this.message = c.getMessage();
+		model.undo();
 	}
 
 	public void redo() {
-		this.message = history.peekRedo().getMessage();
-		Change<ECGModel, String> c = history.redo(
-				new Change<ECGModel, String>(this.model, this.message));
-		this.model = c.getData();
-		this.message = c.getMessage();
+		model.redo();
 	}
 
 	public String undoMessage() {
-		return history.peekUndo().getMessage();
+		return model.undoMessage();
 	}
 
 	public String redoMessage() {
-		return history.peekRedo().getMessage();
+		return model.redoMessage();
 	}
 
 	public boolean canUndo() {
-		return history.canUndo();
+		return model.canUndo();
 	}
 
 	public boolean canRedo() {
-		return history.canRedo();
+		return model.canRedo();
 	}
 }
 

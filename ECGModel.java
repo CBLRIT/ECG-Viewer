@@ -10,8 +10,10 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * class ECGModel - class for holding all datasets
@@ -28,6 +30,8 @@ public class ECGModel {
 	private HashSet<Annotation> annotations;	
 	private ECGFileManager filePlugins;
 	private ECGFile file;
+	private String message;
+	private UndoStack<Change<HashMap<Integer, Undoable>, String>> history;
 
 	private <T> void printArrayList(ArrayList<T[]> arr) {
 		for(int i = 0; i < arr.size(); i++) {
@@ -46,6 +50,7 @@ public class ECGModel {
 		filePlugins = new ECGFileManager();
 		filePlugins.load();
 		file = null;
+		history = new UndoStack<Change<HashMap<Integer, Undoable>, String>>();
 	}
 
 	/**
@@ -268,6 +273,7 @@ public class ECGModel {
 	 */
 	public void readData(String filename) 
 			throws IOException, FileNotFoundException {
+		history.reset();
 		this.clear();
 
 		file = filePlugins.getECGFile(filename);
@@ -560,6 +566,72 @@ public class ECGModel {
 		}
 		if(Settings.isBadInterp())
 			interpolateBadLead(index);
+	}
+
+	public void pushChange(Change<HashMap<Integer, Undoable>, String> c) {
+		message = c.getMessage();
+		history.pushChange(c);
+	}
+
+	private HashMap<Integer, Undoable> getCurrentState() {
+		HashMap<Integer, Undoable> ret = new HashMap<Integer, Undoable>();
+		int i = 0;
+		for(; i < points.length; i++) {
+			ret.put(i, points[i]);
+		}
+		for(Annotation a : annotations) {
+			ret.put(i, a);
+			i++;
+		}
+		return ret;
+	}
+
+	public void undo() {
+		this.message = history.peekUndo().getMessage();
+		Change<HashMap<Integer, Undoable>, String> c = history.undo(
+				new Change<HashMap<Integer, Undoable>, String>(getCurrentState(), this.message));
+		HashSet<Annotation> newanno = new HashSet<Annotation>();
+		for(Map.Entry<Integer, Undoable> entry : c.getData().entrySet()) {
+			if(entry.getValue() instanceof ECGDataSet) {
+				points[entry.getKey()] = (ECGDataSet)entry.getValue();
+			} else if(entry.getValue() instanceof Annotation) {
+				newanno.add((Annotation)entry.getValue());
+			}
+		}
+		annotations = newanno;
+		this.message = c.getMessage();
+	}
+
+	public void redo() {
+		this.message = history.peekRedo().getMessage();
+		Change<HashMap<Integer, Undoable>, String> c = history.redo(
+				new Change<HashMap<Integer, Undoable>, String>(getCurrentState(), this.message));
+		HashSet<Annotation> newanno = new HashSet<Annotation>();
+		for(Map.Entry<Integer, Undoable> entry : c.getData().entrySet()) {
+			if(entry.getValue() instanceof ECGDataSet) {
+				points[entry.getKey()] = (ECGDataSet)entry.getValue();
+			} else if(entry.getValue() instanceof Annotation) {
+				newanno.add((Annotation)entry.getValue());
+			}
+		}
+		annotations = newanno;
+		this.message = c.getMessage();
+	}
+
+	public String undoMessage() {
+		return history.peekUndo().getMessage();
+	}
+
+	public String redoMessage() {
+		return history.peekRedo().getMessage();
+	}
+
+	public boolean canUndo() {
+		return history.canUndo();
+	}
+
+	public boolean canRedo() {
+		return history.canRedo();
 	}
 }
 
