@@ -1,0 +1,31 @@
+
+The File Plugin System
+
+Table Of Contents
+1 ---- Getting Started
+2 ---- Necessary Methods
+2.1 -- read()
+2.2 -- getSampleInterval()
+2.3 -- getLayout()
+2.4 -- getExtension()
+
+1 Getting Started
+The Java Development Kit (JDK) version 1.6 is required for writing new plugins.
+Make sure a copy of Sample.java.sample is available in this directory for an
+example of a stubbed-out plugin.  To create a new plugin, copy the sample file
+to a new file with a name of your choice, according to the Java Language 
+Specification section 3.8 (the name must start with: 1: An uppercase letter, 
+2: A lowercase letter, 3: an underscore (_), or 4: a dollar sign ($), the name 
+can then continue with any of the above and/or digits).  Inside the file, the 
+name of the class NEEDS to match the name of the file (e.g. Sample.java ->
+public class Sample extends ECGFile { ... }).
+
+2 Necessary Methods
+For the proper operation of the plugin, 4 methods need implementation: read(),
+getSampleInterval(), getLayout(), and getExtension().
+
+2.1 read()
+This is the main function of the class.  This function takes in a filename and
+outputs the data in that file as well as a success flag.  The filename is a 
+standard Java String representing an absolute path to the file.  
+
