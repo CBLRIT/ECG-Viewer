@@ -1,0 +1,74 @@
+
+The File Plugin System
+
+Table Of Contents
+1 ---- Getting Started
+2 ---- Necessary Methods
+2.1 -- read()
+2.2 -- getSampleInterval()
+2.3 -- getLayout()
+2.4 -- getExtension()
+3 ---- Deployment
+
+1 Getting Started
+The Java Development Kit (JDK) version 1.6 or higher is required for writing 
+new plugins. Make sure a copy of Sample.java.sample is available in this 
+directory for an example of a stubbed-out plugin.  To create a new plugin, copy
+the sample file to a new file with a name of your choice, according to the Java
+Language Specification section 3.8 (the name must start with: 1: An uppercase 
+letter, 2: A lowercase letter, 3: an underscore (_), or 4: a dollar sign ($), 
+the name can then continue with any of the above and/or digits).  Inside the 
+file, the name of the class NEEDS to match the name of the file (e.g. 
+Sample.java -> public class Sample extends ECGFile { ... }).
+
+2 Necessary Methods
+For the proper operation of the plugin, 4 methods need implementation: read(),
+getSampleInterval(), getLayout(), and getExtension().
+
+2.1 read()
+This is the main function of the class.  This function takes in a filename and
+outputs the data in that file as well as a success flag.  The filename is a 
+standard Java String representing an absolute path to the file.  The next
+parameter is a mutable ArrayList of time-values pairs.  Each entry in the outer
+ArrayList is an AbstractMap.SimpleEntry, which, in this context, is just a 
+2-tuple.  Each of these tuples consists of a Double and an ArrayList of
+Doubles.  The first Double is the time in milliseconds since the beginning of
+the dataset.  The next ArrayList of Doubles is the values of each of the leads
+at that time.  The size of this ArrayList should be the same as the number of
+leads in the dataset.  Finally, the return value of the function should be 0
+on success and not 0 otherwise.
+
+2.2 getSampleInterval()
+This function returns the amount of time, in milliseconds, between each sample.
+Note: This is not frequency, it's "wavelength".
+
+2.3 getLayout()
+getLayout() determines how and which leads get displayed.  The return value for
+this function is a 2D array of integers which specify a column-row position on
+the main frame of the program.  The array should be of size N*2, where N is at 
+least the number of leads.  Given a primary index i, the value of the returned
+array at i, r[i], should be an array of 2 values: [column, row] which describes 
+where it should be displayed on the screen. If column or row is less than 0,
+then the lead will not be displayed.  This is useful for leads in the file that
+do not describe torso leads.
+
+2.4 getExtension()
+A Java String representing the common file extension associated with this file
+type.  When a file is being opened, this function determines whether this class
+should be used to open that file.  This string should not include the period (.)
+character. For example: This
+
+    ECGFile e;
+	e.read("dataset.dat", points);
+	System.out.println(e.getExtension());
+
+should display the string "dat" instead of ".dat".
+
+3 Deployment
+As mentioned in part 1, to develop plugins for this application, the JDK must be
+installed with at least a version of 1.6.  Running the main program once will
+compile the plugin, and link it to the currently running program.  The 
+compilation process will put a ".class" file with the same name and directory as
+the plugin.  To distribute the plugin to those without a JDK, just distribute 
+the ".class" file.
+
