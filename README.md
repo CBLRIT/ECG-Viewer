@@ -61,8 +61,8 @@ To run the program, either double click on `ECGViewer/ECGViewer.jar` to execute 
 ###2. Workflow
 This section goes through a sample workflow of processing a dataset.
 To begin, run the program with one of the prescribed methods in section 1.3.
-Th program should look like this:
-![](https://github.com/RaineForest/ECG-Viewer/blob/master/imgs/1.png =500x)
+The program should look like this:
+![](imgs/1.png?raw=true)
 
 ####2.1. Opening
 
