@@ -1,4 +1,4 @@
-ECG Viewer - Opens and manipulates raw ECG data
+<a name="top"></a>ECG Viewer - Opens and manipulates raw ECG data
 ===============================================
 Author: Dakota Williams, drw9888@rit.edu
 
@@ -6,23 +6,23 @@ Author: Dakota Williams, drw9888@rit.edu
 
 1. [Setup](#1)
   1. [Prerequisites](#1.1)
-  2. Compilation
-  3. Running
-2. Workflow
-  1. Opening
-  2. Filtering
-    1. Detrending
-    2. Denoising
-  3. Marking Bad Leads
-  4. Annotations & Settings
-  5. Exporting
-    1. Data
-    2. Bad Leads
-    3. Annotations
-3. Acknowledgements
+  2. [Compilation](#1.2)
+  3. [Running](#1.3)
+2. [Workflow](#2)
+  1. [Opening](#2.1)
+  2. [Filtering](#2.2)
+    1. [Detrending](#2.2.1)
+    2. [Denoising](#2.2.2)
+  3. [Marking Bad Leads](#2.3)
+  4. [Annotations & Settings](#2.4)
+  5. [Exporting](#2.5)
+    1. [Data](#2.5.1)
+    2. [Bad Leads](#2.5.2)
+    3. [Annotations](#2.5.3)
+3. [Acknowledgements](#3)
 
-###<a name="1"></a>1. Setup
-####<a name="1.1"></a>1.1. Prerequisites
+###<a name="1"></a>1. Setup [[top](#top)]
+####<a name="1.1"></a>1.1. Prerequisites [[top](#top)]
 To run this application, a Java Runtime Environment (JRE) version 1.6 or higher is required.
 This program is platform-independent thanks to the Java Virtual Machine, meaning this application is not dependent on the client operating system.
 If plugin development is desired, then a Java Development Kit (JDK) version 1.6 or higher is also needed.
@@ -44,7 +44,7 @@ Getting `make`:
 - OS X - Install [Xcode](https://developer.apple.com/xcode/), specifically its developer tools.
 - Linux - Lucky you! You have it already!
 
-####1.2. Compilation
+####<a name="1.2"></a>1.2. Compilation [[top](#top)]
 Compiling the source code is as simple as running `make release`.
 This creates a folder called `ECGViewer` in the source directory containing the jar and folders contains the libraries and plugins.
 During active development there are other targets for the makefile:
@@ -55,39 +55,39 @@ During active development there are other targets for the makefile:
 - `clean`: This will delete the compiled class files from the source directory (note: not the plugin directory).
 - `realclean`: Does the same thing as `clean` as well as removing the `ECGViewer` directory entirely.
 
-####1.3. Running
+####<a name="1.3"></a>1.3. Running [[top](#top)]
 To run the program, either double click on `ECGViewer/ECGViewer.jar` to execute it, or, from command line, run the command `java -jar ECGViewer/ECGViewer.jar`.
 
-###2. Workflow
+###<a name="2"></a>2. Workflow [[top](#top)]
 This section goes through a sample workflow of processing a dataset.
 To begin, run the program with one of the prescribed methods in section 1.3.
 The program should look like this:
 ![](imgs/1.png?raw=true)
 
-####2.1. Opening
+####<a name="2.1"></a>2.1. Opening [[top](#top)]
 There are two options for opening a file, opening the whole file and opening a subset of a file.
 To open a whole file, go to `File->Open...` which will present a dialog like this:
 ![](imgs/2-1.png?raw=true)
 
-####2.2. Filtering
+####<a name="2.2"></a>2.2. Filtering [[top](#top)]
 
-#####2.2.1. Detrending
+#####<a name="2.2.1"></a>2.2.1. Detrending [[top](#top)]
 
-#####2.2.2. Denoising
+#####<a name="2.2.2"></a>2.2.2. Denoising [[top](#top)]
 
-####2.3. Marking Bad Leads
+####<a name="2.3"></a>2.3. Marking Bad Leads [[top](#top)]
 
-####2.4. Annotations & Settings
+####<a name="2.4"></a>2.4. Annotations & Settings [[top](#top)]
 
-####2.5. Exporting
+####<a name="2.5"></a>2.5. Exporting [[top](#top)]
 
-#####2.5.1. Data
+#####<a name="2.5.1"></a>2.5.1. Data [[top](#top)]
 
-#####2.5.2. Bad Leads
+#####<a name="2.5.2"></a>2.5.2. Bad Leads [[top](#top)]
 
-#####2.5.3. Annotations
+#####<a name="2.5.3"></a>2.5.3. Annotations [[top](#top)]
 
-###3. Acknowledgements
+###<a name="3"></a>3. Acknowledgements [[top](#top)]
 
 This work is supported by the National Science Foundation CAREER Award #ACI-1350374 
 
