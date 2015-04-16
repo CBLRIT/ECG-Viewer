@@ -2,7 +2,7 @@
 ===============================================
 Author: Dakota Williams, drw9888@rit.edu
 
-###Table of Contents
+##Table of Contents
 
 1. [Setup](#1)
   1. [Prerequisites](#1.1)
@@ -21,18 +21,18 @@ Author: Dakota Williams, drw9888@rit.edu
     3. [Annotations](#2.5.3)
 3. [Acknowledgements](#3)
 
-###<a name="1"></a>1. Setup [[top](#top)]
-####<a name="1.1"></a>1.1. Prerequisites [[top](#top)]
+##<a name="1"></a>1. Setup [[top](#top)]
+###<a name="1.1"></a>1.1. Prerequisites [[top](#top)]
 To run this application, a Java Runtime Environment (JRE) version 1.6 or higher is required.
 This program is platform-independent thanks to the Java Virtual Machine, meaning this application is not dependent on the client operating system.
 If plugin development is desired, then a Java Development Kit (JDK) version 1.6 or higher is also needed.
-For more information about plugins, see section 2.1 of this document.
+For more information about plugins, see section [2.1](#2.1) of this document.
 If compilation of the source code is necessary, then a JDK version 1.6 or higher and GNU `make` is also needed.
 If compilation is not necessary, skip section 1.2.
 A breakdown of requirements and dependencies are shown in the table below.
 
     | General Use        | Plugin Development | Application Development
-----|--------------------|--------------------|------------------------
+---:|:------------------:|:------------------:|:----------------------:
 JDK | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 JRE |                    | :heavy_check_mark: | :heavy_check_mark:
 make|                    |                    | :heavy_check_mark:
@@ -44,7 +44,7 @@ Getting `make`:
 - OS X - Install [Xcode](https://developer.apple.com/xcode/), specifically its developer tools.
 - Linux - Lucky you! You have it already!
 
-####<a name="1.2"></a>1.2. Compilation [[top](#top)]
+###<a name="1.2"></a>1.2. Compilation [[top](#top)]
 Compiling the source code is as simple as running `make release`.
 This creates a folder called `ECGViewer` in the source directory containing the jar and folders contains the libraries and plugins.
 During active development there are other targets for the makefile:
@@ -55,40 +55,70 @@ During active development there are other targets for the makefile:
 - `clean`: This will delete the compiled class files from the source directory (note: not the plugin directory).
 - `realclean`: Does the same thing as `clean` as well as removing the `ECGViewer` directory entirely.
 
-####<a name="1.3"></a>1.3. Running [[top](#top)]
+###<a name="1.3"></a>1.3. Running [[top](#top)]
 To run the program, either double click on `ECGViewer/ECGViewer.jar` to execute it, or, from command line, run the command `java -jar ECGViewer/ECGViewer.jar`.
 
-###<a name="2"></a>2. Workflow [[top](#top)]
+##<a name="2"></a>2. Workflow [[top](#top)]
 This section goes through a sample workflow of processing a dataset.
 To begin, run the program with one of the prescribed methods in section 1.3.
 The program should look like this:
 ![](imgs/1.png?raw=true)
 
-####<a name="2.1"></a>2.1. Opening [[top](#top)]
+###<a name="2.1"></a>2.1. Opening [[top](#top)]
 There are two options for opening a file, opening the whole file and opening a subset of a file.
 To open a whole file, go to `File->Open...` which will present a dialog like this:
 ![](imgs/2-1.png?raw=true)
 
-####<a name="2.2"></a>2.2. Filtering [[top](#top)]
+Opening a subset of a file is a bit different.
+Using `File->Open Subset...` will show a dialog
+![](imgs/3-1.png?raw=true) 
 
-#####<a name="2.2.1"></a>2.2.1. Detrending [[top](#top)]
+like this.
+The two text boxes on the left side of the dialog specify the time into the dataset that begins the subset and how long the subset is, respectively.  Both of these times are measured in milliseconds.
 
-#####<a name="2.2.2"></a>2.2.2. Denoising [[top](#top)]
+Currently, the supported file types include .dat and .123 files.
+For a more in depth analysis of these files, see `plugins/DATFile.java` and `plugins/_123File.java`.
+More file types can be read in by creating plugins.
+For more information on creating plugins, see `plugins/README`.
 
-####<a name="2.3"></a>2.3. Marking Bad Leads [[top](#top)]
+After loading the file, the main window should display the leads as graphs.
+![](imgs/4.png?raw=true)
 
-####<a name="2.4"></a>2.4. Annotations & Settings [[top](#top)]
+###<a name="2.2"></a>2.2. Filtering [[top](#top)]
+Applying a filter can be done two ways: To an individual lead, or to all the leads at once.
+Applying a filter to all the leads in done in the main window from the `Filter All` menu.
+Selecting a method from there will display a preview dialog of a single lead and parameter sliders for that filter.
+After clicking OK, the filter will be applied to all leads.
 
-####<a name="2.5"></a>2.5. Exporting [[top](#top)]
+The other way to apply a filter is to one lead, individually. 
+Clicking on a graph will produce a window as shown below.
+![](imgs/5.png?raw=true)
 
-#####<a name="2.5.1"></a>2.5.1. Data [[top](#top)]
+The menu `Filter` on this lead window has all of the filter options available to filter just this lead.
 
-#####<a name="2.5.2"></a>2.5.2. Bad Leads [[top](#top)]
+####<a name="2.2.1"></a>2.2.1. Detrending [[top](#top)]
+The main purpose of detrending is to bring the data to a baseline so it can accurately represent the data.
+The detrending options can be found on the first half of the `Filter` menu, before the separator.
 
-#####<a name="2.5.3"></a>2.5.3. Annotations [[top](#top)]
+- Detrend: A polynomial fit, the order of the polynomial is asked for in the dialog.
+- Constant Offset: Shifts the entire signal by a constant value.
 
-###<a name="3"></a>3. Acknowledgements [[top](#top)]
+####<a name="2.2.2"></a>2.2.2. Denoising [[top](#top)]
 
+
+###<a name="2.3"></a>2.3. Marking Bad Leads [[top](#top)]
+
+###<a name="2.4"></a>2.4. Annotations & Settings [[top](#top)]
+
+###<a name="2.5"></a>2.5. Exporting [[top](#top)]
+
+####<a name="2.5.1"></a>2.5.1. Data [[top](#top)]
+
+####<a name="2.5.2"></a>2.5.2. Bad Leads [[top](#top)]
+
+####<a name="2.5.3"></a>2.5.3. Annotations [[top](#top)]
+
+##<a name="3"></a>3. Acknowledgements [[top](#top)]
 This work is supported by the National Science Foundation CAREER Award #ACI-1350374 
 
 Libraries Used
