@@ -79,7 +79,7 @@ The two text boxes on the left side of the dialog specify the time into the data
 Currently, the supported file types include .dat and .123 files.
 For a more in depth analysis of these files, see `plugins/DATFile.java` and `plugins/_123File.java`.
 More file types can be read in by creating plugins.
-For more information on creating plugins, see `plugins/README`.
+For more information on creating plugins, see [`plugins/README`](plugins/README).
 
 After loading the file, the main window should display the leads as graphs.
 ![](imgs/4.png?raw=true)
@@ -104,7 +104,14 @@ The detrending options can be found on the first half of the `Filter` menu, befo
 - Constant Offset: Shifts the entire signal by a constant value.
 
 ####<a name="2.2.2"></a>2.2.2. Denoising [[top](#top)]
+Denoising a signal removes extraneous data and leaves the more important parts of the signal.
+The denoising options are found on the second half of the `Filter` menu, after the separator.
+Some solid options include:
 
+- Savitsky-Golay filter: Does a good job at smoothing the signal, however the morphology may change.
+- FFT: Has a sweet spot for minimizing noise, however if too low, the filter may lose information.
+- Wavelet: Solid all-around choice.
+- Butterworth: Finicky, but works well.
 
 ###<a name="2.3"></a>2.3. Marking Bad Leads [[top](#top)]
 
