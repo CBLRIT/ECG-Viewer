@@ -4,8 +4,8 @@ Author: Dakota Williams, drw9888@rit.edu
 
 ###Table of Contents
 
-1. Setup
-  1. Prerequisites
+1. [Setup](#1)
+  1. [Prerequisites](#1.1)
   2. Compilation
   3. Running
 2. Workflow
@@ -21,8 +21,8 @@ Author: Dakota Williams, drw9888@rit.edu
     3. Annotations
 3. Acknowledgements
 
-###1. Setup
-####1.1. Prerequisites
+###<a name="1"></a>1. Setup
+####<a name="1.1"></a>1.1. Prerequisites
 To run this application, a Java Runtime Environment (JRE) version 1.6 or higher is required.
 This program is platform-independent thanks to the Java Virtual Machine, meaning this application is not dependent on the client operating system.
 If plugin development is desired, then a Java Development Kit (JDK) version 1.6 or higher is also needed.
@@ -65,6 +65,9 @@ The program should look like this:
 ![](imgs/1.png?raw=true)
 
 ####2.1. Opening
+There are two options for opening a file, opening the whole file and opening a subset of a file.
+To open a whole file, go to `File->Open...` which will present a dialog like this:
+![](imgs/2-1.png?raw=true)
 
 ####2.2. Filtering
 
