@@ -14,7 +14,7 @@ Author: Dakota Williams, drw9888@rit.edu
     1. [Detrending](#2.2.1)
     2. [Denoising](#2.2.2)
   3. [Marking Bad Leads](#2.3)
-  4. [Annotations & Settings](#2.4)
+  4. [Annotations](#2.4)
   5. [Exporting](#2.5)
     1. [Data](#2.5.1)
     2. [Bad Leads](#2.5.2)
@@ -94,6 +94,15 @@ The other way to apply a filter is to one lead, individually.
 Clicking on a graph will produce a window as shown below.
 ![](imgs/5.png?raw=true)
 
+Controls for navigating the graph:
+- Click-n-drag (upper-left to lower-right): Zoom in on area
+- Click-n-drag (lower-right to upper-left): Zoom out
+- Ctrl + click-n-drag: Pan
+
+The lower text boxes allow for manual focus of the graph.
+`Start offset` sets the where the left side of the graph is aligned.
+`Length` sets how much the x-axis contains.
+
 The menu `Filter` on this lead window has all of the filter options available to filter just this lead.
 
 ####<a name="2.2.1"></a>2.2.1. Detrending [[top](#top)]
@@ -114,8 +123,39 @@ Some solid options include:
 - Butterworth: Finicky, but works well.
 
 ###<a name="2.3"></a>2.3. Marking Bad Leads [[top](#top)]
+Picking out bad leads must be done individually to each lead.
+To do so, click on the lead's graph in the main window to open that lead's window.
+On that lead's menu, click `Dataset->Bad Lead`.
+Doing so will set the background of that lead to red, indicating it is bad.
 
-###<a name="2.4"></a>2.4. Annotations & Settings [[top](#top)]
+There is an option to interpolate bad leads with their direct neighbors.
+In the settings panel (Main Window `File->Settings`), check `Interpolate Bad Leads?` to activate this functionality.
+
+###<a name="2.4"></a>2.4. Annotations [[top](#top)]
+Annotations are used to mark places of interest in the signal.
+Four designated titles currently exist:
+
+1. P-wave,
+2. QRS-complex,
+3. R-wave,
+4. T-wave
+
+They represent the major features in a single beat.
+Annotations are placed on an individual lead, but apply to all leads.
+For example, if an annotation is set on lead a, then on lead b, the same annotations appear.
+
+Placing an annotation is a two-step procedure.
+First, make sure `Annotation->Place Annotations` is checked.
+This disables the graph navigation function and enables placing annotations.
+Second, selecting the correct type of annotation from the `Annotation` menu and clicking on the graph where the annotation should be placed will add a new annotation.
+To enable graph navigation, uncheck `Annotation->Place Annotations`.
+
+There is a feature to auto annotate the R-waves (highest peaks) in the signal.
+To use this, click `Annotation->Find R-Waves`.
+
+To clear all annotations, use `Annotation->Clear`.
+
+Customizing annotation colors can be set from the settings panel.
 
 ###<a name="2.5"></a>2.5. Exporting [[top](#top)]
 
