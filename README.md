@@ -158,12 +158,31 @@ To clear all annotations, use `Annotation->Clear`.
 Customizing annotation colors can be set from the settings panel.
 
 ###<a name="2.5"></a>2.5. Exporting [[top](#top)]
+Exporting data allows it to be used in other programs and routines not a part of this application.
+All export methods can be found in the `File` menu of the main window.
 
 ####<a name="2.5.1"></a>2.5.1. Data [[top](#top)]
+Like opening data, exporting data can be done two ways: All at once, or just a subset.
+To export all of the data, use `File->Export...`.
+To export just a subset of the data, use `File-Export Subset...`.
+The subset bounds are defined by the two text boxes at the bottom of the main window.
+In both of these methods, the file format must be chosen from the drop-down in the export dialog.
+
+Currently, there is one way of exporting data.
+The data is exported into a file of comma separated values (CSV), where first row is the lead number, and each subsequent row is the time followed by the value for that lead at that time.
+Even though the drop-down provides a MATLAB matrix option, do not use it since it does not work.
 
 ####<a name="2.5.2"></a>2.5.2. Bad Leads [[top](#top)]
+Exporting bad leads is done by `File->Export Bad Leads...`.
+The file output is all of the lead numbers of the bad leads, one per line.
 
 ####<a name="2.5.3"></a>2.5.3. Annotations [[top](#top)]
+Exporting annotations is invoked by `File->Export Annotations...`.
+Each annotation is associated with a number in order of how they appear in the menu (P-wave -> 0, QRS -> 1, etc.).
+These numbers are stored with there temporal position in the signal, one per line.
+
+For example, an R-wave (3rd in menu -> 2) annotation was placed at time 1000.
+When the annotations are exported, then the file would have a line that looks like `2.0 1000.0`.
 
 ##<a name="3"></a>3. Acknowledgements [[top](#top)]
 This work is supported by the National Science Foundation CAREER Award #ACI-1350374 
