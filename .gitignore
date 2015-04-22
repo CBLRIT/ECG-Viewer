@@ -3,4 +3,3 @@ RnD/*
 *.class
 !plugins/*.class
 data/*
-ECGViewer/*

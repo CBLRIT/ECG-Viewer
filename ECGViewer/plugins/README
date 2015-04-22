@@ -59,8 +59,8 @@ should be used to open that file.  This string should not include the period (.)
 character. For example: This
 
     ECGFile e;
-	e.read("dataset.dat", points);
-	System.out.println(e.getExtension());
+    e.read("dataset.dat", points);
+    System.out.println(e.getExtension());
 
 should display the string "dat" instead of ".dat".
 

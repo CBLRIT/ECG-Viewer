@@ -25,6 +25,7 @@ release:
 	done
 	cp -R plugins/ ECGViewer/
 	cp manifest.txt ECGViewer/
+	cp README.md ECGViewer/
 	cd ECGViewer; \
 	javac -cp .:$(shell cd ECGViewer; ls -1 libs/*.jar | sed -e ':a;N;$$!ba;s/\s/:/g') ../*.java -d ./; \
 	jar cfm ECGViewer.jar manifest.txt *.class
