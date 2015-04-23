@@ -304,9 +304,9 @@ public class ECGModel {
 			found.add(tempLayout[i]);
 		}
 
-		layout = new int[found.size()][2];
+		layout = new int[found.size()][3];
 		for(int i = 0; i < found.size(); i++) {
-			layout[i] = new int[]{found.get(i)[0], found.get(i)[1]};
+			layout[i] = new int[]{found.get(i)[0], found.get(i)[1], found.get(i)[2]};
 		}
 		ignoredLeads = new ECGDataSet[numIgnoreLeads];
 		points = new ECGDataSet[numGoodLeads];
@@ -438,6 +438,15 @@ public class ECGModel {
 	 */
 	public int getOffset() {
 		return dataOffset;
+	}
+
+	/**
+	 * getTitle - the title of the lead index requested
+	 * @param i the index
+	 * @return the title
+	 */
+	public String getTitle(int i) {
+		return ""+this.getLayout()[i][2];
 	}
 
 	/**

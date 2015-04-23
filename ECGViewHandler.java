@@ -72,7 +72,7 @@ public class ECGViewHandler {
 	}
 
 	public ECGView getView(int i, boolean withLabels) {
-		return new ECGView(this, model.getDataset(i), i, ""+(i+model.getOffset()-1), withLabels);
+		return new ECGView(this, model.getDataset(i), i, model.getTitle(i), withLabels);
 	}
 
 	public void applyFilter(FilterDialog f, int index) {
