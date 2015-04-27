@@ -13,8 +13,9 @@ public interface ECGOutputFile {
 	 * @throws IOException when an IOException occurs
 	 *
 	 * @param data the data to write
+	 * @param offset the lead title offset
 	 */
-	public void write(ECGDataSet[] data) throws IOException;
+	public void write(ECGDataSet[] data, int offset) throws IOException;
 
 	/**
 	 * writeSubset - writes part of the data
@@ -23,6 +24,7 @@ public interface ECGOutputFile {
 	 * @param data the data to write
 	 * @param start the index to start at
 	 * @param end the index to end at
+	 * @param offset the lead title offset
 	 */
-	public void writeSubset(ECGDataSet[] data, int start, int end) throws IOException;
+	public void writeSubset(ECGDataSet[] data, int start, int end, int offset) throws IOException;
 }

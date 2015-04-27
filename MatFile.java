@@ -27,7 +27,7 @@ public class MatFile implements ECGOutputFile {
 		} catch(FileNotFoundException e) {}
 	}
 
-	public void write(ECGDataSet[] data) //data - channels, x/y, entries
+	public void write(ECGDataSet[] data, int offset) //data - channels, x/y, entries
 			throws IOException {
 		int n = data[0].size();  //# of data points
 		int m = data.length;	  	//# of channels
@@ -129,7 +129,7 @@ public class MatFile implements ECGOutputFile {
 		//END
 	}
 
-	public void writeSubset(ECGDataSet[] data, int start, int end)
+	public void writeSubset(ECGDataSet[] data, int start, int end, int offset)
 			throws IOException {
 		int n = end-start;  //# of data points
 		int m = data.length;	  	//# of channels

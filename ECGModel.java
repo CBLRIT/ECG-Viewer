@@ -184,7 +184,11 @@ public class ECGModel {
 	 */
 	public void writeDataMat(String filename) 
 			throws IOException {
-		(new MatFile(filename)).write(points);
+		int offset = 0;
+		if(points.length != 64) {
+			offset = 4;
+		}
+		(new MatFile(filename)).write(points, offset);
 	}
 
 	/**
@@ -195,7 +199,11 @@ public class ECGModel {
 	 */
 	public void writeDataCSV(String filename)
 			throws IOException {
-		(new CSVFile(filename)).write(points);
+		int offset = 0;
+		if(points.length != 64) {
+			offset = 4;
+		}
+		(new CSVFile(filename)).write(points, offset);
 	}
 
 	/**
@@ -207,9 +215,13 @@ public class ECGModel {
 	 */
 	public void writeDataSubsetMat(String filename, double start, double end) 
 			throws IOException {
+		int offset = 0;
+		if(points.length != 64) {
+			offset = 4;
+		}
 		(new MatFile(filename)).writeSubset(points, 
 											points[0].indexBefore(start), 
-											points[0].indexBefore(end));
+											points[0].indexBefore(end), offset);
 	}
 
 	/**
@@ -221,9 +233,13 @@ public class ECGModel {
 	 */
 	public void writeDataSubsetCSV(String filename, double start, double end)
 			throws IOException {
+		int offset = 0;
+		if(points.length != 64) {
+			offset = 4;
+		}
 		(new CSVFile(filename)).writeSubset(points, 
 											points[0].indexBefore(start), 
-											points[0].indexBefore(end));
+											points[0].indexBefore(end), offset);
 	}
 
 	/**
@@ -233,11 +249,15 @@ public class ECGModel {
 	 */
 	public void writeBadLeads(String filename) 
 			throws IOException {
+		int offset = 0;
+		if(points.length != 64) {
+			offset = 4;
+		}
 		PrintWriter out = new PrintWriter(filename);
 
 		for(int i = 0; i < points.length; i++) {
 			if(points[i].isBad()) {
-				out.println((i+4));
+				out.println(i+offset);
 			}
 		}
 

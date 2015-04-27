@@ -76,7 +76,7 @@ Using `File->Open Subset...` will show a dialog
 like this.
 The two text boxes on the left side of the dialog specify the time into the dataset that begins the subset and how long the subset is, respectively.  Both of these times are measured in milliseconds.
 
-Currently, the supported file types include .dat and .123 files.
+Currently, the supported file types include .dat, .123, and 64-lead .txt files.
 For a more in depth analysis of these files, see `plugins/DATFile.java` and `plugins/_123File.java`.
 More file types can be read in by creating plugins.
 For more information on creating plugins, see [`plugins/README`](plugins/README).

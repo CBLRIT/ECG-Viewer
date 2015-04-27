@@ -32,11 +32,11 @@ public class CSVFile implements ECGOutputFile {
 	 *			2. x (0) or y (1)
 	 *			3. sample number
 	 */
-	public void write(ECGDataSet[] data) 
+	public void write(ECGDataSet[] data, int offset) 
 			throws IOException {
 		for(int i = 0; i < data.length; i++) {
 			out.write(",\t\t", 0, 3);
-			out.write("" + (i+4), 0, new Integer(i+4).toString().length());
+			out.write("" + (i+offset), 0, new Integer(i+offset).toString().length());
 		}
 		out.write("\n", 0, 1);
 	
@@ -62,11 +62,11 @@ public class CSVFile implements ECGOutputFile {
 	 * @param start the index to start at
 	 * @param end the index to end at
 	 */
-	public void writeSubset(ECGDataSet[] data, int start, int end)
+	public void writeSubset(ECGDataSet[] data, int start, int end, int offset)
 			throws IOException {
 		for(int i = 0; i < data.length; i++) {
 			out.write(",\t\t", 0, 3);
-			out.write("" + (i+4), 0, new Integer(i+4).toString().length());
+			out.write("" + (i+offset), 0, new Integer(i+offset).toString().length());
 		}
 		out.write("\n", 0, 1);
 	

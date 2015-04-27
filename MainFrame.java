@@ -438,7 +438,7 @@ public class MainFrame extends JFrame {
 			final int count = i;
 			graph.getPanel().addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
-					ChartFrame cf = new ChartFrame(views, count, ""+(count+views.getOffset()-1));
+					ChartFrame cf = new ChartFrame(views, count, ""+views.getLayout()[count][2]);
 					cf.addWindowListener(new WindowListener() {
 						public void windowClosing(WindowEvent e) {
 							graph.setBackground(!graph.isBad() ? 
