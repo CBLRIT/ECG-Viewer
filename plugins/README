@@ -47,10 +47,10 @@ getLayout() determines how and which leads get displayed.  The return value for
 this function is a 2D array of integers which specify a column-row position on
 the main frame of the program.  The array should be of size N*2, where N is at 
 least the number of leads.  Given a primary index i, the value of the returned
-array at i, r[i], should be an array of 2 values: [column, row] which describes 
-where it should be displayed on the screen. If column or row is less than 0,
-then the lead will not be displayed.  This is useful for leads in the file that
-do not describe torso leads.
+array at i, r[i], should be an array of 3 values: [column, row, title] which 
+describes where and how it should be displayed on the screen. If column or row 
+is less than 0, then the lead will not be displayed.  This is useful for leads 
+in the file that do not describe torso leads.
 
 2.4 getExtension()
 A Java String representing the common file extension associated with this file
