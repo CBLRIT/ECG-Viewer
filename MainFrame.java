@@ -426,10 +426,14 @@ public class MainFrame extends JFrame {
 
 	private void relink() {
 		graphs.clear();
+		for(int i = 0; i < subPanels.length; i++) {
+			subPanels[i].removeAll();
+			subPanels[i].revalidate();
+			subPanels[i].repaint();
+		}
 		for(int i = 0; i < views.size(); i++) {
 			int index = views.getLayout()[i][0]*xnum + views.getLayout()[i][1];
 			final ECGView graph = views.getView(i, false);
-			subPanels[index].removeAll();
 
 			final int count = i;
 			graph.getPanel().addMouseListener(new MouseListener() {
@@ -462,8 +466,11 @@ public class MainFrame extends JFrame {
 
 			graphs.add(graph);
 			subPanels[index].add(graph.getPanel());
+			subPanels[index].revalidate();
+			subPanels[index].repaint();
 		}
 
 		thisFrame.revalidate();
+		thisFrame.repaint();
 	}
 }
