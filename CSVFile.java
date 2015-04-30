@@ -34,13 +34,14 @@ public class CSVFile implements ECGOutputFile {
 	 */
 	public void write(ECGDataSet[] data, int offset) 
 			throws IOException {
+		String s = data.length + " leads sampled @" + (data[0].getAt(1)[0]-data[0].getAt(0)[0]) + "ms";
+		out.write(s, 0, s.length());
 		for(int i = 0; i < data.length; i++) {
 			out.write(",\t\t", 0, 3);
 			out.write("" + (i+offset), 0, new Integer(i+offset).toString().length());
 		}
 		out.write("\n", 0, 1);
 	
-		String s;
 		for(int i = 0; i < data[0].size(); i++) {
 			s = String.format("%f", data[0].getAt(i)[0]);
 			out.write("" + s, 0, s.length());
@@ -64,13 +65,14 @@ public class CSVFile implements ECGOutputFile {
 	 */
 	public void writeSubset(ECGDataSet[] data, int start, int end, int offset)
 			throws IOException {
+		String s = data.length + " leads sampled @" + (data[0].getAt(1)[0]-data[0].getAt(0)[0]) + "ms";
+		out.write(s, 0, s.length());
 		for(int i = 0; i < data.length; i++) {
 			out.write(",\t\t", 0, 3);
 			out.write("" + (i+offset), 0, new Integer(i+offset).toString().length());
 		}
 		out.write("\n", 0, 1);
 	
-		String s;
 		for(int i = start; i < end; i++) {
 			s = String.format("%f", data[0].getAt(i)[0]);
 			out.write("" + s, 0, s.length());
