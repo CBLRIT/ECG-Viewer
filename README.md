@@ -33,8 +33,8 @@ A breakdown of requirements and dependencies are shown in the table below.
 
     | General Use        | Plugin Development | Application Development
 ---:|:------------------:|:------------------:|:----------------------:
-JDK | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
-JRE |                    | :heavy_check_mark: | :heavy_check_mark:
+JRE | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
+JDK |                    | :heavy_check_mark: | :heavy_check_mark:
 make|                    |                    | :heavy_check_mark:
 
 The latest JDK and JRE are available [here](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
