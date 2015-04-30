@@ -81,7 +81,7 @@ public class MainFrame extends JFrame {
 					try {
 						views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
 											 fc.getStartTime(),
-											 fc.getLengthTime());
+											 fc.getStartTime()+fc.getLengthTime());
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null,
 													  "Could not load file",

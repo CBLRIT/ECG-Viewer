@@ -135,6 +135,8 @@ public class ECGView {
 			});
 		}
 
+		this.setViewingDomain(data.getAt(0)[0], data.getAt(data.size()-1)[0]);
+
 //		System.out.println(origData.toArray()[1][0]);
 	}
 
