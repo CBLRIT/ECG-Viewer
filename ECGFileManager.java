@@ -50,7 +50,7 @@ public class ECGFileManager {
 				JOptionPane.showMessageDialog(null, "There were plugin compilation errors. All or some of the plugins will not be added. Check \"plugins/error.log\" for details.", "Compilation error", JOptionPane.WARNING_MESSAGE);
 			}
 		} else if (sources.length != 0) {
-			JOptionPane.showMessageDialog(null, "Source plugins not supported, please install a Java Development Kit (JDK).", "Cannot Compile Plugin", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Source plugins not supported, please install a Java Development Kit (JDK) to develop plugins. If you are not developing plugins, please ignore this message.", "Cannot Compile Plugin", JOptionPane.INFORMATION_MESSAGE);
 		}
 
 		File[] classfiles = folder.listFiles(new FileFilter() {
