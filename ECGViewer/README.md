@@ -33,8 +33,8 @@ A breakdown of requirements and dependencies are shown in the table below.
 
     | General Use        | Plugin Development | Application Development
 ---:|:------------------:|:------------------:|:----------------------:
-JDK | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
-JRE |                    | :heavy_check_mark: | :heavy_check_mark:
+JRE | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
+JDK |                    | :heavy_check_mark: | :heavy_check_mark:
 make|                    |                    | :heavy_check_mark:
 
 The latest JDK and JRE are available [here](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
@@ -76,7 +76,7 @@ Using `File->Open Subset...` will show a dialog
 like this.
 The two text boxes on the left side of the dialog specify the time into the dataset that begins the subset and how long the subset is, respectively.  Both of these times are measured in milliseconds.
 
-Currently, the supported file types include .dat, .123, and 64-lead .txt files.
+Currently, the supported file types include .dat, .123, 64-lead .txt, and .csv (exported from this application) files.
 For a more in depth analysis of these files, see `plugins/DATFile.java` and `plugins/_123File.java`.
 More file types can be read in by creating plugins.
 For more information on creating plugins, see [`plugins/README`](plugins/README).
