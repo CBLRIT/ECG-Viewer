@@ -75,6 +75,17 @@ public class ECGViewHandler {
 		return new ECGView(this, model.getDataset(i), i, model.getTitle(i), withLabels);
 	}
 
+	public ECGView getCompositeView(boolean withLabels) {
+		ECGView v = new ECGView(this, model.getDataset(0), 0, "Composite", withLabels);
+		for(int i = 1; i < model.size(); i++) {
+			v.addDataset(model.getDataset(i));
+		}
+		if(withLabels) {
+			v.addLegend();
+		}
+		return v;
+	}
+
 	public void applyFilter(FilterDialog f, int index) {
 		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
 		changes.put(

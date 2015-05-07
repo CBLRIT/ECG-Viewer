@@ -49,7 +49,8 @@ public class ChartFrame extends JFrame {
 	/**
 	 * Constructor - creates the frame and everything in it
 	 *
-	 * @param v the view to display
+	 * @param handler the viewhandler to use
+	 * @param index the view to display
 	 * @param title the title of the frame
 	 */
 	public ChartFrame(final ECGViewHandler handler, int index, String title) {
@@ -247,6 +248,123 @@ public class ChartFrame extends JFrame {
 		filter.add(filter_butter);
 		
 		menu.add(filter);
+
+		//annotation menu
+		JMenu annotations = new JMenu("Annotation");
+		anno_enable = new JCheckBoxMenuItem("Place Annotations");
+		anno_enable.setState(false);
+		anno_enable.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanPlace(anno_enable.getState());
+			}
+		});
+		JMenuItem annotations_clear = new JMenuItem("Clear");
+		annotations_clear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.clearAnnotations();
+			}
+		});
+		JMenuItem annotations_auto = new JMenuItem("Find R-Waves");
+		annotations_auto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.handler.extractFeatures(thisFrame.index);
+				thisFrame.view.redrawAnnotations();
+				thisFrame.view.revalidate();
+			}
+		});
+		annotations.add(anno_enable);
+		annotations.add(annotations_clear);
+		annotations.add(annotations_auto);
+		annotations.addSeparator();
+		ButtonGroup annoGroup = new ButtonGroup();
+		JRadioButtonMenuItem[] annotations_colors = new JRadioButtonMenuItem[Settings.numAnnoTypes()];
+		for(int i = 0; i < annotations_colors.length; i++) {
+			final int count = i;
+			annotations_colors[i] = new JRadioButtonMenuItem("Annotation " + (i+1) 
+											+ " (" + Settings.getAnnotationTitle(i) + ")", 
+											Settings.getSelectedAnnotationType()==i);
+			annotations_colors[i].addActionListener(new ActionListener() {
+				private final int changeNum = count;
+
+				public void actionPerformed(ActionEvent e) {
+					Settings.setSelectedAnnotationType(changeNum);
+				}
+			});
+			annotations.add(annotations_colors[i]);
+			annoGroup.add(annotations_colors[i]);
+		}
+
+		menu.add(annotations);
+
+		setJMenuBar(menu);
+
+		//add the specified view to the frame
+		add(thisFrame.view.getPanel(), BorderLayout.CENTER);
+
+		JPanel statusBar = new JPanel();
+		JLabel startLabel = new JLabel("Start offset (ms):");
+		startText.setValue(0L);
+		startText.setColumns(10);
+		startText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				long start = (Long)startText.getValue();
+				long len = (Long)lenText.getValue();
+				thisFrame.view.setViewingDomain(start, start+len);
+			}
+		});
+		JLabel lenLabel = new JLabel("Length (ms):");
+		lenText.setValue(0L);
+		lenText.setColumns(10);
+		lenText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				long start = (Long)startText.getValue();
+				long len = (Long)lenText.getValue();
+				thisFrame.view.setViewingDomain(start, start+len);
+			}
+		});
+		statusBar.add(startLabel);
+		statusBar.add(startText);
+		statusBar.add(lenLabel);
+		statusBar.add(lenText);
+		
+		lenText.setValue(thisFrame.handler.leadSize(index)*thisFrame.handler.getSampleInterval());
+
+		add(statusBar, BorderLayout.SOUTH);
+
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setVisible(true);
+	}
+
+	/**
+	 * Constructor - frame that views a composite view
+	 *
+	 * @param handler the viewhandler to use
+	 */
+	public ChartFrame(final ECGViewHandler handler) {
+		super("Composite");
+		setBounds(0, 0, 500, 500);
+		setLayout(new BorderLayout());
+
+		this.handler = handler;
+		this.index = 0;
+		view = handler.getCompositeView(true);
+
+		//start with the menu bar
+		JMenuBar menu = new JMenuBar();
+
+		//dataset menu
+		JMenu file = new JMenu("Dataset");
+		file_badlead = new JCheckBoxMenuItem("Bad Lead");
+		file_badlead.setState(false);
+		JMenuItem file_exit = new JMenuItem("Exit");
+		file_exit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.setVisible(false);
+				thisFrame.dispose();
+			}
+		});
+		file.add(file_exit);
+		menu.add(file);
 
 		//annotation menu
 		JMenu annotations = new JMenu("Annotation");

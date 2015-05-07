@@ -19,6 +19,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.DefaultXYDataset;
 
 /**
@@ -33,6 +34,7 @@ public class ECGView {
 	private NumberAxis xaxis;
 	private NumberAxis yaxis;
 	private XYLineAndShapeRenderer renderer;
+	private DefaultXYDataset dataset;
 
 	private final int defaultWidth = 200;
 	private final int defaultHeight = 200;
@@ -66,7 +68,7 @@ public class ECGView {
 		this.data = data;
 		this.labels = withLabels;
 
-		DefaultXYDataset dataset = new DefaultXYDataset();
+		dataset = new DefaultXYDataset();
 		dataset.addSeries(1, data.toArray());
 		
 		this.xaxis = new NumberAxis("Time (msec)");
@@ -138,6 +140,15 @@ public class ECGView {
 		this.setViewingDomain(data.getAt(0)[0], data.getAt(data.size()-1)[0]);
 
 //		System.out.println(origData.toArray()[1][0]);
+	}
+
+	/**
+	 * addDataset - adds a new plot to the graph
+	 *
+	 * @param d the dataset
+	 */
+	public void addDataset(ECGDataSet d) {
+		dataset.addSeries(dataset.getSeriesCount()+1, d.toArray());
 	}
 
 	/**
@@ -253,6 +264,13 @@ public class ECGView {
 	 */
 	public void filter(int filterid, Number[] params) {
 		this.data = handler.shallowFilter(index, filterid, params, labels).data;
+	}
+
+	/**
+	 * addLegend - enables a legend on the chart
+	 */
+	public void addLegend() {
+		this.chart.addLegend(new LegendTitle(plot));
 	}
 }
 
