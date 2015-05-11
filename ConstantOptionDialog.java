@@ -55,7 +55,6 @@ public class ConstantOptionDialog extends FilterDialog {
 		slider.gridy = 0;
 
 		this.setBounds(thisFrame.getX(), thisFrame.getY(), 500, 400);
-		this.setResizable(false);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				e.getWindow().dispose();

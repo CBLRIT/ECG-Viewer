@@ -23,6 +23,7 @@ public abstract class FilterDialog extends JDialog {
 								 int idNum) {
 		super(thisFrame, title, modal);
 		id = idNum;
+		this.setResizable(true);
 	}
 
 	public abstract int Id();
