@@ -26,7 +26,7 @@ public class TextSlide extends JPanel {
 		slider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				number.setValue(slider.getValue() / scale);
+				number.setValue(((Number)slider.getValue()).doubleValue() / scale);
 				fireStateChanged();
 			}
 		});
@@ -34,7 +34,7 @@ public class TextSlide extends JPanel {
 		number.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				slider.setValue((int)((Double)number.getValue() * scale));
+				slider.setValue((int)(((Number)number.getValue()).doubleValue() * scale));
 				fireStateChanged();
 			}
 		});
@@ -44,7 +44,7 @@ public class TextSlide extends JPanel {
 	}
 
 	public Double getValue() {
-		return (Double) ((double)slider.getValue() / scale);
+		return slider.getValue() / scale;
 	}
 
 	public void setValue(Double val) {

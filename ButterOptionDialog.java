@@ -49,13 +49,9 @@ public class ButterOptionDialog extends FilterDialog {
 		labels.gridx = 0;
 		labels.gridy = 0;
 
-		GridBagConstraints values = new GridBagConstraints();
-		values.gridx = 6;
-		values.gridy = 0;
-
 		GridBagConstraints slider = new GridBagConstraints();
 		slider.gridwidth = 5;
-		slider.gridx = 7;
+		slider.gridx = 6;
 		slider.gridy = 0;
 
 		this.setBounds(thisFrame.getX(), thisFrame.getY(), 500, 400);
@@ -66,16 +62,13 @@ public class ButterOptionDialog extends FilterDialog {
 		});
 
 		controls.add(new JLabel("Frequency Threshold"), labels);
-		final JLabel leftNum = new JLabel("60.0");
-		controls.add(leftNum, values);
-		final JSlider leftSlide = new JSlider(00000, 1500000, 600000);
-		final JSlider orderSlide = new JSlider(1, 10, 2);
+		final TextSlide leftSlide = new TextSlide(0, 150, 60, 4);
+		final TextSlide orderSlide = new TextSlide(1, 10, 2, 0);
 		leftSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				leftNum.setText("" + (double)(int)leftSlide.getValue()/10000.0);
 				preview[0].filter(id, new Number[]{0,
-												   ((double)(int)leftSlide.getValue())/10000.0,
-												   (int)orderSlide.getValue()*2});
+												   (double)leftSlide.getValue(),
+												   (int)(orderSlide.getValue()*2.0)});
 				preview[0].revalidate();
 			}
 		});
@@ -83,15 +76,11 @@ public class ButterOptionDialog extends FilterDialog {
 
 		labels.gridy = 1;
 		controls.add(new JLabel("Filter Order"), labels);
-		final JLabel orderNum = new JLabel("4");
-		values.gridy = 1;
-		controls.add(orderNum, values);
 		orderSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				orderNum.setText("" + ((int)orderSlide.getValue()*2));
 				preview[0].filter(id, new Number[]{0,
-												   ((double)(int)leftSlide.getValue())/10000.0,
-												   (int)orderSlide.getValue()*2});
+												   (double)leftSlide.getValue(),
+												   (int)(orderSlide.getValue()*2.0)});
 				preview[0].revalidate();
 			}
 		});
@@ -104,8 +93,8 @@ public class ButterOptionDialog extends FilterDialog {
 			public void actionPerformed(ActionEvent e) {
 				accept.setEnabled(false);
 				cancel.setEnabled(false);
-				freq = ((double)(int)leftSlide.getValue())/10000.0;
-				order = (int)orderSlide.getValue()*2;
+				freq = (double)leftSlide.getValue();
+				order = (int)(orderSlide.getValue()*2.0);
 				thisFrame.revalidate();
 				thisDialog.dispose();
 				retVal = true;
@@ -126,6 +115,7 @@ public class ButterOptionDialog extends FilterDialog {
 
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
+		this.setSize(600,600);
 		this.setVisible(true);
 	}
 
