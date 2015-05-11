@@ -497,3 +497,4 @@ public class MainFrame extends JFrame {
 		thisFrame.repaint();
 	}
 }
+
