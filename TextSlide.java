@@ -1,6 +1,7 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.GridLayout;
 import java.text.NumberFormat;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -20,6 +21,8 @@ public class TextSlide extends JPanel {
 		number = new JFormattedTextField(NumberFormat.getNumberInstance());
 		number.setValue(init);
 
+		setLayout(new GridLayout(1, 2));
+
 		slider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -33,6 +36,9 @@ public class TextSlide extends JPanel {
 				slider.setValue((int)((Double)number.getValue() * scale));
 			}
 		});
+
+		add(number);
+		add(slider);
 	}
 
 	public Double getValue() {
