@@ -91,6 +91,8 @@ public class ECGModel {
 		points = new ECGDataSet[]{};
 		layout = new int[][]{};
 		dataOffset = 0;
+		history.reset();
+		annotations.clear();
 	}
 
 	/**
@@ -293,7 +295,6 @@ public class ECGModel {
 	 */
 	public void readData(String filename) 
 			throws IOException, FileNotFoundException {
-		history.reset();
 		this.clear();
 
 		file = filePlugins.getECGFile(filename);
