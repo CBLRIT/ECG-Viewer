@@ -115,7 +115,7 @@ public class ButterOptionDialog extends FilterDialog {
 
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
-		this.setSize(600,600);
+		this.setSize(650,650);
 		this.setVisible(true);
 	}
 

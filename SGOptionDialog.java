@@ -49,12 +49,8 @@ public class SGOptionDialog extends FilterDialog {
 		labels.gridx = 0;
 		labels.gridy = 0;
 
-		GridBagConstraints values = new GridBagConstraints();
-		values.gridx = 6;
-		values.gridy = 0;
-
 		GridBagConstraints slider = new GridBagConstraints();
-		slider.gridwidth = 5;
+		slider.gridwidth = 6;
 		slider.gridx = 7;
 		slider.gridy = 0;
 
@@ -66,17 +62,14 @@ public class SGOptionDialog extends FilterDialog {
 		});
 
 		controls.add(new JLabel("Left Elements to Sample"), labels);
-		final JLabel leftNum = new JLabel("25");
-		controls.add(leftNum, values);
-		final JSlider leftSlide = new JSlider(1, 100, 25);
-		final JSlider rightSlide = new JSlider(1, 100, 25);
-		final JSlider degreeSlide = new JSlider(0, 10, 6);
+		final TextSlide leftSlide = new TextSlide(1, 100, 25, 0);
+		final TextSlide rightSlide = new TextSlide(1, 100, 25, 0);
+		final TextSlide degreeSlide = new TextSlide(0, 10, 6, 0);
 		leftSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				leftNum.setText("" + leftSlide.getValue());
-				preview[0].filter(id, new Number[]{leftSlide.getValue(),
-												   rightSlide.getValue(),
-												   degreeSlide.getValue()});
+				preview[0].filter(id, new Number[]{leftSlide.getValue().intValue(),
+												   rightSlide.getValue().intValue(),
+												   degreeSlide.getValue().intValue()});
 				preview[0].revalidate();
 			}
 		});
@@ -84,15 +77,11 @@ public class SGOptionDialog extends FilterDialog {
 
 		labels.gridy = 1;
 		controls.add(new JLabel("Right Elements to Sample"), labels);
-		final JLabel rightNum = new JLabel("25");
-		values.gridy = 1;
-		controls.add(rightNum, values);
 		rightSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				rightNum.setText("" + rightSlide.getValue());
-				preview[0].filter(id, new Number[]{leftSlide.getValue(),
-												   rightSlide.getValue(),
-												   degreeSlide.getValue()});
+				preview[0].filter(id, new Number[]{leftSlide.getValue().intValue(),
+												   rightSlide.getValue().intValue(),
+												   degreeSlide.getValue().intValue()});
 				preview[0].revalidate();
 			}
 		});
@@ -101,15 +90,11 @@ public class SGOptionDialog extends FilterDialog {
 
 		labels.gridy = 2;
 		controls.add(new JLabel("Degree of Fitting Polynomial"), labels);
-		final JLabel degreeNum = new JLabel("6");
-		values.gridy = 2;
-		controls.add(degreeNum, values);
 		degreeSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				degreeNum.setText("" + degreeSlide.getValue());
-				preview[0].filter(id, new Number[]{leftSlide.getValue(),
-												   rightSlide.getValue(),
-												   degreeSlide.getValue()});
+				preview[0].filter(id, new Number[]{leftSlide.getValue().intValue(),
+												   rightSlide.getValue().intValue(),
+												   degreeSlide.getValue().intValue()});
 				preview[0].revalidate();
 			}
 		});
@@ -122,9 +107,9 @@ public class SGOptionDialog extends FilterDialog {
 			public void actionPerformed(ActionEvent e) {
 				accept.setEnabled(false);
 				cancel.setEnabled(false);
-				left = leftSlide.getValue();
-				right = rightSlide.getValue(); 
-				degree = degreeSlide.getValue();
+				left = leftSlide.getValue().intValue();
+				right = rightSlide.getValue().intValue(); 
+				degree = degreeSlide.getValue().intValue();
 				thisFrame.revalidate();
 				thisDialog.dispose();
 				retVal = true;
@@ -145,6 +130,7 @@ public class SGOptionDialog extends FilterDialog {
 
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
+		this.setSize(650,650);
 		this.setVisible(true);
 	}
 

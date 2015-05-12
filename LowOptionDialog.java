@@ -45,12 +45,8 @@ public class LowOptionDialog extends FilterDialog {
 		labels.gridx = 0;
 		labels.gridy = 0;
 
-		GridBagConstraints values = new GridBagConstraints();
-		values.gridx = 6;
-		values.gridy = 0;
-
 		GridBagConstraints slider = new GridBagConstraints();
-		slider.gridwidth = 5;
+		slider.gridwidth = 6;
 		slider.gridx = 7;
 		slider.gridy = 0;
 
@@ -62,13 +58,10 @@ public class LowOptionDialog extends FilterDialog {
 		});
 
 		controls.add(new JLabel("Frequency Threshold"), labels);
-		final JLabel leftNum = new JLabel("40.0");
-		controls.add(leftNum, values);
-		final JSlider leftSlide = new JSlider(3000, 7000, 4000);
+		final TextSlide leftSlide = new TextSlide(30, 70, 40, 2);
 		leftSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
-				preview[0].filter(id, new Number[]{((double)(int)leftSlide.getValue())/100.0});
+				preview[0].filter(id, new Number[]{(double)leftSlide.getValue()});
 				preview[0].revalidate();
 			}
 		});
@@ -80,7 +73,7 @@ public class LowOptionDialog extends FilterDialog {
 			public void actionPerformed(ActionEvent e) {
 				accept.setEnabled(false);
 				cancel.setEnabled(false);
-				freq = ((double)(int)leftSlide.getValue())/100.0;
+				freq = (double)leftSlide.getValue();
 				thisFrame.revalidate();
 				thisDialog.dispose();
 				retVal = true;
@@ -101,6 +94,7 @@ public class LowOptionDialog extends FilterDialog {
 
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
+		this.setSize(650,650);
 		this.setVisible(true);
 	}
 

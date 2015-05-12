@@ -45,13 +45,9 @@ public class ConstantOptionDialog extends FilterDialog {
 		labels.gridx = 0;
 		labels.gridy = 0;
 
-		GridBagConstraints values = new GridBagConstraints();
-		values.gridx = 6;
-		values.gridy = 0;
-
 		GridBagConstraints slider = new GridBagConstraints();
 		slider.gridwidth = 5;
-		slider.gridx = 7;
+		slider.gridx = 6;
 		slider.gridy = 0;
 
 		this.setBounds(thisFrame.getX(), thisFrame.getY(), 500, 400);
@@ -62,13 +58,10 @@ public class ConstantOptionDialog extends FilterDialog {
 		});
 
 		controls.add(new JLabel("Offset"), labels);
-		final JLabel leftNum = new JLabel("0");
-		controls.add(leftNum, values);
-		final JSlider leftSlide = new JSlider(-100000, 100000, 000);
+		final TextSlide leftSlide = new TextSlide(-1000, 1000, 0, 2);
 		leftSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				leftNum.setText("" + ((double)(int)leftSlide.getValue())/100.0);
-				preview[0].filter(id, new Number[]{((double)(int)leftSlide.getValue())/100.0});
+				preview[0].filter(id, new Number[]{(double)leftSlide.getValue()});
 				preview[0].revalidate();
 			}
 		});
@@ -80,7 +73,7 @@ public class ConstantOptionDialog extends FilterDialog {
 			public void actionPerformed(ActionEvent e) {
 				accept.setEnabled(false);
 				cancel.setEnabled(false);
-				offset = ((double)(int)leftSlide.getValue())/100.0;
+				offset = (double)leftSlide.getValue();
 				thisFrame.revalidate();
 				thisDialog.dispose();
 				retVal = true;
@@ -101,6 +94,7 @@ public class ConstantOptionDialog extends FilterDialog {
 
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
+		this.setSize(650,650);
 		this.setVisible(true);
 	}
 

@@ -59,13 +59,9 @@ public class DetrendOptionDialog extends FilterDialog {
 		labels.gridx = 0;
 		labels.gridy = 0;
 
-		GridBagConstraints values = new GridBagConstraints();
-		values.gridx = 6;
-		values.gridy = 0;
-
 		GridBagConstraints slider = new GridBagConstraints();
 		slider.gridwidth = 5;
-		slider.gridx = 7;
+		slider.gridx = 6;
 		slider.gridy = 0;
 
 		this.setBounds(thisFrame.getX(), thisFrame.getY(), 500, 400);
@@ -75,14 +71,11 @@ public class DetrendOptionDialog extends FilterDialog {
 			}
 		});
 
-		final JSlider degreeSlide = new JSlider(0, 10, 6);
+		final TextSlide degreeSlide = new TextSlide(0, 10, 6, 0);
 		controls.add(new JLabel("Degree of Fitting Polynomial"), labels);
-		final JLabel degreeNum = new JLabel("6");
-		controls.add(degreeNum, values);
 		degreeSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				degreeNum.setText("" + degreeSlide.getValue());
-				preview[0].filter(id, new Number[]{degreeSlide.getValue()});
+				preview[0].filter(id, new Number[]{degreeSlide.getValue().intValue()});
 				preview[0].revalidate();
 			}
 		});
@@ -94,7 +87,7 @@ public class DetrendOptionDialog extends FilterDialog {
 			public void actionPerformed(ActionEvent e) {
 				accept.setEnabled(false);
 				cancel.setEnabled(false);
-				degree = degreeSlide.getValue();
+				degree = degreeSlide.getValue().intValue();
 				thisFrame.revalidate();
 				thisDialog.dispose();
 				retVal = true;
@@ -115,6 +108,7 @@ public class DetrendOptionDialog extends FilterDialog {
 
 		this.add(preview[0].getPanel(), BorderLayout.CENTER);
 
+		this.setSize(650,650);
 		this.setVisible(true);
 	}
 

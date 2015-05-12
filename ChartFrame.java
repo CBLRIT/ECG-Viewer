@@ -55,7 +55,7 @@ public class ChartFrame extends JFrame {
 	 */
 	public ChartFrame(final ECGViewHandler handler, int index, String title) {
 		super(title);
-		setBounds(0, 0, 500, 500);
+		setBounds(0, 0, 650, 650);
 		setLayout(new BorderLayout());
 
 		this.handler = handler;
