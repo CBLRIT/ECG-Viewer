@@ -97,6 +97,7 @@ public class ChartFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				handler.undo();
 				thisFrame.view.update();
+				thisFrame.view.redrawAnnotations();
 			}
 		});
 		final JMenuItem edit_redo = new JMenuItem("Redo");
@@ -104,6 +105,7 @@ public class ChartFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				handler.redo();
 				thisFrame.view.update();
+				thisFrame.view.redrawAnnotations();
 			}
 		});
 		edit.addMenuListener(new MenuListener() {
