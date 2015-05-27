@@ -122,8 +122,8 @@ public class ECGView {
 						return;
 					Point2D p = panel.translateScreenToJava2D(event.getTrigger().getPoint());
 					double x = plot.getDomainAxis().java2DToValue(p.getX(),
-																  panel.getScreenDataArea(),
-																  plot.getDomainAxisEdge());
+											  panel.getScreenDataArea(),
+											  plot.getDomainAxisEdge());
 					if(canPlace) {
 						thisView.handler.addAnnotation(
 										Settings.getSelectedAnnotationType(), x);
@@ -188,7 +188,11 @@ public class ECGView {
 	 * @param c the color to set the panel to
 	 */
 	public void setBackground(Color c) {
-		this.chart.setBackgroundPaint(c); this.panel.revalidate(); } /**
+		this.chart.setBackgroundPaint(c); 
+		this.panel.revalidate(); 
+	} 
+	
+	/**
 	 * setBad - sets whether the data should be marked as bad
 	 *
 	 * @param b the value of the flag

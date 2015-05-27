@@ -366,6 +366,38 @@ public class ChartFrame extends JFrame {
 		file.add(file_exit);
 		menu.add(file);
 
+		//edit menu
+		JMenu edit = new JMenu("Edit");
+		final JMenuItem edit_undo = new JMenuItem("Undo");
+		edit_undo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				handler.undo();
+				thisFrame.view.redrawAnnotations();
+			}
+		});
+		final JMenuItem edit_redo = new JMenuItem("Redo");
+		edit_redo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				handler.redo();
+				thisFrame.view.redrawAnnotations();
+			}
+		});
+		edit.addMenuListener(new MenuListener() {
+			public void menuSelected(MenuEvent e) {
+				edit_undo.setEnabled(handler.canUndo());
+				edit_undo.setText("Undo " + (handler.canUndo()?handler.undoMessage():""));
+				edit_redo.setEnabled(handler.canRedo());
+				edit_redo.setText("Redo " + (handler.canRedo()?handler.redoMessage():""));
+			}
+
+			//don't care
+			public void menuDeselected(MenuEvent e) {}
+			public void menuCanceled(MenuEvent e) {}
+		});
+		edit.add(edit_undo);
+		edit.add(edit_redo);
+		menu.add(edit);
+
 		//annotation menu
 		JMenu annotations = new JMenu("Annotation");
 		anno_enable = new JCheckBoxMenuItem("Place Annotations");
@@ -386,7 +418,6 @@ public class ChartFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				thisFrame.handler.extractFeatures(thisFrame.index);
 				thisFrame.view.redrawAnnotations();
-				thisFrame.view.revalidate();
 			}
 		});
 		annotations.add(anno_enable);
