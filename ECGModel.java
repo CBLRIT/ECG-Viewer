@@ -23,7 +23,8 @@ import java.util.Map;
 public class ECGModel {
 	private ECGDataSet[] ignoredLeads;
 	private ECGDataSet[] points;
-	private int layout[][];
+	private int[][] layout;
+	private String[] titles;
 	private int dataOffset = 0;
 	private int actualSize = 130;
 	private double sampleFreq = 0;
@@ -46,6 +47,7 @@ public class ECGModel {
 		ignoredLeads = new ECGDataSet[]{};
 		points = new ECGDataSet[]{};
 		layout = new int[][]{};
+		titles = new String[]{};
 		annotations = new HashSet<Annotation>();
 		filePlugins = new ECGFileManager();
 		filePlugins.load();
@@ -66,6 +68,7 @@ public class ECGModel {
 		newModel.ignoredLeads = new ECGDataSet[this.ignoredLeads.length];
 		newModel.points = new ECGDataSet[this.points.length];
 		newModel.layout = new int[this.layout.length][this.layout[0].length];
+		newModel.titles = new String[this.titles.length];
 
 		for(int i = 0; i < this.ignoredLeads.length; i++) {
 			newModel.ignoredLeads[i] = (ECGDataSet)this.ignoredLeads[i].clone();
@@ -79,6 +82,9 @@ public class ECGModel {
 		for(int i = 0; i < this.layout.length; i++) {
 			System.arraycopy(this.layout[i], 0, newModel.layout[i], 0, this.layout[0].length);
 		}
+		for(int i = 0; i < this.titles.length; i++) {
+			newModel.titles[i] = this.titles[i];
+		}
 
 		return newModel;
 	}
@@ -90,6 +96,7 @@ public class ECGModel {
 		ignoredLeads = new ECGDataSet[]{};
 		points = new ECGDataSet[]{};
 		layout = new int[][]{};
+		titles = new String[]{};
 		dataOffset = 0;
 		history.reset();
 		annotations.clear();
@@ -325,10 +332,11 @@ public class ECGModel {
 			found.add(tempLayout[i]);
 		}
 
-		layout = new int[found.size()][3];
+		layout = new int[found.size()][2];
 		for(int i = 0; i < found.size(); i++) {
-			layout[i] = new int[]{found.get(i)[0], found.get(i)[1], found.get(i)[2]};
+			layout[i] = new int[]{found.get(i)[0], found.get(i)[1]};
 		}
+		titles = file.getTitles();
 		ignoredLeads = new ECGDataSet[numIgnoreLeads];
 		points = new ECGDataSet[numGoodLeads];
 
@@ -454,6 +462,14 @@ public class ECGModel {
 	}
 
 	/**
+	 * getTitles - gets the titles of the leads
+	 * @return an array of titles
+	 */
+	public String[] getTitles() {
+		return titles;
+	}
+
+	/**
 	 * getOffset - the number of leads before the data leads start
 	 * @return the offset
 	 */
@@ -467,7 +483,7 @@ public class ECGModel {
 	 * @return the title
 	 */
 	public String getTitle(int i) {
-		return ""+this.getLayout()[i][2];
+		return titles[i];
 	}
 
 	/**

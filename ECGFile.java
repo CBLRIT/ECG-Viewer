@@ -21,6 +21,8 @@ public abstract class ECGFile {
 
 	public abstract int[][] getLayout();
 
+	public abstract String[] getTitles();
+
 	public abstract String getExtension();
 
 	public int getNorth(int index) {

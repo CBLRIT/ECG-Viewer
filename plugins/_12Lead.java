@@ -53,6 +53,7 @@ public class _12Lead extends ECGFile {
 			System.err.println("Error reading file \"" + fileName + "\"");
 			return -2;
 		}
+
 		return 0;
 	}
 					
@@ -68,15 +69,22 @@ public class _12Lead extends ECGFile {
 	 * @return An array of x,y coordinates that describe how that lead should be positioned.
 	 *		   The coordinates are aligned to the upper-left corner of the screen.
 	 *		   Coordinates are in blocks, so pixel perfection is not necessary.
-	 *		   Ex: { {1,2,1}, {1,3,2}, .............., {i, j, n} } 
-	 *				 lead 1,  lead 2,  .............., lead n
+	 *		   Ex: { {1, 2},  {1, 3}, ..............., {i, j} } 
+	 *				 lead 1,  lead 2, ..............., lead n
 	 *  1st column 2nd row, 1st col 3rd row, ...., 5th column 5th row 
 	 *		   Any coordinates with a negative number are excluded from being drawn.
 	 */
 	public int[][] getLayout() {
-		return new int[][]{
-			{0, 1, 1},	{0, 2, 2},	{0, 3, 3},	{0, 4, 4},	{0, 5, 5},
-			{1, 0, 6},	{1, 1, 7},	{1, 2, 8},	{1, 3, 9},	{1, 4, 10},	{1, 5, 11},	{1, 6, 12}
+		return new int[][] {
+			{0, 1},	{0, 2},	{0, 3},	{0, 4},	{0, 5},
+			{1, 0},	{1, 1},	{1, 2},	{1, 3},	{1, 4},	{1, 5},	{1, 6}
+		};
+	}
+
+	public String[] getTitles() {
+		return new String[] {
+			"I", "II", "III", "AVR", "AVL",
+			"AVF", "V1", "V2", "V3", "V4", "V5", "V6"
 		};
 	}
 
