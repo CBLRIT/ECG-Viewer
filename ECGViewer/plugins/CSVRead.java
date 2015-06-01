@@ -88,8 +88,6 @@ public class CSVRead extends ECGFile {
 		switch(numLeads) {
 			case 123:
 				return new int[][]{
-					{-1, -1}, // // first two are junk
-					{-1, -1}, // //
 					{9, 0}, // 1-3 limb leads
 					{9, 2}, //
 					{9, 4}, //

@@ -194,3 +194,4 @@ Libraries Used
 1. <a href="https://code.google.com/p/savitzky-golay-filter/">savitzky-golay-filter</a> - modified  
   1. SGFilter.java was updated to resolve deprecated dependencies on Apache Commons Math. A copy of the Apache license is contained in the `sgfilter` directory  
 1. <a href="https://github.com/cscheiblich/JWave/">JWave</a> - unmodified
+1. <a href="http://www.oracle.com/technetwork/java/repository-140393.html">Java Look and Feel Graphics Repository</a> - unmodified

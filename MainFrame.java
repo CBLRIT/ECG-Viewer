@@ -9,11 +9,14 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.GridLayout;
 import java.io.IOException;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -355,6 +358,15 @@ public class MainFrame extends JFrame {
 				thisFrame.revalidateAll();
 			}
 		});
+
+		JMenuItem filter_fix12 = new JMenuItem("Recalculate 12-Lead");
+		filter_fix12.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				views.fix12Lead();
+				thisFrame.revalidateAll();
+			}
+		});
+
 		filter.add(filter_detrend);
 		filter.add(filter_constant);
 		filter.addSeparator();
@@ -364,15 +376,83 @@ public class MainFrame extends JFrame {
 		filter.add(filter_low);
 		filter.add(filter_wave);
 		filter.add(filter_butter);
+		filter.addSeparator();
+		filter.add(filter_fix12);
 		menubar.add(filter);
 
 		this.setJMenuBar(menubar);
 
 		// Toolbar
 		JToolBar toolbar = new JToolBar("Main");
-		JButton openButton = null;
+		toolbar.setFloatable(false);
+		JButton openButton = makeToolbarButton("Open24", "Open");
+		openButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int ret = fc.showOpenDialog(thisFrame);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try {
+						views.loadFile(fc.getSelectedFile().getAbsolutePath());
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null, 
+													  "Could not load file", 
+													  "Error",
+													  JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 
+					thisFrame.relink();
+				}
+			}
+		});
 		toolbar.add(openButton);
+		JButton exportButton = makeToolbarButton("Export24", "Open");
+		exportButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				FileNameExtensionFilter matlab = new FileNameExtensionFilter(
+					"MATLAB matrix", "m");
+				FileNameExtensionFilter csv = new FileNameExtensionFilter(
+						"Comma Separated Values", "csv");
+				fc.addChoosableFileFilter(matlab);
+				fc.addChoosableFileFilter(csv);
+				fc.setAcceptAllFileFilterUsed(false);
+				int ret = fc.showSaveDialog(thisFrame);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try { 
+						String extension = fc.getFileFilter().getDescription();
+						if("MATLAB matrix".equals(extension)) {
+							views.writeDataMat(fc.getSelectedFile().getAbsolutePath());
+						} else if ("Comma Separated Values".equals(extension)) {
+							views.writeDataCSV(fc.getSelectedFile().getAbsolutePath());
+						}
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null, 
+													  "Error writing file: " + ex.getMessage(), 
+													  "IOException", 
+													  JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+		toolbar.add(exportButton);
+		toolbar.addSeparator();
+		JButton undoButton = makeToolbarButton("Undo24", "Undo");
+		undoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				views.undo();
+				thisFrame.relink();
+			}
+		});
+		toolbar.add(undoButton);
+		JButton redoButton = makeToolbarButton("Redo24", "Redo");
+		redoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				views.redo();
+				thisFrame.relink();
+			}
+		});
+		toolbar.add(redoButton);
 
 		add(toolbar, BorderLayout.PAGE_START);
 		// end toolbar
@@ -505,6 +585,17 @@ public class MainFrame extends JFrame {
 
 		thisFrame.revalidate();
 		thisFrame.repaint();
+	}
+
+	private JButton makeToolbarButton(String imgName, String toolTip) {
+		String imgLoc = "imgs/toolbarButtonGraphics/general/" + imgName + ".gif";
+		URL imageURL = MainFrame.class.getResource(imgLoc);
+
+		JButton button = new JButton();
+		button.setToolTipText(toolTip);
+		button.setIcon(new ImageIcon(imageURL, toolTip));
+
+		return button;
 	}
 }
 

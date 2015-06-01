@@ -90,6 +90,17 @@ public class ECGViewHandler {
 		return v;
 	}
 
+	public void fix12Lead() {
+		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
+		for(int i = 0; i < model.size(); i++) {
+			changes.put(i, (ECGDataSet)model.getDataset(i).clone());
+		}
+		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+						changes, 
+						"12 lead fix"));
+		model.interpolate12Lead();
+	}
+
 	public void applyFilter(FilterDialog f, int index) {
 		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
 		changes.put(

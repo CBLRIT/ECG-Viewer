@@ -7,12 +7,14 @@ import java.awt.event.WindowListener;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.net.URL;
 import java.text.NumberFormat;
 import javax.swing.ButtonGroup;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
@@ -25,6 +27,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSlider;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import org.jfree.chart.plot.XYPlot;
@@ -45,6 +49,7 @@ public class ChartFrame extends JFrame {
 	private final JCheckBoxMenuItem file_badlead;
 	private final ChartFrame thisFrame = this;
 	private final JCheckBoxMenuItem anno_enable;
+	private final JToggleButton placeAnnoButton;
 
 	/**
 	 * Constructor - creates the frame and everything in it
@@ -251,6 +256,8 @@ public class ChartFrame extends JFrame {
 		
 		menu.add(filter);
 
+		placeAnnoButton = new JToggleButton();
+		placeAnnoButton.setSelected(false);
 		//annotation menu
 		JMenu annotations = new JMenu("Annotation");
 		anno_enable = new JCheckBoxMenuItem("Place Annotations");
@@ -258,6 +265,7 @@ public class ChartFrame extends JFrame {
 		anno_enable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				thisFrame.view.setCanPlace(anno_enable.getState());
+				placeAnnoButton.setSelected(anno_enable.getState());
 			}
 		});
 		JMenuItem annotations_clear = new JMenuItem("Clear");
@@ -299,6 +307,44 @@ public class ChartFrame extends JFrame {
 		menu.add(annotations);
 
 		setJMenuBar(menu);
+
+		// Toolbar
+		JToolBar toolbar = new JToolBar("Main");
+		toolbar.setFloatable(false);
+		JButton undoButton = makeToolbarButton("Undo24", "Undo");
+		undoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				handler.undo();
+				thisFrame.view.update();
+				thisFrame.view.redrawAnnotations();
+			}
+		});
+		toolbar.add(undoButton);
+		JButton redoButton = makeToolbarButton("Redo24", "Redo");
+		redoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				handler.redo();
+				thisFrame.view.update();
+				thisFrame.view.redrawAnnotations();
+			}
+		});
+		toolbar.add(redoButton);
+		toolbar.addSeparator();
+		ChartFrame.class.getResource("imgs/toolbarButtonGraphics/general/Bookmarks24.gif");
+		placeAnnoButton.setToolTipText("Toggle Place Annotation");
+		placeAnnoButton.setIcon(
+			new ImageIcon("imgs/toolbarButtonGraphics/general/Bookmarks24.gif", 
+							"Toggle Place Annotation"));
+		placeAnnoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanPlace(placeAnnoButton.isSelected());
+				anno_enable.setState(placeAnnoButton.isSelected());
+			}
+		});
+		toolbar.add(placeAnnoButton);
+
+		add(toolbar, BorderLayout.PAGE_START);
+		// end toolbar
 
 		//add the specified view to the frame
 		add(thisFrame.view.getPanel(), BorderLayout.CENTER);
@@ -400,6 +446,8 @@ public class ChartFrame extends JFrame {
 		edit.add(edit_redo);
 		menu.add(edit);
 
+		placeAnnoButton = new JToggleButton();
+		placeAnnoButton.setSelected(false);
 		//annotation menu
 		JMenu annotations = new JMenu("Annotation");
 		anno_enable = new JCheckBoxMenuItem("Place Annotations");
@@ -407,6 +455,7 @@ public class ChartFrame extends JFrame {
 		anno_enable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				thisFrame.view.setCanPlace(anno_enable.getState());
+				placeAnnoButton.setSelected(anno_enable.getState());
 			}
 		});
 		JMenuItem annotations_clear = new JMenuItem("Clear");
@@ -448,6 +497,42 @@ public class ChartFrame extends JFrame {
 
 		setJMenuBar(menu);
 
+		// Toolbar
+		JToolBar toolbar = new JToolBar("Main");
+		toolbar.setFloatable(false);
+		JButton undoButton = makeToolbarButton("Undo24", "Undo");
+		undoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				handler.undo();
+				thisFrame.view.redrawAnnotations();
+			}
+		});
+		toolbar.add(undoButton);
+		JButton redoButton = makeToolbarButton("Redo24", "Redo");
+		redoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				handler.redo();
+				thisFrame.view.redrawAnnotations();
+			}
+		});
+		toolbar.add(redoButton);
+		toolbar.addSeparator();
+		ChartFrame.class.getResource("imgs/toolbarButtonGraphics/general/Bookmarks24.gif");
+		placeAnnoButton.setToolTipText("Toggle Place Annotation");
+		placeAnnoButton.setIcon(
+			new ImageIcon("imgs/toolbarButtonGraphics/general/Bookmarks24.gif", 
+							"Toggle Place Annotation"));
+		placeAnnoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanPlace(placeAnnoButton.isSelected());
+				anno_enable.setState(placeAnnoButton.isSelected());
+			}
+		});
+		toolbar.add(placeAnnoButton);
+
+		add(toolbar, BorderLayout.PAGE_START);
+		// end toolbar
+
 		//add the specified view to the frame
 		add(thisFrame.view.getPanel(), BorderLayout.CENTER);
 
@@ -483,6 +568,17 @@ public class ChartFrame extends JFrame {
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
+	}
+
+	private JButton makeToolbarButton(String imgName, String toolTip) {
+		String imgLoc = "imgs/toolbarButtonGraphics/general/" + imgName + ".gif";
+		URL imageURL = ChartFrame.class.getResource(imgLoc);
+
+		JButton button = new JButton();
+		button.setToolTipText(toolTip);
+		button.setIcon(new ImageIcon(imageURL, toolTip));
+
+		return button;
 	}
 }
 

@@ -26,11 +26,14 @@ release:
 	cp -R plugins/ ECGViewer/
 	cp manifest.txt ECGViewer/
 	cp README.md ECGViewer/
+	mkdir ECGViewer/imgs/
+	cp -R imgs/toolbarButtonGraphics/ ECGViewer/imgs/toolbarButtonGraphics/
 	cd ECGViewer; \
 	javac -cp .:$(shell cd ECGViewer; ls -1 libs/*.jar | sed -e ':a;N;$$!ba;s/\s/:/g') ../*.java -d ./; \
-	jar cfm ECGViewer.jar manifest.txt *.class
+	jar cfm ECGViewer.jar manifest.txt *.class imgs/
 	chmod u+x ECGViewer/ECGViewer.jar
 	rm ECGViewer/*.class ECGViewer/manifest.txt
+	rm -rf ECGViewer/imgs
 
 #Main.class: MoldTorso.class Main.java
 #	javac -cp $(LIBPATH) Main.java
