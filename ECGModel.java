@@ -530,6 +530,7 @@ public class ECGModel {
 
 	/**
 	 * interpolateBadLeads - finds bad leads and interpolates it with it's neighbors
+	 * @param i the index
 	 */
 	public void interpolateBadLead(int i) {
 		if(!isBad(i)) {
@@ -560,6 +561,45 @@ public class ECGModel {
 			newLead.addTuple(neighbors.get(0).getAt(j)[0], sum/((double)neighbors.size()));
 		}
 		points[i] = newLead;
+	}
+
+	/**
+	 * interpolate12Lead - corrects certain 12 lead datasets
+	 */
+	public void interpolate12Lead() {
+		ECGDataSet pv1 = new ECGDataSet();
+		ECGDataSet pv2 = new ECGDataSet();
+		ECGDataSet pv3 = new ECGDataSet();
+		ECGDataSet pv5 = new ECGDataSet();
+		for(int i = 0; i < points[0].size(); i++) {
+			double I = points[0].getAt(i)[1];
+			double II = points[1].getAt(i)[1];
+			double V1 = points[6].getAt(i)[1];
+			double V2 = points[7].getAt(i)[1];
+			double V3 = points[8].getAt(i)[1];
+			double V4 = points[9].getAt(i)[1];
+			double V5 = points[10].getAt(i)[1];
+			double V6 = points[11].getAt(i)[1];
+
+			double PV1 = -0.48867*I - 0.14374*II + 0.53433*V2 - 0.14343*V3 
+							+ 0.067212*V4 + 0.14037*V5 - 0.10467*V6;
+			double PV2 = 0.053699*I + 0.041180*II + 0.57189*V1 + 1.30444*V3
+							- 0.91712*V4 + 0.32831*V5 - 0.089629*V6;
+			double PV3 = 0.16719*I + 0.00098*II - 0.06027*V1 + 0.51212*V2
+							+ 0.84120*V4 - 0.40982*V5 + 0.04163*V6;
+			double PV5 = 0.15592*I - 0.055366*II + 0.040822*V1 + 0.089207*V2
+							- 0.28363*V3 + 0.65436*V4 + 0.63840*V6;
+
+			pv1.addTuple(points[0].getAt(i)[0], PV1);
+			pv2.addTuple(points[0].getAt(i)[0], PV2);
+			pv3.addTuple(points[0].getAt(i)[0], PV3);
+			pv5.addTuple(points[0].getAt(i)[0], PV5);
+		}
+
+		points[6] = pv1;
+		points[7] = pv2;
+		points[8] = pv3;
+		points[10] = pv5;
 	}
 
 	/** 

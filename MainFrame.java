@@ -24,6 +24,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import org.jfree.chart.plot.XYPlot;
 
@@ -366,6 +367,15 @@ public class MainFrame extends JFrame {
 		menubar.add(filter);
 
 		this.setJMenuBar(menubar);
+
+		// Toolbar
+		JToolBar toolbar = new JToolBar("Main");
+		JButton openButton = null;
+
+		toolbar.add(openButton);
+
+		add(toolbar, BorderLayout.PAGE_START);
+		// end toolbar
 
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new GridLayout(ynum, xnum));
