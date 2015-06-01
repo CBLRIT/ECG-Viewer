@@ -71,7 +71,7 @@ public class DetrendOptionDialog extends FilterDialog {
 			}
 		});
 
-		final TextSlide degreeSlide = new TextSlide(0, 10, 6, 0);
+		final TextSlide degreeSlide = new TextSlide(0, 20, 6, 0);
 		controls.add(new JLabel("Degree of Fitting Polynomial"), labels);
 		degreeSlide.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
