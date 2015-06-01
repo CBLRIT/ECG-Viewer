@@ -130,6 +130,14 @@ public class ECGModel {
 		annotations = new HashSet<Annotation>(annos);
 	}
 
+	/**
+	 * removeAnnotation - removes an annotation
+	 * @param i the index
+	 */
+	public void removeAnnotation(int i) {
+		annotations.remove(i);
+	}
+
 	/** 
 	 * clearAnnotations - removes all annotations associated with this dataset
 	 */

@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import org.jfree.chart.axis.NumberAxis;
@@ -47,6 +48,7 @@ public class ECGView {
 	private final ECGView thisView = this;
 
 	private boolean canPlace = false;
+	private boolean canRemove = false;
 
 	private boolean labels;
 
@@ -131,6 +133,27 @@ public class ECGView {
 												 Settings.getSelectedAnnotationColor(), 
 												 new BasicStroke()));
 					}
+					if(canRemove) {
+						double xl = plot.getDomainAxis().java2DToValue(p.getX() - 10,
+												panel.getScreenDataArea(),
+												plot.getDomainAxisEdge());
+						double xr = plot.getDomainAxis().java2DToValue(p.getX() + 10,
+												panel.getScreenDataArea(),
+												plot.getDomainAxisEdge());
+						System.out.println("Between " + xl + " and " + xr);
+
+						ArrayList<Annotation> annos = thisView.handler.getAnnotations();
+						for(int i = 0; i < annos.size(); i++) {
+							if(annos.get(i).getLoc() < xr && annos.get(i).getLoc() > xl) {
+								System.out.println("Hit! " + annos.get(i).getLoc());
+								ValueMarker m = new ValueMarker(annos.get(i).getLoc());
+								thisView.handler.removeAnnotation(i);
+								plot.removeDomainMarker(m);
+								thisView.redrawAnnotations();
+								break;
+							}
+						}
+					}
 				}
 
 				public void chartMouseMoved(ChartMouseEvent event) {}
@@ -158,6 +181,14 @@ public class ECGView {
 	 */
 	public void setCanPlace(boolean b) {
 		canPlace = b;
+	}
+
+	/**
+	 * setCanRemove - sets whether clicking the chart will remove annotations
+	 * @param b the new value
+	 */
+	public void setCanRemove(boolean b) {
+		canRemove = b;
 	}
 
 	/**

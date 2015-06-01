@@ -182,6 +182,20 @@ public class ECGViewHandler {
 		model.addAnnotation(type, i);
 	}
 
+	public void removeAnnotation(int index) {
+		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
+		ArrayList<Annotation> annotations = model.getAnnotations();
+		int j = 0;
+		for(Annotation a : annotations) {
+			changes.put(j, a);
+			j++;
+		}
+		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+					changes,
+					"Remove annotation"));
+		model.removeAnnotation(index);
+	}
+
 	public void clearAnnotations() {
 		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
 		ArrayList<Annotation> annotations = model.getAnnotations();

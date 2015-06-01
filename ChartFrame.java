@@ -49,7 +49,9 @@ public class ChartFrame extends JFrame {
 	private final JCheckBoxMenuItem file_badlead;
 	private final ChartFrame thisFrame = this;
 	private final JCheckBoxMenuItem anno_enable;
+	private final JCheckBoxMenuItem anno_remove;
 	private final JToggleButton placeAnnoButton;
+	private final JToggleButton removeAnnoButton;
 
 	/**
 	 * Constructor - creates the frame and everything in it
@@ -258,14 +260,30 @@ public class ChartFrame extends JFrame {
 
 		placeAnnoButton = new JToggleButton();
 		placeAnnoButton.setSelected(false);
+		removeAnnoButton = new JToggleButton();
+		removeAnnoButton.setSelected(false);
 		//annotation menu
 		JMenu annotations = new JMenu("Annotation");
 		anno_enable = new JCheckBoxMenuItem("Place Annotations");
 		anno_enable.setState(false);
 		anno_enable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanRemove(false);
 				thisFrame.view.setCanPlace(anno_enable.getState());
 				placeAnnoButton.setSelected(anno_enable.getState());
+				removeAnnoButton.setSelected(false);
+				anno_remove.setState(false);
+			}
+		});
+		anno_remove = new JCheckBoxMenuItem("Remove Annotations");
+		anno_remove.setState(false);
+		anno_remove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanPlace(false);
+				thisFrame.view.setCanRemove(anno_enable.getState());
+				removeAnnoButton.setSelected(anno_enable.getState());
+				anno_enable.setState(false);
+				placeAnnoButton.setSelected(false);
 			}
 		});
 		JMenuItem annotations_clear = new JMenuItem("Clear");
@@ -283,6 +301,7 @@ public class ChartFrame extends JFrame {
 			}
 		});
 		annotations.add(anno_enable);
+		annotations.add(anno_remove);
 		annotations.add(annotations_clear);
 		annotations.add(annotations_auto);
 		annotations.addSeparator();
@@ -337,11 +356,29 @@ public class ChartFrame extends JFrame {
 							"Toggle Place Annotation"));
 		placeAnnoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanRemove(false);
 				thisFrame.view.setCanPlace(placeAnnoButton.isSelected());
 				anno_enable.setState(placeAnnoButton.isSelected());
+				removeAnnoButton.setSelected(false);
+				anno_remove.setState(false);
 			}
 		});
 		toolbar.add(placeAnnoButton);
+		ChartFrame.class.getResource("imgs/toolbarButtonGraphics/general/Remove24.gif");
+		removeAnnoButton.setToolTipText("Toggle Remove Annotation");
+		removeAnnoButton.setIcon(
+			new ImageIcon("imgs/toolbarButtonGraphics/general/Remove24.gif", 
+							"Toggle Remove Annotation"));
+		removeAnnoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanPlace(false);
+				thisFrame.view.setCanRemove(removeAnnoButton.isSelected());
+				anno_remove.setState(removeAnnoButton.isSelected());
+				anno_enable.setState(false);
+				placeAnnoButton.setSelected(false);
+			}
+		});
+		toolbar.add(removeAnnoButton);
 
 		add(toolbar, BorderLayout.PAGE_START);
 		// end toolbar
@@ -448,14 +485,30 @@ public class ChartFrame extends JFrame {
 
 		placeAnnoButton = new JToggleButton();
 		placeAnnoButton.setSelected(false);
+		removeAnnoButton = new JToggleButton();
+		removeAnnoButton.setSelected(false);
 		//annotation menu
 		JMenu annotations = new JMenu("Annotation");
 		anno_enable = new JCheckBoxMenuItem("Place Annotations");
 		anno_enable.setState(false);
 		anno_enable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanRemove(false);
 				thisFrame.view.setCanPlace(anno_enable.getState());
 				placeAnnoButton.setSelected(anno_enable.getState());
+				removeAnnoButton.setSelected(false);
+				anno_remove.setState(false);
+			}
+		});
+		anno_remove = new JCheckBoxMenuItem("Remove Annotations");
+		anno_remove.setState(false);
+		anno_remove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanPlace(false);
+				thisFrame.view.setCanRemove(anno_enable.getState());
+				removeAnnoButton.setSelected(anno_enable.getState());
+				anno_enable.setState(false);
+				placeAnnoButton.setSelected(false);
 			}
 		});
 		JMenuItem annotations_clear = new JMenuItem("Clear");
@@ -472,6 +525,7 @@ public class ChartFrame extends JFrame {
 			}
 		});
 		annotations.add(anno_enable);
+		annotations.add(anno_remove);
 		annotations.add(annotations_clear);
 		annotations.add(annotations_auto);
 		annotations.addSeparator();
@@ -524,11 +578,29 @@ public class ChartFrame extends JFrame {
 							"Toggle Place Annotation"));
 		placeAnnoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanRemove(false);
 				thisFrame.view.setCanPlace(placeAnnoButton.isSelected());
 				anno_enable.setState(placeAnnoButton.isSelected());
+				removeAnnoButton.setSelected(false);
+				anno_remove.setState(false);
 			}
 		});
 		toolbar.add(placeAnnoButton);
+		ChartFrame.class.getResource("imgs/toolbarButtonGraphics/general/Remove24.gif");
+		removeAnnoButton.setToolTipText("Toggle Remove Annotation");
+		removeAnnoButton.setIcon(
+			new ImageIcon("imgs/toolbarButtonGraphics/general/Remove24.gif", 
+							"Toggle Remove Annotation"));
+		removeAnnoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				thisFrame.view.setCanPlace(false);
+				thisFrame.view.setCanRemove(removeAnnoButton.isSelected());
+				anno_remove.setState(removeAnnoButton.isSelected());
+				anno_enable.setState(false);
+				placeAnnoButton.setSelected(false);
+			}
+		});
+		toolbar.add(removeAnnoButton);
 
 		add(toolbar, BorderLayout.PAGE_START);
 		// end toolbar
