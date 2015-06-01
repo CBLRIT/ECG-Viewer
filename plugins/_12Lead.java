@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /*
  * Use this as a template for writing new plugins.
@@ -52,6 +53,10 @@ public class _12Lead extends ECGFile {
 		} catch (IOException e) {
 			System.err.println("Error reading file \"" + fileName + "\"");
 			return -2;
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, 
+											"Improper format on line " + (count+1), 
+											"Error", JOptionPane.ERROR_MESSAGE);
 		}
 
 		return 0;

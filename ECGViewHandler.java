@@ -67,6 +67,10 @@ public class ECGViewHandler {
 		return model.getLayout();
 	}
 
+	public String[] getTitles() {
+		return model.getTitles();
+	}
+
 	public int getOffset() {
 		return model.getOffset();
 	}

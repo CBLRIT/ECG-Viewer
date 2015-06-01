@@ -24,9 +24,9 @@ public class DATFile extends ECGFile {
 		return new int[][]{
 			{-1, -1}, // // first two are junk
 			{-1, -1}, // //
-			{-1, -1}, // 1-3 unhelpful (limb leads)
-			{-1, -1}, //
-			{-1, -1}, //
+			{9, 0}, // 1-3 limb leads
+			{9, 2}, //
+			{9, 4}, //
 			{4, 0},	{5, 0},	{6, 0},	{7, 0},
 			{1, 1},	{2, 1},	{3, 1}, {4, 1},	{5, 1},	{6, 1},	{7, 1},
 			{1, 2}, {2, 2}, {3, 2}, {4, 2}, {5, 2}, {6, 2}, {7, 2},
@@ -50,6 +50,7 @@ public class DATFile extends ECGFile {
 
 	public String[] getTitles() {
 		return new String[] {
+			"Limb 1", "Limb 2", "Limb 3",
 			"4", "5", "6", "7",
 			"8", "9", "10", "11", "12", "13", "14",
 			"15", "16", "17", "18", "19", "20", "21",

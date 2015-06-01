@@ -28,7 +28,7 @@ import javax.swing.UIManager;
 import org.jfree.chart.plot.XYPlot;
 
 public class MainFrame extends JFrame {
-	private int ynum = 8;
+	private int ynum = 10;
 	private int xnum = 18;
 
 	private final ECGViewHandler views;
@@ -440,7 +440,7 @@ public class MainFrame extends JFrame {
 			final int count = i;
 			graph.getPanel().addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
-					ChartFrame cf = new ChartFrame(views, count, ""+views.getLayout()[count][2]);
+					ChartFrame cf = new ChartFrame(views, count, views.getTitles()[count]);
 					cf.addWindowListener(new WindowListener() {
 						public void windowClosing(WindowEvent e) {
 							graph.setBackground(!graph.isBad() ? 

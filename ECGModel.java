@@ -366,6 +366,7 @@ public class ECGModel {
 			}
 		}
 
+		//median shift
 		for(int i = 0; i < points.length; i++) {
 			ArrayList<Double> values = new ArrayList<Double>();
 			for(int j = 0; j < points[i].size(); j++) {
