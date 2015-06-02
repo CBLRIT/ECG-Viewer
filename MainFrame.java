@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.GridLayout;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.NumberFormat;
@@ -114,11 +115,24 @@ public class MainFrame extends JFrame {
 				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try { 
+						String path = fc.getSelectedFile().getAbsolutePath();
+						File f = new File(path);
+						if(f.exists() && !f.isDirectory()) {
+							ret = JOptionPane.showConfirmDialog(
+									null,
+									"Are you sure you want to overwrite this file?",
+									"Overwrite",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.WARNING_MESSAGE);
+							if(ret == 1) { // No
+								return;
+							}
+						}
 						String extension = fc.getFileFilter().getDescription();
 						if("MATLAB matrix".equals(extension)) {
-							views.writeDataMat(fc.getSelectedFile().getAbsolutePath());
+							views.writeDataMat(path);
 						} else if ("Comma Separated Values".equals(extension)) {
-							views.writeDataCSV(fc.getSelectedFile().getAbsolutePath());
+							views.writeDataCSV(path);
 						}
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
@@ -143,14 +157,27 @@ public class MainFrame extends JFrame {
 				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try { 
+						String path = fc.getSelectedFile().getAbsolutePath();
+						File f = new File(path);
+						if(f.exists() && !f.isDirectory()) {
+							ret = JOptionPane.showConfirmDialog(
+									null,
+									"Are you sure you want to overwrite this file?",
+									"Overwrite",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.WARNING_MESSAGE);
+							if(ret == 1) { // No
+								return;
+							}
+						}
 						String extension = fc.getFileFilter().getDescription();
 						if("MATLAB matrix".equals(extension)) {
-							views.writeDataSubsetMat(fc.getSelectedFile().getAbsolutePath(), 
+							views.writeDataSubsetMat(path, 
 													 (Long)startText.getValue(),
 													 (Long)startText.getValue()
 													 		+(Long)lenText.getValue());
 						} else if ("Comma Separated Values".equals(extension)) {
-							views.writeDataSubsetCSV(fc.getSelectedFile().getAbsolutePath(),
+							views.writeDataSubsetCSV(path,
 													 (Long)startText.getValue(),
 													 (Long)startText.getValue()
 													 		+(Long)lenText.getValue());
@@ -171,7 +198,20 @@ public class MainFrame extends JFrame {
 				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
-						views.writeBadLeads(fc.getSelectedFile().getAbsolutePath());
+						String path = fc.getSelectedFile().getAbsolutePath();
+						File f = new File(path);
+						if(f.exists() && !f.isDirectory()) {
+							ret = JOptionPane.showConfirmDialog(
+									null,
+									"Are you sure you want to overwrite this file?",
+									"Overwrite",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.WARNING_MESSAGE);
+							if(ret == 1) { // No
+								return;
+							}
+						}
+						views.writeBadLeads(path);
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
 													  "Error writing file: " + ex.getMessage(), 
@@ -188,7 +228,20 @@ public class MainFrame extends JFrame {
 				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
-						views.writeAnnotations(fc.getSelectedFile().getAbsolutePath());
+						String path = fc.getSelectedFile().getAbsolutePath();
+						File f = new File(path);
+						if(f.exists() && !f.isDirectory()) {
+							ret = JOptionPane.showConfirmDialog(
+									null,
+									"Are you sure you want to overwrite this file?",
+									"Overwrite",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.WARNING_MESSAGE);
+							if(ret == 1) { // No
+								return;
+							}
+						}
+						views.writeAnnotations(path);
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
 													  "Error writing file: " + ex.getMessage(), 
@@ -420,11 +473,24 @@ public class MainFrame extends JFrame {
 				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try { 
+						String path = fc.getSelectedFile().getAbsolutePath();
+						File f = new File(path);
+						if(f.exists() && !f.isDirectory()) {
+							ret = JOptionPane.showConfirmDialog(
+									null,
+									"Are you sure you want to overwrite this file?",
+									"Overwrite",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.WARNING_MESSAGE);
+							if(ret == 1) { // No
+								return;
+							}
+						}
 						String extension = fc.getFileFilter().getDescription();
 						if("MATLAB matrix".equals(extension)) {
-							views.writeDataMat(fc.getSelectedFile().getAbsolutePath());
+							views.writeDataMat(path);
 						} else if ("Comma Separated Values".equals(extension)) {
-							views.writeDataCSV(fc.getSelectedFile().getAbsolutePath());
+							views.writeDataCSV(path);
 						}
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
