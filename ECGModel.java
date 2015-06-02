@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public class ECGModel {
 	private int dataOffset = 0;
 	private int actualSize = 130;
 	private double sampleFreq = 0;
-	private HashSet<Annotation> annotations;	
+	private ArrayList<Annotation> annotations;	
 	private ECGFileManager filePlugins;
 	private ECGFile file;
 	private String message;
@@ -48,7 +47,7 @@ public class ECGModel {
 		points = new ECGDataSet[]{};
 		layout = new int[][]{};
 		titles = new String[]{};
-		annotations = new HashSet<Annotation>();
+		annotations = new ArrayList<Annotation>();
 		filePlugins = new ECGFileManager();
 		filePlugins.load();
 		file = null;
@@ -127,7 +126,7 @@ public class ECGModel {
 	 * @param annos the annotations
 	 */
 	public void setAnnotations(ArrayList<Annotation> annos) {
-		annotations = new HashSet<Annotation>(annos);
+		annotations = new ArrayList<Annotation>(annos);
 	}
 
 	/**
@@ -685,7 +684,7 @@ public class ECGModel {
 		this.message = history.peekUndo().getMessage();
 		Change<HashMap<Integer, Undoable>, String> c = history.undo(
 				new Change<HashMap<Integer, Undoable>, String>(getCurrentState(), this.message));
-		HashSet<Annotation> newanno = new HashSet<Annotation>();
+		ArrayList<Annotation> newanno = new ArrayList<Annotation>();
 		for(Map.Entry<Integer, Undoable> entry : c.getData().entrySet()) {
 			if(entry.getValue() instanceof ECGDataSet) {
 				points[entry.getKey()] = (ECGDataSet)entry.getValue();
@@ -701,7 +700,7 @@ public class ECGModel {
 		this.message = history.peekRedo().getMessage();
 		Change<HashMap<Integer, Undoable>, String> c = history.redo(
 				new Change<HashMap<Integer, Undoable>, String>(getCurrentState(), this.message));
-		HashSet<Annotation> newanno = new HashSet<Annotation>();
+		ArrayList<Annotation> newanno = new ArrayList<Annotation>();
 		for(Map.Entry<Integer, Undoable> entry : c.getData().entrySet()) {
 			if(entry.getValue() instanceof ECGDataSet) {
 				points[entry.getKey()] = (ECGDataSet)entry.getValue();

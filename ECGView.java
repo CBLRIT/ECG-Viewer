@@ -140,12 +140,10 @@ public class ECGView {
 						double xr = plot.getDomainAxis().java2DToValue(p.getX() + 10,
 												panel.getScreenDataArea(),
 												plot.getDomainAxisEdge());
-						System.out.println("Between " + xl + " and " + xr);
 
 						ArrayList<Annotation> annos = thisView.handler.getAnnotations();
 						for(int i = 0; i < annos.size(); i++) {
 							if(annos.get(i).getLoc() < xr && annos.get(i).getLoc() > xl) {
-								System.out.println("Hit! " + annos.get(i).getLoc());
 								ValueMarker m = new ValueMarker(annos.get(i).getLoc());
 								thisView.handler.removeAnnotation(i);
 								plot.removeDomainMarker(m);
