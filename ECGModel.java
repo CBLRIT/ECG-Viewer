@@ -750,9 +750,9 @@ public class ECGModel {
 				points[entry.getKey()] = (ECGDataSet)entry.getValue();
 			} else if(entry.getValue() instanceof Annotation) {
 				newanno.add((Annotation)entry.getValue());
+				annotations = newanno;
 			}
 		}
-		annotations = newanno;
 		this.message = c.getMessage();
 	}
 
@@ -766,9 +766,9 @@ public class ECGModel {
 				points[entry.getKey()] = (ECGDataSet)entry.getValue();
 			} else if(entry.getValue() instanceof Annotation) {
 				newanno.add((Annotation)entry.getValue());
+				annotations = newanno;
 			}
 		}
-		annotations = newanno;
 		this.message = c.getMessage();
 	}
 
