@@ -8,6 +8,7 @@ import math.jwave.transforms.wavelets.daubechies.Daubechies10;
 import mr.go.sgfilter.ContinuousPadder;
 import mr.go.sgfilter.SGFilter;
 import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.fitting.HarmonicCurveFitter;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
 import org.apache.commons.math3.transform.DftNormalization;
@@ -31,6 +32,25 @@ public class Filters {
 			set.set(h, new Double[]{set.get(h)[0], set.get(h)[1]-off});
 		}
 	}
+
+/*
+	public static void harmonicDetrend(List<Double[]> set) {
+		HarmonicCurveFitter p = HarmonicCurveFitter.create();
+		WeightedObservedPoints wop = new WeightedObservedPoints();
+		for(int i = 0; i < set.size(); i++) {
+			wop.add(set.get(i)[0], set.get(i)[1]);
+		}
+		double[] coeff = p.fit(wop.toList());
+		for(int h = 0; h < set.size(); h++) {
+			double val = set.get(h)[0];
+			double off = 0;
+			for(int i = detrendPolynomial; i >= 0; i--) {
+				off += coeff[i] * Math.pow(val, i);
+			}
+			set.set(h, new Double[]{set.get(h)[0], set.get(h)[1]-off});
+		}
+	}
+	*/
 
 	public static void sgolayfilt(List<Double[]> set, int left, int right, int degree) {
 		double[][] data = Filters.toArray(set);

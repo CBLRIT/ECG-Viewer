@@ -33,7 +33,6 @@ release:
 	jar cfm ECGViewer.jar manifest.txt *.class imgs/
 	chmod u+x ECGViewer/ECGViewer.jar
 	rm ECGViewer/*.class ECGViewer/manifest.txt
-	rm -rf ECGViewer/imgs
 
 #Main.class: MoldTorso.class Main.java
 #	javac -cp $(LIBPATH) Main.java
