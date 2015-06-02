@@ -201,8 +201,8 @@ public class ECGModel {
 	public void writeDataMat(String filename) 
 			throws IOException {
 		int offset = 0;
-		if(points.length != 64) {
-			offset = 4;
+		if(points.length == 123) {
+			offset = 1;
 		}
 		(new MatFile(filename)).write(points, offset);
 	}
@@ -215,11 +215,16 @@ public class ECGModel {
 	 */
 	public void writeDataCSV(String filename)
 			throws IOException {
+		writeArrayCSV(filename, points);
+	}
+
+	private void writeArrayCSV(String filename, ECGDataSet[] data) 
+			throws IOException {
 		int offset = 0;
-		if(points.length != 64) {
-			offset = 4;
+		if(data.length == 123) {
+			offset = 1;
 		}
-		(new CSVFile(filename)).write(points, offset);
+		(new CSVFile(filename)).write(data, offset);
 	}
 
 	/**
@@ -232,8 +237,8 @@ public class ECGModel {
 	public void writeDataSubsetMat(String filename, double start, double end) 
 			throws IOException {
 		int offset = 0;
-		if(points.length != 64) {
-			offset = 4;
+		if(points.length == 123) {
+			offset = 1;
 		}
 		(new MatFile(filename)).writeSubset(points, 
 											points[0].indexBefore(start), 
@@ -250,8 +255,8 @@ public class ECGModel {
 	public void writeDataSubsetCSV(String filename, double start, double end)
 			throws IOException {
 		int offset = 0;
-		if(points.length != 64) {
-			offset = 4;
+		if(points.length == 123) {
+			offset = 1;
 		}
 		(new CSVFile(filename)).writeSubset(points, 
 											points[0].indexBefore(start), 
@@ -607,6 +612,69 @@ public class ECGModel {
 		points[7] = pv2;
 		points[8] = pv3;
 		points[10] = pv5;
+	}
+
+	/**
+	 * convertTo12 - converts the current model 120 lead format to 12 lead format
+	 * @return the filename of the temp file to open
+	 */
+	public String convertTo12() {
+		// 0: make sure current model is 120 lead
+		if(points.length != 123) {
+			return null; // do nothing
+		}
+		// 1: create new datasets
+		ECGDataSet[] newpoints = new ECGDataSet[12];
+		for(int i = 0; i < 12; i++) {
+			newpoints[i] = new ECGDataSet();
+		}
+		double time;
+		for(int i = 0; i < points[0].size(); i++) {
+			time = points[0].getAt(i)[0];
+
+			newpoints[0].addTuple(time,										  // I =
+				(points[64-1].getAt(i)[1] + points[65-1].getAt(i)[1]/2.0)     //  LA
+				- (points[15-1].getAt(i)[1] + points[16-1].getAt(i)[1]/2.0)); //- RA
+
+			newpoints[1].addTuple(time,										  // II=
+				(points[70-1].getAt(i)[1])									  //  LL
+				- (points[15-1].getAt(i)[1] + points[16-1].getAt(i)[1]/2.0)); //- RA
+
+			newpoints[2].addTuple(time,										  //III=
+				(points[70-1].getAt(i)[1])									  //  LL
+				- (points[64-1].getAt(i)[1] + points[65-1].getAt(i)[1]/2.0)); //- LA
+
+			newpoints[3].addTuple(time,										  //AVR=
+				-(newpoints[0].getAt(i)[1] + newpoints[1].getAt(i)[1])/2.0);  //-(I+II)/2
+			newpoints[4].addTuple(time,										  //AVL=
+				(newpoints[0].getAt(i)[1] - newpoints[2].getAt(i)[1])/2.0);   //(I-III)/2
+			newpoints[5].addTuple(time,										  //AVF=
+				(newpoints[1].getAt(i)[1] + newpoints[2].getAt(i)[1])/2.0);   //(II+III)/2
+
+			newpoints[6].addTuple(time, points[25-1].getAt(i)[1]);
+			newpoints[7].addTuple(time, points[39-1].getAt(i)[1]);
+			newpoints[8].addTuple(time, points[46-1].getAt(i)[1] 
+										+ points[53-1].getAt(i)[1]
+										+ points[47-1].getAt(i)[1]
+										+ points[54-1].getAt(i)[1]/4.0);
+			newpoints[9].addTuple(time, points[61-1].getAt(i)[1]);
+			newpoints[10].addTuple(time, points[68-1].getAt(i)[1] 
+										+ 2*points[72-1].getAt(i)[1]/3.0);
+			newpoints[11].addTuple(time, points[76-1].getAt(i)[1]);
+		}
+		// 2: write dataset to file
+		String filename = "temp" + System.currentTimeMillis() + ".csv";
+		try {
+			writeArrayCSV(filename, newpoints);
+		} catch (IOException e) {
+			System.err.println("Error writing: " + e.getMessage());
+			return null;
+		}
+
+		return filename;
+		// for caller:
+		// 3: read in the new file to the program
+		// 4: delete new file
 	}
 
 	/** 
