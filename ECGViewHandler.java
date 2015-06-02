@@ -51,6 +51,11 @@ public class ECGViewHandler {
 		model.writeAnnotations(file);
 	}
 
+	public void convertTo12(String file) 
+			throws IOException {
+		model.convertTo12(file);
+	}
+
 	public int size() {
 		return model.size();
 	}

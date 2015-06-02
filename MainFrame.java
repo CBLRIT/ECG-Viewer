@@ -253,6 +253,36 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+		JMenuItem convert_12 = new JMenuItem("Convert to 12 Lead...");
+		convert_12.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int ret = fc.showSaveDialog(thisFrame);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try {
+						String path = fc.getSelectedFile().getAbsolutePath();
+						File f = new File(path);
+						if(f.exists() && !f.isDirectory()) {
+							ret = JOptionPane.showConfirmDialog(
+									null,
+									"Are you sure you want to overwrite this file?",
+									"Overwrite",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.WARNING_MESSAGE);
+							if(ret == 1) { // No
+								return;
+							}
+						}
+						views.convertTo12(path);
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null, 
+													  "Error writing file: " + ex.getMessage(), 
+													  "IOException", 
+													  JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
 		JMenuItem settings = new JMenuItem("Settings");
 		settings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -272,6 +302,8 @@ public class MainFrame extends JFrame {
 		menu.add(export_subset);
 		menu.add(export_annos);
 		menu.add(export_badleads);
+		menu.addSeparator();
+		menu.add(convert_12);
 		menu.addSeparator();
 		menu.add(settings);
 		menu.add(exit);

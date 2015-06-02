@@ -615,13 +615,13 @@ public class ECGModel {
 	}
 
 	/**
-	 * convertTo12 - converts the current model 120 lead format to 12 lead format
-	 * @return the filename of the temp file to open
+	 * convertTo12 - converts the current model 120 lead format to 12 lead format and saves it
 	 */
-	public String convertTo12() {
+	public void convertTo12(String filename) 
+			throws IOException {
 		// 0: make sure current model is 120 lead
 		if(points.length != 123) {
-			return null; // do nothing
+			return; // do nothing
 		}
 		// 1: create new datasets
 		ECGDataSet[] newpoints = new ECGDataSet[12];
@@ -663,18 +663,7 @@ public class ECGModel {
 			newpoints[11].addTuple(time, points[76-1].getAt(i)[1]);
 		}
 		// 2: write dataset to file
-		String filename = "temp" + System.currentTimeMillis() + ".csv";
-		try {
-			writeArrayCSV(filename, newpoints);
-		} catch (IOException e) {
-			System.err.println("Error writing: " + e.getMessage());
-			return null;
-		}
-
-		return filename;
-		// for caller:
-		// 3: read in the new file to the program
-		// 4: delete new file
+		writeArrayCSV(filename, newpoints);
 	}
 
 	/** 
