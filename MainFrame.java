@@ -67,6 +67,7 @@ public class MainFrame extends JFrame {
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
 						views.loadFile(fc.getSelectedFile().getAbsolutePath());
+						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
 													  "Could not load file", 
@@ -89,6 +90,7 @@ public class MainFrame extends JFrame {
 						views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
 											 fc.getStartTime(),
 											 fc.getStartTime()+fc.getLengthTime());
+						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null,
 													  "Could not load file",
@@ -446,6 +448,7 @@ public class MainFrame extends JFrame {
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
 						views.loadFile(fc.getSelectedFile().getAbsolutePath());
+						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
 													  "Could not load file", 
@@ -459,7 +462,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 		toolbar.add(openButton);
-		JButton exportButton = makeToolbarButton("Export24", "Open");
+		JButton exportButton = makeToolbarButton("Export24", "Export");
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
