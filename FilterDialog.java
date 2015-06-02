@@ -9,10 +9,11 @@ public abstract class FilterDialog extends JDialog {
 	 * 1 - High Pass
 	 * 2 - Low Pass
 	 * 3 - FFT
-	 * 4 - Detrend
+	 * 4 - Polynomial Detrend
 	 * 5 - Wavelet
 	 * 6 - Constant Detrend
 	 * 7 - Butterworth
+	 * 8 - Harmonic Detrend
 	 */
 
 	public FilterDialog(final JFrame thisFrame, 

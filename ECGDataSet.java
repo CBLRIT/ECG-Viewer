@@ -227,4 +227,8 @@ public class ECGDataSet implements Undoable {
 	public void butterworthfilt(int mode, double rate, double freq, int order) {
 		Filters.butterworthfilt(set, mode, rate, freq, order);
 	}
+
+	public void harmonicDetrend() {
+		Filters.harmonicDetrend(set);
+	}
 }

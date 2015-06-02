@@ -133,11 +133,25 @@ public class ChartFrame extends JFrame {
 
 		//filter menu
 		JMenu filter = new JMenu("Filter");
-		JMenuItem filter_detrend = new JMenuItem("Detrend");
+		JMenuItem filter_detrend = new JMenuItem("Polynomial Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, 
-																	 "Detrend", 
+																	 "Polynomial Detrend", 
+																	 true, 
+																	 thisFrame.handler,
+																	 thisFrame.index);
+				if(dialog.accepted()) {
+					handler.applyFilter(dialog, thisFrame.index);
+				}
+				thisFrame.view.revalidate();
+			}
+		});
+		JMenuItem filter_harmonic = new JMenuItem("Harmonic Detrend");
+		filter_harmonic.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				HarmonicDetrendDialog dialog = new HarmonicDetrendDialog(thisFrame, 
+																	 "Harmonic Detrend", 
 																	 true, 
 																	 thisFrame.handler,
 																	 thisFrame.index);
@@ -247,6 +261,7 @@ public class ChartFrame extends JFrame {
 		});
 
 		filter.add(filter_detrend);
+		filter.add(filter_harmonic);
 		filter.add(filter_constant);
 		filter.addSeparator();
 		filter.add(filter_savitzky);

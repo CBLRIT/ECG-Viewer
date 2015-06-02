@@ -163,6 +163,9 @@ public class ECGViewHandler {
 									 (double)params[1],
 								 	 (int)params[2]);
 				break;
+			case 8:
+				data.harmonicDetrend();
+				break;
 			default:
 				break;
 		}

@@ -341,10 +341,23 @@ public class MainFrame extends JFrame {
 		menubar.add(edit);
 
 		JMenu filter = new JMenu("Filter All");
-		JMenuItem filter_detrend = new JMenuItem("Detrend");
+		JMenuItem filter_detrend = new JMenuItem("Polynomial Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, "Detrend", true, views, sampleLead*thisFrame.views.size());
+				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, "Polynomial Detrend", true, views, sampleLead*thisFrame.views.size());
+				if(!dialog.accepted()) {
+					return;
+				}
+
+				views.applyFilterAll(dialog);
+				
+				thisFrame.revalidateAll();
+			}
+		});
+		JMenuItem filter_harmonic = new JMenuItem("Harmonic Detrend");
+		filter_harmonic.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				HarmonicDetrendDialog dialog = new HarmonicDetrendDialog(thisFrame, "Harmonic Detrend", true, views, sampleLead*thisFrame.views.size());
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -455,6 +468,7 @@ public class MainFrame extends JFrame {
 		});
 
 		filter.add(filter_detrend);
+		filter.add(filter_harmonic);
 		filter.add(filter_constant);
 		filter.addSeparator();
 		filter.add(filter_savitzky);

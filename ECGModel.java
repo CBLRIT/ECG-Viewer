@@ -712,6 +712,9 @@ public class ECGModel {
 											  (double)params[1],
 											  (int)params[2]);
 				break;
+			case 8:
+				points[index].harmonicDetrend();
+				break;
 			default:
 				return;
 		}
