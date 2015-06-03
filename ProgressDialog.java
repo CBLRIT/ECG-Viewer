@@ -1,5 +1,5 @@
 
-import java.awt.Frame;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -11,69 +11,42 @@ import javax.swing.JPanel;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 
-public class ProgressDialog extends JPanel 
-							implements PropertyChangeListener, WindowListener {
+public class ProgressDialog implements PropertyChangeListener {
 	private ProgressMonitor pm;
 	private SwingWorker<Void, Void> t;
 
-	public static void make(final SwingWorker<Void, Void> task) {
-		System.out.println("entered make");
+	public static void make(final SwingWorker<Void, Void> task, final Component attach) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() { 
-				show(task);
+				show(task, attach);
 			}
 		});
 	}
 
-	private static void show(final SwingWorker<Void, Void> task) {
-		System.out.println("entered show");
-		JDialog dialog = new JDialog((Frame) null, true);
-
-		final ProgressDialog content = new ProgressDialog();
+	private static void show(final SwingWorker<Void, Void> task, Component attach) {
+		ProgressDialog content = new ProgressDialog();
 		content.t = task;
-		content.setOpaque(true);
-		dialog.setContentPane(content);
-		dialog.addWindowListener(content);
 
-		dialog.pack();
-		dialog.setVisible(true);
+		content.run(attach);
 	}
 	
-	private void run() {
-		System.out.println("running");
-		pm = new ProgressMonitor(ProgressDialog.this, "Working...", "", 0, 100);
+	private void run(Component attach) {
+		pm = new ProgressMonitor(attach, "", "Working...", 0, 100);
 		pm.setProgress(0);
 		t.addPropertyChangeListener(this);
 		t.execute();
 	}
 
-	public void windowOpened(WindowEvent e) {
-		System.out.println("window opened");
-		run();
-	}
-	public void windowActivated(WindowEvent e){}
-	public void windowClosed(WindowEvent e){}
-	public void windowClosing(WindowEvent e){}
-	public void windowDeactivated(WindowEvent e){}
-	public void windowDeiconified(WindowEvent e){}
-	public void windowIconified(WindowEvent e){}
-
 	public void propertyChange(PropertyChangeEvent e) {
-		System.out.println("changed property: " + e.toString());
 		if("progress" == e.getPropertyName()) {
-			System.out.println("progress" + (Integer)e.getNewValue());
 			pm.setProgress((Integer) e.getNewValue());
 			if(pm.isCanceled()) {
 				t.cancel(true);
 			}
 		}
-	}
-
-	public boolean isDone() {
-		return t.isDone();
-	}
-
-	public boolean isCancelled() {
-		return t.isCancelled();
+		if("state" == e.getPropertyName() 
+				&& SwingWorker.StateValue.DONE == (SwingWorker.StateValue)e.getNewValue()) {
+			pm.close();
+		}
 	}
 }

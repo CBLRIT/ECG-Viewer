@@ -1,5 +1,6 @@
 
 import java.awt.Color;
+import java.awt.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,33 +119,35 @@ public class ECGViewHandler {
 		model.applyFilter(index, f.Id(), f.returnVals());
 	}
 
-	public void applyFilterAll(final FilterDialog f) {
+	public void applyFilterAll(final FilterDialog f, final MainFrame attach) {
 		final HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>(model.size());
 		for(int i = 0; i < model.size(); i++) {
 			changes.put(i, (ECGDataSet)model.getDataset(i).clone());
 		}
+		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+						changes, 
+						"Apply filter " + f.Id() + " to all leads"));
 		ProgressDialog.make(new SwingWorker<Void, Void>() {
 			@Override
 			public Void doInBackground() {
-				System.out.println("doing");
 				setProgress(0);
 				for(int i = 0; i < model.size(); i++) {
 					model.applyFilter(i, f.Id(), f.returnVals());
 					setProgress((int)((double)i/(double)model.size()*100));
+					if(isCancelled()) {
+						model.undo();
+						model.resetFuture();
+						break;
+					}
 				}
 				return null;
 			}
 
 			@Override
 			public void done() {
-				System.out.println("done");
-				if(!isCancelled()) {
-					model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
-									changes, 
-									"Apply filter " + f.Id() + " to all leads"));
-				}
+				attach.relink();
 			}
-		});
+		}, attach);
 	}
 
 	public ECGView shallowFilter(int index, 

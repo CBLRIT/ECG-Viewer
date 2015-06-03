@@ -350,9 +350,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				views.applyFilterAll(dialog);
-				
-				thisFrame.revalidateAll();
+				views.applyFilterAll(dialog, thisFrame);
 			}
 		});
 		JMenuItem filter_harmonic = new JMenuItem("Harmonic Detrend");
@@ -363,9 +361,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				views.applyFilterAll(dialog);
-				
-				thisFrame.revalidateAll();
+				views.applyFilterAll(dialog, thisFrame);
 			}
 		});
 		JMenuItem filter_constant = new JMenuItem("Constant Offset");
@@ -376,9 +372,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				views.applyFilterAll(dialog);
-
-				thisFrame.revalidateAll();
+				views.applyFilterAll(dialog, thisFrame);
 			}
 		});
 		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
@@ -389,9 +383,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				views.applyFilterAll(dialog);
-				
-				thisFrame.revalidateAll();
+				views.applyFilterAll(dialog, thisFrame);
 			}
 		});
 		JMenuItem filter_high = new JMenuItem("High Pass");
@@ -402,9 +394,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				views.applyFilterAll(dialog);
-				
-				thisFrame.revalidateAll();
+				views.applyFilterAll(dialog, thisFrame);
 			}
 		});
 		JMenuItem filter_highfft = new JMenuItem("FFT");
@@ -415,9 +405,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				views.applyFilterAll(dialog);
-				
-				thisFrame.revalidateAll();
+				views.applyFilterAll(dialog, thisFrame);
 			}
 		});
 		JMenuItem filter_low = new JMenuItem("Low Pass");
@@ -428,9 +416,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				views.applyFilterAll(dialog);
-				
-				thisFrame.revalidateAll();
+				views.applyFilterAll(dialog, thisFrame);
 			}
 		});
 		JMenuItem filter_wave = new JMenuItem("Wavelet");
@@ -441,9 +427,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				views.applyFilterAll(dialog);
-
-				thisFrame.revalidateAll();
+				views.applyFilterAll(dialog, thisFrame);
 			}
 		});
 		JMenuItem filter_butter = new JMenuItem("Butterworth");
@@ -454,9 +438,7 @@ public class MainFrame extends JFrame {
 					return;
 				}
 
-				views.applyFilterAll(dialog);
-
-				thisFrame.revalidateAll();
+				views.applyFilterAll(dialog, thisFrame);
 			}
 		});
 
@@ -465,6 +447,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				views.fix12Lead();
 				thisFrame.revalidateAll();
+				thisFrame.relink();
 			}
 		});
 
@@ -632,7 +615,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	private void relink() {
+	public void relink() {
 		graphs.clear();
 		for(int i = 0; i < subPanels.length; i++) {
 			subPanels[i].removeAll();

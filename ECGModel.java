@@ -787,5 +787,9 @@ public class ECGModel {
 	public boolean canRedo() {
 		return history.canRedo();
 	}
+
+	public void resetFuture() {
+		history.resetFuture();
+	}
 }
 
