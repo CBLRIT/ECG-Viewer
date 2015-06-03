@@ -294,6 +294,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				thisFrame.setVisible(false);
 				thisFrame.dispose();
+				System.exit(0);
 			}
 		});
 		menu.add(open);

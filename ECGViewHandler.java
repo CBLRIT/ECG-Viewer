@@ -3,9 +3,10 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.SwingWorker;
 
 public class ECGViewHandler {
-	private ECGModel model;	
+	private final ECGModel model;	
 
 	public ECGViewHandler(ECGModel model) {
 		this.model = model;
@@ -117,17 +118,33 @@ public class ECGViewHandler {
 		model.applyFilter(index, f.Id(), f.returnVals());
 	}
 
-	public void applyFilterAll(FilterDialog f) {
-		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>(model.size());
+	public void applyFilterAll(final FilterDialog f) {
+		final HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>(model.size());
 		for(int i = 0; i < model.size(); i++) {
 			changes.put(i, (ECGDataSet)model.getDataset(i).clone());
 		}
-		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
-						changes, 
-						"Apply filter " + f.Id() + " to all leads"));
-		for(int i = 0; i < model.size(); i++) {
-			model.applyFilter(i, f.Id(), f.returnVals());
-		}
+		ProgressDialog.make(new SwingWorker<Void, Void>() {
+			@Override
+			public Void doInBackground() {
+				System.out.println("doing");
+				setProgress(0);
+				for(int i = 0; i < model.size(); i++) {
+					model.applyFilter(i, f.Id(), f.returnVals());
+					setProgress((int)((double)i/(double)model.size()*100));
+				}
+				return null;
+			}
+
+			@Override
+			public void done() {
+				System.out.println("done");
+				if(!isCancelled()) {
+					model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+									changes, 
+									"Apply filter " + f.Id() + " to all leads"));
+				}
+			}
+		});
 	}
 
 	public ECGView shallowFilter(int index, 

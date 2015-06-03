@@ -80,6 +80,13 @@ import java.util.Stack;
 	}
 
 	/**
+	 * resetFuture - deletes all future history
+	 */
+	public void resetFuture() {
+		redoStack.clear();
+	}
+
+	/**
 	 * peekUndo - gets the undo without popping
 	 *
 	 * @return the previous state
