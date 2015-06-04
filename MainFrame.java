@@ -375,6 +375,20 @@ public class MainFrame extends JFrame {
 				views.applyFilterAll(dialog, thisFrame);
 			}
 		});
+		JMenuItem filter_median = new JMenuItem("Median Offset");
+		filter_median.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MedianOffsetDialog dialog = new MedianOffsetDialog(thisFrame, 
+																	 "Median Offset", 
+																	 true, 
+																	 views, sampleLead*thisFrame.views.size());
+				if(!dialog.accepted()) {
+					return;
+				}
+
+				views.applyFilterAll(dialog, thisFrame);
+			}
+		});
 		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
 		filter_savitzky.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -454,6 +468,7 @@ public class MainFrame extends JFrame {
 		filter.add(filter_detrend);
 		filter.add(filter_harmonic);
 		filter.add(filter_constant);
+		filter.add(filter_median);
 		filter.addSeparator();
 		filter.add(filter_savitzky);
 		filter.add(filter_high);

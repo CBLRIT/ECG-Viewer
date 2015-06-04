@@ -14,6 +14,7 @@ public abstract class FilterDialog extends JDialog {
 	 * 6 - Constant Detrend
 	 * 7 - Butterworth
 	 * 8 - Harmonic Detrend
+	 * 9 - Median Offset
 	 */
 
 	public FilterDialog(final JFrame thisFrame, 

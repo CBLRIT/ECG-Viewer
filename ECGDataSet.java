@@ -231,4 +231,8 @@ public class ECGDataSet implements Undoable {
 	public void harmonicDetrend() {
 		Filters.harmonicDetrend(set);
 	}
+
+	public void medianDetrend() {
+		Filters.medianDetrend(set);
+	}
 }

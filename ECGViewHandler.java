@@ -186,6 +186,9 @@ public class ECGViewHandler {
 			case 8:
 				data.harmonicDetrend();
 				break;
+			case 9:
+				data.medianDetrend();
+				break;
 			default:
 				break;
 		}

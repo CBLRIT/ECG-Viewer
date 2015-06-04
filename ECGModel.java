@@ -377,27 +377,6 @@ public class ECGModel {
 
 			}
 		}
-
-		//median shift
-		for(int i = 0; i < points.length; i++) {
-			ArrayList<Double> values = new ArrayList<Double>();
-			for(int j = 0; j < points[i].size(); j++) {
-				values.add(new Double(points[i].getAt(j)[1]));
-			}
-
-			Collections.sort(values);
-			double median = 0;
-			if(values.size() % 2 == 0) { //is even
-				median = (values.get(values.size()/2-1) > values.get(values.size()/2)) ?
-							values.get(values.size()/2-1) : values.get(values.size()/2);
-			} else { //is odd
-				median = values.get(values.size() / 2);
-			}
-
-			for(int j = 0; j < points[i].size(); j++) {
-				points[i].getAt(j)[1] -= median;
-			}
-		}
 	}
 
 	/**
@@ -714,6 +693,9 @@ public class ECGModel {
 				break;
 			case 8:
 				points[index].harmonicDetrend();
+				break;
+			case 9:
+				points[index].medianDetrend();
 				break;
 			default:
 				return;

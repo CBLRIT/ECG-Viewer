@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import math.jwave.Transform;
 import math.jwave.transforms.AncientEgyptianDecomposition;
@@ -42,8 +43,28 @@ public class Filters {
 		double[] coeff = p.fit(wop.toList());
 		for(int h = 0; h < set.size(); h++) {
 			double val = set.get(h)[0];
-			double off = coeff[0] * Math.cos(2*Math.PI*coeff[1]*val + coeff[2]);
+			double off = coeff[0] * Math.sin(2*Math.PI*coeff[1]*val + coeff[2]);
 			set.set(h, new Double[]{val, set.get(h)[1]-off});
+		}
+	}
+
+	public static void medianDetrend(List<Double[]> set) {
+		ArrayList<Double> values = new ArrayList<Double>();
+		for(int j = 0; j < set.size(); j++) {
+			values.add(new Double(set.get(j)[1]));
+		}
+
+		Collections.sort(values);
+		double median = 0;
+		if(values.size() % 2 == 0) { //is even
+			median = (values.get(values.size()/2-1) > values.get(values.size()/2)) ?
+						values.get(values.size()/2-1) : values.get(values.size()/2);
+		} else { //is odd
+			median = values.get(values.size() / 2);
+		}
+
+		for(int j = 0; j < set.size(); j++) {
+			set.set(j, new Double[]{set.get(j)[0], set.get(j)[1] - median});
 		}
 	}
 
