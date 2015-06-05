@@ -23,6 +23,10 @@ public class ECGViewHandler {
 		model.readSubsetData(file, start, end);
 	}
 
+	public void loadAnnotations(String file) {
+		model.readAnnotations(file);
+	}
+
 	public void writeDataCSV(String file) 
 			throws IOException {
 		model.writeDataCSV(file);

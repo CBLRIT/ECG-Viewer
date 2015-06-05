@@ -1,6 +1,8 @@
 
+import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
@@ -13,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import javax.swing.JOptionPane;
 
 /**
  * class ECGModel - class for holding all datasets
@@ -287,8 +290,40 @@ public class ECGModel {
 	}
 
 	/**
+	 * readAnnotations - reads annotations from a previously saved annotation file
+	 * @param filename the name of the file
+	 */
+	public void readAnnotations(String filename) {
+		int count = 1;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(filename));
+			String s = "";
+			String regex = "\\s+";
+			while((s = reader.readLine()) != null) {
+				String[] nums = s.split(regex);
+				if(nums.length < 2) {
+					throw new Exception();
+				}
+				addAnnotation((int)Double.parseDouble(nums[0]),Double.parseDouble(nums[1]));
+				count++;
+			}
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "No such file \"" + filename + "\"", 
+											"Error", JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, 
+											"Error reading file \"" + filename + "\"", 
+											"Error", JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, 
+											"Improper format on line " + count, 
+											"Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	/**
 	 * writeAnnotations - writes the all of the annotations to a file
-	 * Format: <lead number> <annotation type> <annotation location>
+	 * Format: <annotation type> <annotation location>
 	 *
 	 * @param filename the name of the file to write to
 	 */
