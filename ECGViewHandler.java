@@ -196,7 +196,7 @@ public class ECGViewHandler {
 			default:
 				break;
 		}
-		return new ECGView(this, data, index, ""+(index+4),  withLabels);
+		return new ECGView(this, data, index, getTitles()[index],  withLabels);
 	}
 
 	public ArrayList<Annotation> getAnnotations() {
