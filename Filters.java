@@ -5,7 +5,7 @@ import java.util.List;
 import math.jwave.Transform;
 import math.jwave.transforms.AncientEgyptianDecomposition;
 import math.jwave.transforms.FastWaveletTransform;
-import math.jwave.transforms.wavelets.daubechies.Daubechies10;
+import math.jwave.transforms.wavelets.daubechies.Daubechies2;
 import mr.go.sgfilter.ContinuousPadder;
 import mr.go.sgfilter.SGFilter;
 import org.apache.commons.math3.complex.Complex;
@@ -157,14 +157,14 @@ public class Filters {
 
 	public static void waveletfilt(List<Double[]> set, double threshold) {
 		Transform waveTrans = new Transform(new AncientEgyptianDecomposition(
-												new FastWaveletTransform(new Daubechies10())));
+												new FastWaveletTransform(new Daubechies2())));
 		double[][] data = toArray(set);
 		double[] forward = waveTrans.forward(data[1]);
 
 		//filter magic
 		for(int i = 0; i < forward.length; i++) {
 			if(Math.abs(forward[i]) < threshold) {
-				forward[i] = 1;
+				forward[i] = 0;
 			}
 		}
 

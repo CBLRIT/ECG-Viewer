@@ -54,8 +54,31 @@ public class MainFrame extends JFrame {
 
 		this.views = views;
 
-		this.setBounds(20, 20, 1400, 750);
+		this.setBounds(20, 20, 1500, 750);
 		this.setLayout(new BorderLayout());
+
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new WindowListener() {
+			public void windowActivated(WindowEvent e) {}
+			public void windowClosed(WindowEvent e) {}
+			public void windowClosing(WindowEvent e) {
+				int ret = JOptionPane.showConfirmDialog(
+						null,
+						"Are you sure you want to exit?",
+						"Exit",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.INFORMATION_MESSAGE);
+				if(ret == 1) { // No
+					return;
+				}
+				thisFrame.dispose();
+				System.exit(0);
+			}
+			public void windowDeactivated(WindowEvent e) {}
+			public void windowDeiconified(WindowEvent e) {}
+			public void windowIconified(WindowEvent e) {}
+			public void windowOpened(WindowEvent e) {}
+		});
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu menu = new JMenu("File");
@@ -303,6 +326,15 @@ public class MainFrame extends JFrame {
 		JMenuItem exit = new JMenuItem("Exit");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int ret = JOptionPane.showConfirmDialog(
+						null,
+						"Are you sure you want to exit?",
+						"Exit",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.WARNING_MESSAGE);
+				if(ret == 1) { // No
+					return;
+				}
 				thisFrame.setVisible(false);
 				thisFrame.dispose();
 				System.exit(0);
@@ -632,7 +664,6 @@ public class MainFrame extends JFrame {
 
 		this.add(statusBar, BorderLayout.SOUTH);
 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 	}
 

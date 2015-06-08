@@ -16,7 +16,7 @@ public class ProgressDialog implements PropertyChangeListener {
 	private SwingWorker<Void, Void> t;
 
 	public static void make(final SwingWorker<Void, Void> task, final Component attach) {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
 			public void run() { 
 				show(task, attach);
 			}
