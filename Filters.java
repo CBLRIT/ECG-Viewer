@@ -5,7 +5,7 @@ import java.util.List;
 import math.jwave.Transform;
 import math.jwave.transforms.AncientEgyptianDecomposition;
 import math.jwave.transforms.FastWaveletTransform;
-import math.jwave.transforms.wavelets.daubechies.Daubechies2;
+import math.jwave.transforms.wavelets.WaveletBuilder;
 import mr.go.sgfilter.ContinuousPadder;
 import mr.go.sgfilter.SGFilter;
 import org.apache.commons.math3.complex.Complex;
@@ -155,10 +155,11 @@ public class Filters {
 		}
 	} 
 
-	public static void waveletfilt(List<Double[]> set, double threshold) {
-		FastWaveletTransform waveTrans = new FastWaveletTransform(new Daubechies2());
+	public static void waveletfilt(List<Double[]> set, double threshold, String wavelet, int levels) {
+		Transform waveTrans = new Transform(new AncientEgyptianDecomposition(
+												new FastWaveletTransform(WaveletBuilder.create(wavelet))));
 		double[][] data = toPaddedArray(set, findNextLargestPower2(set.size()));
-		double[] forward = waveTrans.forward(data[1]);
+		double[] forward = waveTrans.forward(data[1], levels);
 
 		//filter magic
 		for(int i = 0; i < forward.length; i++) {
@@ -167,7 +168,7 @@ public class Filters {
 			}
 		}
 
-		double[] inverse = waveTrans.reverse(forward);
+		double[] inverse = waveTrans.reverse(forward, levels);
 		for(int i = 0; i < set.size(); i++) {
 			set.set(i, new Double[]{data[0][i], inverse[i]});
 		}
