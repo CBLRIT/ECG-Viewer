@@ -1,9 +1,10 @@
 
 import java.util.Arrays;
+import math.jwave.exceptions.JWaveException;
 import math.jwave.Transform;
 import math.jwave.transforms.AncientEgyptianDecomposition;
 import math.jwave.transforms.FastWaveletTransform;
-import math.jwave.transforms.wavelets.Haar1;
+import math.jwave.transforms.wavelets.haar.Haar1;
 
 public class WaveletTest {
 	public static void main(String[] args) {

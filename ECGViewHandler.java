@@ -176,7 +176,7 @@ public class ECGViewHandler {
 				data.detrend((int)params[0]);
 				break;
 			case 5:
-				data.waveletfilt((double)params[0]);
+				data.waveletfilt((double)params[0], (int)params[1], (int)params[2]);
 				break;
 			case 6:
 				data.constofffilt((double)params[0]);

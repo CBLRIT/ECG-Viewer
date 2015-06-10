@@ -2,6 +2,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import math.jwave.exceptions.JWaveException;
 import math.jwave.Transform;
 import math.jwave.transforms.AncientEgyptianDecomposition;
 import math.jwave.transforms.FastWaveletTransform;
@@ -155,23 +156,24 @@ public class Filters {
 		}
 	} 
 
-	public static void waveletfilt(List<Double[]> set, double threshold, String wavelet, int levels) {
-		Transform waveTrans = new Transform(new AncientEgyptianDecomposition(
-												new FastWaveletTransform(WaveletBuilder.create(wavelet))));
-		double[][] data = toPaddedArray(set, findNextLargestPower2(set.size()));
-		double[] forward = waveTrans.forward(data[1], levels);
+	public static void waveletfilt(List<Double[]> set, double threshold, int wavelet, int levels) {
+		try {
+			FastWaveletTransform waveTrans = new FastWaveletTransform(WaveletBuilder.create2arr()[wavelet]);
+			double[][] data = toPaddedArray(set, findNextLargestPower2(set.size()));
+			double[] forward = waveTrans.forward(data[1], levels);
 
-		//filter magic
-		for(int i = 0; i < forward.length; i++) {
-			if(Math.abs(forward[i]) < threshold) {
-				forward[i] = 0;
+			//filter magic
+			for(int i = 0; i < forward.length; i++) {
+				if(Math.abs(forward[i]) < threshold) {
+					forward[i] = 0;
+				}
 			}
-		}
 
-		double[] inverse = waveTrans.reverse(forward, levels);
-		for(int i = 0; i < set.size(); i++) {
-			set.set(i, new Double[]{data[0][i], inverse[i]});
-		}
+			double[] inverse = waveTrans.reverse(forward, levels);
+			for(int i = 0; i < set.size(); i++) {
+				set.set(i, new Double[]{data[0][i], inverse[i]});
+			}
+		} catch (JWaveException e) {}
 	}
 
 	/**

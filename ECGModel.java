@@ -715,7 +715,7 @@ public class ECGModel {
 				points[index].detrend((int)params[0]);
 				break;
 			case 5:
-				points[index].waveletfilt((double)params[0]);
+				points[index].waveletfilt((double)params[0], (int)params[1], (int)params[2]);
 				break;
 			case 6:
 				points[index].constofffilt((double)params[0]);

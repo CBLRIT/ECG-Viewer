@@ -202,8 +202,8 @@ public class ECGDataSet implements Undoable {
 	 *
 	 * @param threshold the threshold value to cut off
 	 */
-	public void waveletfilt(double threshold) {
-		Filters.waveletfilt(set, threshold);
+	public void waveletfilt(double threshold, int wavelet, int level) {
+		Filters.waveletfilt(set, threshold, wavelet, level);
 	}
 
 	/**
