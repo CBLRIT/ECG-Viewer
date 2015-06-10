@@ -156,9 +156,8 @@ public class Filters {
 	} 
 
 	public static void waveletfilt(List<Double[]> set, double threshold) {
-		Transform waveTrans = new Transform(new AncientEgyptianDecomposition(
-												new FastWaveletTransform(new Daubechies2())));
-		double[][] data = toArray(set);
+		FastWaveletTransform waveTrans = new FastWaveletTransform(new Daubechies2());
+		double[][] data = toPaddedArray(set, findNextLargestPower2(set.size()));
 		double[] forward = waveTrans.forward(data[1]);
 
 		//filter magic
@@ -169,7 +168,7 @@ public class Filters {
 		}
 
 		double[] inverse = waveTrans.reverse(forward);
-		for(int i = 0; i < inverse.length; i++) {
+		for(int i = 0; i < set.size(); i++) {
 			set.set(i, new Double[]{data[0][i], inverse[i]});
 		}
 	}
@@ -269,6 +268,22 @@ public class Filters {
 			//do a transpose
 			ret[0][j] = set.get(j)[0];
 			ret[1][j] = set.get(j)[1];
+		}
+		return ret;
+	}
+
+	private static double[][] toPaddedArray(List<Double[]> set, int size) {
+		double[][] ret = new double[2][size];
+
+		for(int j = 0; j < size; j++) {
+			if(j < set.size()) {
+				//do a transpose
+				ret[0][j] = set.get(j)[0];
+				ret[1][j] = set.get(j)[1];
+			} else {
+				ret[0][j] = 0.1 * (j-set.size()+1) + set.get(set.size()-1)[0];
+				ret[1][j] = 0.0;
+			}
 		}
 		return ret;
 	}
