@@ -121,7 +121,7 @@ public abstract class Wavelet {
     } // i
   } // _buildOrthonormalSpace
 
-   /*
+  /**
    * Returns a String keeping the name of the current Wavelet.
    * @author Christian Scheiblich (cscheiblich@gmail.com)
    * @date 17.08.2014 11:02:31
@@ -131,9 +131,16 @@ public abstract class Wavelet {
     return _name;
   } // getName
 
-  public String toString() {
-	return getName();
-  }
+  /**
+   * Returns a String keeping the name of the current Wavelet.
+   * Used to override Object's toString method
+   * @author Dakota Williams
+   * @date 11.06.2015 10:12:15
+   * @return String with the name of the wavelet
+   */
+  public String toString( ) {
+    return getName();
+  } // toString
 
   /**
    * Returns the wavelength of the so called mother wavelet or scaling function.

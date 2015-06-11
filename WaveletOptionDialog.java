@@ -66,7 +66,7 @@ public class WaveletOptionDialog extends FilterDialog {
 		});
 
 		final JComboBox<Wavelet> waveletChoice = new JComboBox<Wavelet>(WaveletBuilder.create2arr());
-		final TextSlide levelSlide = new TextSlide(1, 20, 5, 0);
+		final TextSlide levelSlide = new TextSlide(1, 15, 5, 0);
 
 		controls.add(new JLabel("Frequency Threshold"), labels);
 		final TextSlide leftSlide = new TextSlide(0, 1000, 1, 2);
