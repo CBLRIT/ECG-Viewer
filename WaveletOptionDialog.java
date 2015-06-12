@@ -35,14 +35,14 @@ public class WaveletOptionDialog extends FilterDialog {
 		super(thisFrame, title, modal, handler, index, 5);
 
 		freq = 1.0;
-		wavelet = 1;
+		wavelet = 31;
 		level = 5;
 
 		this.setLayout(new BorderLayout());
 
 		final ECGView[] preview = new ECGView[]{handler.shallowFilter(index, 
 																id, 
-																new Number[]{1.0, 1, 5}, 
+																new Number[]{1.0, 31, 5}, 
 																true)};
 		JPanel controls = new JPanel(new GridBagLayout());
 
@@ -66,6 +66,7 @@ public class WaveletOptionDialog extends FilterDialog {
 		});
 
 		final JComboBox<Wavelet> waveletChoice = new JComboBox<Wavelet>(WaveletBuilder.create2arr());
+		waveletChoice.setSelectedIndex(31);
 		final TextSlide levelSlide = new TextSlide(1, 15, 5, 0);
 
 		controls.add(new JLabel("Frequency Threshold"), labels);
