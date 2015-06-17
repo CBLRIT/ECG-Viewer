@@ -7,7 +7,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.image.BufferedImage;
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -15,9 +19,11 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import javax.swing.event.MouseInputListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -636,6 +642,9 @@ views.applyFilterAll(dialog, thisFrame); }
 
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new GridLayout(ynum, xnum));
+		BoxSelectListener bsl = new BoxSelectListener(this, mainPanel);
+		mainPanel.addMouseListener(bsl);
+		mainPanel.addMouseMotionListener(bsl);
 
 		for(int i = 0; i < xnum*ynum; i++) {
 			subPanels[i] = new JPanel();
@@ -794,5 +803,65 @@ views.applyFilterAll(dialog, thisFrame); }
 
 		return ret;
 	}
+
+	public void selectLeadsInBox(Point p1, Point p2) {
+		int[][] layout = views.getLayout();
+		for(int i = 0; i < layout.length; i++) {
+			int centerx = subPanels[layout[i][0]*xnum + layout[i][1]].getLocation().x 
+						+ subPanels[layout[i][0]*xnum + layout[i][1]].getWidth()/2;
+			int centery = subPanels[layout[i][0]*xnum + layout[i][1]].getLocation().y 
+						+ subPanels[layout[i][0]*xnum + layout[i][1]].getHeight()/2;
+
+			if(centerx > p1.x && centerx < p2.x && centery > p1.y && centery < p2.y) {
+				graphs.get(i).setSelected(true);
+				graphs.get(i).setBackground(Settings.selected);
+			}
+		}
+	}
+}
+
+class BoxSelectListener implements MouseInputListener {
+	public BoxSelectListener(MainFrame parent, JPanel local) {
+		this.parent = parent;
+		this.local = local;
+	}
+
+	private MainFrame parent;
+	private JPanel local;
+	private Point corner;
+
+	public void mouseClicked(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	public void mousePressed(MouseEvent e) {
+		if(e.getButton() == MouseEvent.BUTTON1) {
+			corner = e.getPoint();
+		}
+	}
+	public void mouseReleased(MouseEvent e) {
+		if(e.getButton() == MouseEvent.BUTTON1) {
+			Graphics g = local.getGraphics();
+			local.paintComponents(g);
+
+			parent.selectLeadsInBox(corner, e.getPoint());
+		}
+	}
+	public void mouseDragged(MouseEvent e) {
+		Graphics2D g = (Graphics2D)local.getGraphics();
+		BufferedImage bufImg = new BufferedImage(local.getWidth(), 
+												 local.getHeight(), 
+												 BufferedImage.TYPE_INT_ARGB);
+		Graphics g2 = bufImg.createGraphics();
+		local.paintComponents(g2);
+		Point p = e.getPoint();
+		g2.setColor(new Color(Settings.selected.getRed(),
+							Settings.selected.getGreen(),
+							Settings.selected.getBlue(),
+							192));
+		g2.fillRect(corner.x, corner.y, p.x - corner.x, p.y - corner.y);
+
+		g.drawImage(bufImg, null, 0, 0);
+	}
+	public void mouseMoved(MouseEvent e) {}
 }
 

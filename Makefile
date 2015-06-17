@@ -1,4 +1,6 @@
 
+.PHONY : default run debug unchecked release clean realclean
+
 LIBPATH=".:jfreechart-1.0.19/lib/jfreechart-1.0.19.jar:jfreechart-1.0.19/lib/jcommon-1.0.23.jar:commons-math3-3.3/commons-math3-3.3.jar:sgfilter/sgfilter_v1_2.jar:JWave/src/jwave.jar"
 
 LIBS=$(shell echo $(LIBPATH) | sed -e 's/:/ /g' | sed -e 's/\. //g')
@@ -33,18 +35,6 @@ release:
 	jar cfm ECGViewer.jar manifest.txt *.class imgs/
 	chmod u+x ECGViewer/ECGViewer.jar
 	rm ECGViewer/*.class ECGViewer/manifest.txt
-
-#Main.class: MoldTorso.class Main.java
-#	javac -cp $(LIBPATH) Main.java
-#
-#MoldTorso.class: MoldTorso.java Mesh.class
-#	javac -cp $(LIBPATH) MoldTorso.java
-#
-#Mesh.class: Mesh.java UnalignedCoordinateException.class
-#	javac -cp $(LIBPATH) Mesh.java
-#
-#UnalignedCoordinateException.class: UnalignedCoordinateException.java
-#	javac -cp $(LIBPATH) UnalignedCoordinateException.java
 
 clean:
 	rm *.class
