@@ -12,6 +12,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 public final class Settings {
 	private static class StringColor {
@@ -122,5 +123,9 @@ public final class Settings {
 		frame.pack();
 		frame.setVisible(true);
 	}
+
+	public static final Color normalLead = UIManager.getColor("Panel.background");
+	public static final Color badLead = new Color(233, 174, 174);
+	public static final Color selected = UIManager.getColor("ComboBox.selectionBackground");
 }
 

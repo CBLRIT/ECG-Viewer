@@ -50,6 +50,8 @@ public class ECGView {
 	private boolean canPlace = false;
 	private boolean canRemove = false;
 
+	private boolean selected = false;
+
 	private boolean labels;
 
 	/**
@@ -111,8 +113,8 @@ public class ECGView {
 		}
 
 		this.setBackground(!this.isBad() ? 
-						   UIManager.getColor("Panel.background") : 
-						   new Color(233, 174, 174));
+						   Settings.normalLead : 
+						   Settings.badLead);
 
 		this.redrawAnnotations();
 
@@ -187,6 +189,13 @@ public class ECGView {
 	 */
 	public void setCanRemove(boolean b) {
 		canRemove = b;
+	}
+
+	public void setSelected(boolean b) {
+		selected  = b;
+	}
+	public boolean isSelected() {
+		return selected;
 	}
 
 	/**

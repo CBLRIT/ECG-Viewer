@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import javax.swing.SwingWorker;
 
 public class ECGViewHandler {
@@ -130,14 +131,15 @@ public class ECGViewHandler {
 		}
 		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
 						changes, 
-						"Apply filter " + f.Id() + " to all leads"));
+						"Apply filter " + f.Id() + " to leads"));
 		ProgressDialog.make(new SwingWorker<Void, Void>() {
 			@Override
 			public Void doInBackground() {
 				setProgress(0);
-				for(int i = 0; i < model.size(); i++) {
-					model.applyFilter(i, f.Id(), f.returnVals());
-					setProgress((int)((double)i/(double)model.size()*100));
+				for(Iterator<Integer> i = attach.getSelectedLeads().iterator(); i.hasNext();) {
+					int ind = i.next();
+					model.applyFilter(ind, f.Id(), f.returnVals());
+					setProgress((int)((double)ind/(double)model.size()*100));
 					if(isCancelled()) {
 						model.undo();
 						model.resetFuture();

@@ -355,6 +355,24 @@ public class MainFrame extends JFrame {
 		menubar.add(menu);
 
 		JMenu edit = new JMenu("Edit");
+		final JMenuItem edit_selectall = new JMenuItem("Select All");
+		edit_selectall.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for(int i = 0; i < views.size(); i++) {
+					graphs.get(i).setSelected(true);
+					graphs.get(i).setBackground(Settings.selected);
+				}
+			}
+		});
+		final JMenuItem edit_deselectall = new JMenuItem("Deselect All");
+		edit_deselectall.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for(int i = 0; i < views.size(); i++) {
+					graphs.get(i).setSelected(false);
+					graphs.get(i).setBackground(Settings.normalLead);
+				}
+			}
+		});
 		final JMenuItem edit_undo = new JMenuItem("Undo");
 		edit_undo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -383,9 +401,12 @@ public class MainFrame extends JFrame {
 		});
 		edit.add(edit_undo);
 		edit.add(edit_redo);
+		edit.addSeparator();
+		edit.add(edit_selectall);
+		edit.add(edit_deselectall);
 		menubar.add(edit);
 
-		JMenu filter = new JMenu("Filter All");
+		JMenu filter = new JMenu("Filter Selected");
 		JMenuItem filter_detrend = new JMenuItem("Polynomial Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -451,9 +472,7 @@ public class MainFrame extends JFrame {
 				if(!dialog.accepted()) {
 					return;
 				}
-
-				views.applyFilterAll(dialog, thisFrame);
-			}
+views.applyFilterAll(dialog, thisFrame); }
 		});
 		JMenuItem filter_highfft = new JMenuItem("FFT");
 		filter_highfft.addActionListener(new ActionListener() {
@@ -687,23 +706,30 @@ public class MainFrame extends JFrame {
 			final int count = i;
 			graph.getPanel().addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
-					ChartFrame cf = new ChartFrame(views, count, views.getTitles()[count]);
-					cf.addWindowListener(new WindowListener() {
-						public void windowClosing(WindowEvent e) {
-							graph.setBackground(!graph.isBad() ? 
-											UIManager.getColor("Panel.background") : 
-											new Color(233, 174, 174));
-							graph.update();
-						}
+					if (e.getClickCount() == 2) {
+						ChartFrame cf = new ChartFrame(views, count, views.getTitles()[count]);
+						cf.addWindowListener(new WindowListener() {
+							public void windowClosing(WindowEvent e) {
+								graph.setBackground(!graph.isBad() ? 
+												Settings.normalLead : 
+												Settings.badLead);
+								graph.update();
+							}
 
-						//don't care
-						public void windowOpened(WindowEvent e) {}
-						public void windowIconified(WindowEvent e) {}
-						public void windowDeiconified(WindowEvent e) {}
-						public void windowDeactivated(WindowEvent e) {}
-						public void windowActivated(WindowEvent e) {}
-						public void windowClosed(WindowEvent e) {}
-					});
+							//don't care
+							public void windowOpened(WindowEvent e) {}
+							public void windowIconified(WindowEvent e) {}
+							public void windowDeiconified(WindowEvent e) {}
+							public void windowDeactivated(WindowEvent e) {}
+							public void windowActivated(WindowEvent e) {}
+							public void windowClosed(WindowEvent e) {}
+						});
+					} else if (e.getClickCount() == 1) {
+						graph.setSelected(!graph.isSelected());
+						graph.setBackground(graph.isSelected() ?
+											Settings.selected :
+											Settings.normalLead);
+					}
 				}
 
 				//don't care
@@ -723,7 +749,9 @@ public class MainFrame extends JFrame {
 			final ECGView graph = views.getCompositeView(false);
 			graph.getPanel().addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
-					ChartFrame cf = new ChartFrame(views);
+					if (e.getClickCount() == 2) {
+						ChartFrame cf = new ChartFrame(views);
+					}
 				}
 
 				//don't care
@@ -753,6 +781,18 @@ public class MainFrame extends JFrame {
 		button.setIcon(new ImageIcon(imageURL, toolTip));
 
 		return button;
+	}
+
+	public ArrayList<Integer> getSelectedLeads() {
+		ArrayList<Integer> ret = new ArrayList<Integer>();
+
+		for(int i = 0; i < views.size(); i++) {
+			if (graphs.get(i).isSelected()) {
+				ret.add(i);
+			}
+		}
+
+		return ret;
 	}
 }
 
