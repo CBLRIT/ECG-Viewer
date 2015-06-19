@@ -290,6 +290,40 @@ public class ECGModel {
 	}
 
 	/**
+	 * readBadLeads - reads bad leads from a file
+	 *
+	 * @param filename the file to read
+	 */
+	public void readBadLeads(String filename) {
+		int count = 1;
+		int offset = 0;
+		if(points.length != 64) {
+			offset = 4;
+		}
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(filename));
+			String s = "";
+			int lead = 0;
+			while((s = reader.readLine()) != null) {
+				lead = Integer.parseInt(s) - offset;
+				points[lead].setBad(true);
+				count++;
+			}
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "No such file \"" + filename + "\"", 
+											"Error", JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, 
+											"Error reading file \"" + filename + "\"", 
+											"Error", JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, 
+											"Improper format on line " + count, 
+											"Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	/**
 	 * readAnnotations - reads annotations from a previously saved annotation file
 	 * @param filename the name of the file
 	 */

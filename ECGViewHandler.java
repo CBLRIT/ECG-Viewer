@@ -24,6 +24,10 @@ public class ECGViewHandler {
 		model.readSubsetData(file, start, end);
 	}
 
+	public void loadBadLeads(String file) {
+		model.readBadLeads(file);
+	}
+
 	public void loadAnnotations(String file) {
 		model.readAnnotations(file);
 	}
@@ -120,7 +124,7 @@ public class ECGViewHandler {
 				(ECGDataSet)model.getDataset(index).clone());
 		model.pushChange(new Change<HashMap<Integer, Undoable>, String>(
 			changes, 
-			"Apply filter " + f.Id() + " to lead " + (index+model.getOffset()-1)));
+			"Apply filter " + f.Id() + " to lead " + model.getTitles()[index]));
 		model.applyFilter(index, f.Id(), f.returnVals());
 	}
 

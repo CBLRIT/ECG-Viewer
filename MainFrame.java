@@ -132,6 +132,17 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+		JMenuItem load_bad = new JMenuItem("Load Bad Leads...");
+		load_bad.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int ret = fc.showOpenDialog(thisFrame);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					views.loadBadLeads(fc.getSelectedFile().getAbsolutePath());
+					thisFrame.relink();
+				}
+			}
+		});
 		JMenuItem load_annos = new JMenuItem("Load Annotations...");
 		load_annos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -349,6 +360,7 @@ public class MainFrame extends JFrame {
 		menu.add(open);
 		menu.add(open_subset);
 		menu.add(load_annos);
+		menu.add(load_bad);
 		menu.add(export);
 		menu.add(export_subset);
 		menu.add(export_annos);
