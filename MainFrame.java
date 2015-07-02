@@ -46,8 +46,6 @@ public class MainFrame extends JFrame {
 	private final JPanel[] subPanels = new JPanel[xnum*ynum];
 	private final ArrayList<ECGView> graphs = new ArrayList<ECGView>();
 
-	private final int sampleLead = 35/120;
-
 	private JFormattedTextField startText 
 		= new JFormattedTextField(NumberFormat.getIntegerInstance());
 	private JFormattedTextField lenText 
@@ -428,7 +426,7 @@ public class MainFrame extends JFrame {
 		JMenuItem filter_detrend = new JMenuItem("Polynomial Detrend");
 		filter_detrend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, "Polynomial Detrend", true, views, sampleLead*thisFrame.views.size());
+				DetrendOptionDialog dialog = new DetrendOptionDialog(thisFrame, "Polynomial Detrend", true, views, getSelectedLeads().get(0));
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -439,7 +437,7 @@ public class MainFrame extends JFrame {
 		JMenuItem filter_harmonic = new JMenuItem("Harmonic Detrend");
 		filter_harmonic.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				HarmonicDetrendDialog dialog = new HarmonicDetrendDialog(thisFrame, "Harmonic Detrend", true, views, sampleLead*thisFrame.views.size());
+				HarmonicDetrendDialog dialog = new HarmonicDetrendDialog(thisFrame, "Harmonic Detrend", true, views, getSelectedLeads().get(0));
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -450,7 +448,7 @@ public class MainFrame extends JFrame {
 		JMenuItem filter_constant = new JMenuItem("Constant Offset");
 		filter_constant.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ConstantOptionDialog dialog = new ConstantOptionDialog(thisFrame, "Constant Offset", true, views, sampleLead*thisFrame.views.size());
+				ConstantOptionDialog dialog = new ConstantOptionDialog(thisFrame, "Constant Offset", true, views, getSelectedLeads().get(0));
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -464,7 +462,7 @@ public class MainFrame extends JFrame {
 				MedianOffsetDialog dialog = new MedianOffsetDialog(thisFrame, 
 																	 "Median Offset", 
 																	 true, 
-																	 views, sampleLead*thisFrame.views.size());
+																	 views, getSelectedLeads().get(0));
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -475,7 +473,7 @@ public class MainFrame extends JFrame {
 		JMenuItem filter_savitzky = new JMenuItem("Savitzky-Golay");
 		filter_savitzky.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SGOptionDialog dialog = new SGOptionDialog(thisFrame, "Savitzky-Golay Filter", true, views, sampleLead*thisFrame.views.size());
+				SGOptionDialog dialog = new SGOptionDialog(thisFrame, "Savitzky-Golay Filter", true, views, getSelectedLeads().get(0));
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -486,7 +484,7 @@ public class MainFrame extends JFrame {
 		JMenuItem filter_high = new JMenuItem("High Pass");
 		filter_high.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				HighOptionDialog dialog = new HighOptionDialog(thisFrame, "High Pass Filter", true, views, sampleLead*thisFrame.views.size());
+				HighOptionDialog dialog = new HighOptionDialog(thisFrame, "High Pass Filter", true, views, getSelectedLeads().get(0));
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -495,7 +493,7 @@ views.applyFilterAll(dialog, thisFrame); }
 		JMenuItem filter_highfft = new JMenuItem("FFT");
 		filter_highfft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				FFTOptionDialog dialog = new FFTOptionDialog(thisFrame, "FFT Filter", true, views, sampleLead*thisFrame.views.size());
+				FFTOptionDialog dialog = new FFTOptionDialog(thisFrame, "FFT Filter", true, views, getSelectedLeads().get(0));
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -506,7 +504,7 @@ views.applyFilterAll(dialog, thisFrame); }
 		JMenuItem filter_low = new JMenuItem("Low Pass");
 		filter_low.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LowOptionDialog dialog = new LowOptionDialog(thisFrame, "Low Pass Filter", true, views, sampleLead*thisFrame.views.size());
+				LowOptionDialog dialog = new LowOptionDialog(thisFrame, "Low Pass Filter", true, views, getSelectedLeads().get(0));
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -517,7 +515,7 @@ views.applyFilterAll(dialog, thisFrame); }
 		JMenuItem filter_wave = new JMenuItem("Wavelet");
 		filter_wave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				WaveletOptionDialog dialog = new WaveletOptionDialog(thisFrame, "Wavelet Filter", true, views, sampleLead*thisFrame.views.size());
+				WaveletOptionDialog dialog = new WaveletOptionDialog(thisFrame, "Wavelet Filter", true, views, getSelectedLeads().get(0));
 				if(!dialog.accepted()) {
 					return;
 				}
@@ -528,7 +526,7 @@ views.applyFilterAll(dialog, thisFrame); }
 		JMenuItem filter_butter = new JMenuItem("Butterworth");
 		filter_butter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ButterOptionDialog dialog = new ButterOptionDialog(thisFrame, "Butterworth Filter", true, views, sampleLead*thisFrame.views.size());
+				ButterOptionDialog dialog = new ButterOptionDialog(thisFrame, "Butterworth Filter", true, views, getSelectedLeads().get(0));
 				if(!dialog.accepted()) {
 					return;
 				}
