@@ -90,6 +90,7 @@ public class MainFrame extends JFrame {
 		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
@@ -111,6 +112,7 @@ public class MainFrame extends JFrame {
 		open_subset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				SubsetFileChooser fc = new SubsetFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
@@ -134,6 +136,7 @@ public class MainFrame extends JFrame {
 		load_bad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					views.loadBadLeads(fc.getSelectedFile().getAbsolutePath());
@@ -145,6 +148,7 @@ public class MainFrame extends JFrame {
 		load_annos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					views.loadAnnotations(fc.getSelectedFile().getAbsolutePath());
@@ -156,6 +160,7 @@ public class MainFrame extends JFrame {
 		export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				FileNameExtensionFilter matlab = new FileNameExtensionFilter(
 					"MATLAB matrix", "m");
 				FileNameExtensionFilter csv = new FileNameExtensionFilter(
@@ -198,6 +203,7 @@ public class MainFrame extends JFrame {
 		export_subset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				FileNameExtensionFilter matlab = new FileNameExtensionFilter(
 					"MATLAB matrix", "m");
 				FileNameExtensionFilter csv = new FileNameExtensionFilter(
@@ -246,6 +252,7 @@ public class MainFrame extends JFrame {
 		export_badleads.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
@@ -276,6 +283,7 @@ public class MainFrame extends JFrame {
 		export_annos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
@@ -306,6 +314,7 @@ public class MainFrame extends JFrame {
 		convert_12.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
@@ -336,6 +345,7 @@ public class MainFrame extends JFrame {
 		settings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Settings.edit();
+				Settings.save();
 			}
 		});
 		JMenuItem exit = new JMenuItem("Exit");
@@ -568,6 +578,7 @@ views.applyFilterAll(dialog, thisFrame); }
 		openButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
@@ -590,6 +601,7 @@ views.applyFilterAll(dialog, thisFrame); }
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				FileNameExtensionFilter matlab = new FileNameExtensionFilter(
 					"MATLAB matrix", "m");
 				FileNameExtensionFilter csv = new FileNameExtensionFilter(

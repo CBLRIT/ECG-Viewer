@@ -3,13 +3,21 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Frame;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -25,7 +33,9 @@ public final class Settings {
 
 	private static boolean badLeadInterp = false;
 
-	private Settings() {} //no instantiation
+	private static String defaultDir;
+
+	private Settings() {} //no initialization
 
 	public static void makeDefaultSettings() {
 		String[] desc = {"P-wave", "QRS-complex", "R-wave", "T-wave"};
@@ -39,14 +49,31 @@ public final class Settings {
 		}
 
 		badLeadInterp=false;
+		defaultDir = "~";
 	}
 
 	public static void load() {
-		
+		makeDefaultSettings();
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("settings.conf"));
+			String line = "";
+			String[] tokens;
+			while((line = reader.readLine())!=null) {
+				tokens = line.split(":");
+				if("DefaultDir".equals(tokens[0])) {
+					defaultDir = tokens[1];
+					continue;
+				}
+			}
+		} catch (IOException e) {}
 	}
 
 	public static void save() {
-
+		try {
+			PrintWriter writer = new PrintWriter("settings.conf");
+			writer.println("DefaultDir:"+defaultDir);
+			writer.close();
+		} catch(IOException e) {}
 	}
 
 	public static int numAnnoTypes() {
@@ -85,8 +112,12 @@ public final class Settings {
 		badLeadInterp = interp;
 	}
 
+	public static String getDefaultDirectory() {
+		return defaultDir;
+	}
+
 	public static void edit() {
-		JDialog frame = new JDialog((Frame)null, "Settings", true);
+		final JDialog frame = new JDialog((Frame)null, "Settings", true);
 		frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 		
 		JPanel annotation = new JPanel();
@@ -119,6 +150,29 @@ public final class Settings {
 			}
 		});
 		frame.add(interp);
+
+		JPanel directory = new JPanel();
+		JLabel dirlabel = new JLabel("Default Open/Save directory:");
+		directory.add(dirlabel);
+		JLabel dir = new JLabel(defaultDir);
+		directory.add(dir);
+		String imgLoc = "imgs/toolbarButtonGraphics/general/Open16.gif";
+		URL imageURL = MainFrame.class.getResource(imgLoc);
+
+		JButton dirbutton = new JButton();
+		dirbutton.setIcon(new ImageIcon(imageURL));
+		dirbutton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setDialogTitle("Default Directory...");
+				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+					defaultDir = chooser.getSelectedFile().getAbsolutePath();
+				}
+			}
+		});
+		directory.add(dirbutton);
+		frame.add(directory);
 
 		frame.pack();
 		frame.setVisible(true);
