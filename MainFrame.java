@@ -498,7 +498,8 @@ public class MainFrame extends JFrame {
 				if(!dialog.accepted()) {
 					return;
 				}
-views.applyFilterAll(dialog, thisFrame); }
+				views.applyFilterAll(dialog, thisFrame); 
+			}
 		});
 		JMenuItem filter_highfft = new JMenuItem("FFT");
 		filter_highfft.addActionListener(new ActionListener() {
@@ -738,6 +739,10 @@ views.applyFilterAll(dialog, thisFrame); }
 			graph.getPanel().addMouseListener(new MouseListener() {
 				public void mouseClicked(MouseEvent e) {
 					if (e.getClickCount() == 2) {
+						graph.setSelected(!graph.isSelected());
+						graph.setBackground(graph.isSelected() ?
+											Settings.selected :
+											Settings.normalLead);
 						ChartFrame cf = new ChartFrame(views, count, views.getTitles()[count]);
 						cf.addWindowListener(new WindowListener() {
 							public void windowClosing(WindowEvent e) {

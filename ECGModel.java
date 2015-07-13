@@ -281,7 +281,7 @@ public class ECGModel {
 
 		for(int i = 0; i < points.length; i++) {
 			if(points[i].isBad()) {
-				out.println(i+offset);
+				out.println(getTitle(i));
 			}
 		}
 
@@ -305,8 +305,11 @@ public class ECGModel {
 			String s = "";
 			int lead = 0;
 			while((s = reader.readLine()) != null) {
-				lead = Integer.parseInt(s) - offset;
-				points[lead].setBad(true);
+				for(int i = 0; i < points.length; i++) {
+					if(getTitle(i).equals(s)) {
+						points[i].setBad(true);
+					}
+				}
 				count++;
 			}
 		} catch (FileNotFoundException e) {
