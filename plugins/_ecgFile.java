@@ -1,6 +1,5 @@
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader; import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.AbstractMap;
@@ -8,20 +7,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * _123File - opens and reads a .123 file with ECG data
+ * _ecgFile - opens and reads a .ecg file with ECG data
  * @author Dakota Williams
  */
-public class _123File extends ECGFile {
+public class _ecgFile extends ECGFile {
 	private double sint;
 
 	public String getExtension() {
-		return "123";
+		return "ecg";
 	}
 
 	public int[][] getLayout() {
 		return new int[][]{
-			{-1, -1}, // // first two are junk
-			{-1, -1}, // //
 			{9, 0}, // 1-3 limb leads
 			{9, 2}, //
 			{9, 4}, //
@@ -78,7 +75,7 @@ public class _123File extends ECGFile {
 	*/
 	public int read(String fileName,
 			ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) {
-		int numLeads = 120;
+		int numLeads = 123;
 		BufferedReader reader;
 		try {
 			reader = new BufferedReader(new FileReader(fileName));
@@ -88,32 +85,39 @@ public class _123File extends ECGFile {
 		}
 
 		//loop over header info
-		String line;
+		int count = 0;
+		int numSamp = 0;
+		String line = "";
 		try {
 			for(int i = 0; i < 13; i++) {
-				line = reader.readLine();
+				line = reader.readLine().trim();
 				if(i == 5) {
 					double sampsec = Double.parseDouble(line);
 					sint = 1.0 / sampsec * 1000.0;
 				}
+				if(i == 6) {
+					numSamp = Integer.parseInt(line);
+				}
 			}
 
 			line = reader.readLine();
-			String regex = "\\s+";
-			int count = 0;
-			while(line != null) {
-				String[] words = line.split(regex);
-				double time = (double)(Integer.parseInt(words[1])-1) * sint;
+			String buffer;
+			while(line != null && count < numSamp) {
+				int begin = 8;
+				int end = begin + 9; //constant character offset instead of whitespace
+
+				buffer = line.substring(0, begin).trim();
+				double time = (double)(Integer.parseInt(buffer)-1) * sint;
 
 				points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
 					time, new ArrayList<Double>()));
 
-				for(int i = 0; i < 2; i++) {
-					points.get(count).getValue().add(0.0);
-				}
+				for(int i = 0; i < numLeads; i++) {
+					buffer = line.substring(begin, end).trim();
+					points.get(count).getValue().add(Double.parseDouble(buffer));
 
-				for(int i = 2; i < words.length; i++) {
-					points.get(count).getValue().add(Double.parseDouble(words[i]));
+					begin = end;
+					end += 9;
 				}
 
 				count++;
@@ -121,9 +125,15 @@ public class _123File extends ECGFile {
 			}
 		} catch (IOException e) {
 			System.err.println("Something happened while reading "
-												+ fileName + "\n" + e.getMessage());
+								+ fileName + "\n" + e.getMessage());
 			return -2;
+		} catch (Exception e) {
+			System.err.println("Error on line " + count + ": \"" + line + 
+								"\" in file " +fileName+"\n" + e.getMessage());
+			return -3;
 		}
+
+System.out.println("read done");
 
 		return 0;
 	}

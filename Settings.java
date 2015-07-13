@@ -154,7 +154,7 @@ public final class Settings {
 		JPanel directory = new JPanel();
 		JLabel dirlabel = new JLabel("Default Open/Save directory:");
 		directory.add(dirlabel);
-		JLabel dir = new JLabel(defaultDir);
+		final JLabel dir = new JLabel(defaultDir);
 		directory.add(dir);
 		String imgLoc = "imgs/toolbarButtonGraphics/general/Open16.gif";
 		URL imageURL = MainFrame.class.getResource(imgLoc);
@@ -168,6 +168,7 @@ public final class Settings {
 				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 					defaultDir = chooser.getSelectedFile().getAbsolutePath();
+					dir.setText(defaultDir);
 				}
 			}
 		});

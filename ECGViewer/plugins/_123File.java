@@ -93,7 +93,8 @@ public class _123File extends ECGFile {
 			for(int i = 0; i < 13; i++) {
 				line = reader.readLine();
 				if(i == 5) {
-					sint = 1.0 / Double.parseDouble(line) * 1000.0;
+					double sampsec = Double.parseDouble(line);
+					sint = 1.0 / sampsec * 1000.0;
 				}
 			}
 
