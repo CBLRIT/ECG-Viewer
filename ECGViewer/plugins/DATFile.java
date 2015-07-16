@@ -117,7 +117,7 @@ public class DATFile extends ECGFile {
 	 * @param points (mutable) a place for data to be read into
 	 * @return 0 on success, failure otherwise 
 	 */
-	public int read(String fileName, 
+	public int read(String fileName, double start, double length,
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) {
 		int numLeads = 154;
 		 

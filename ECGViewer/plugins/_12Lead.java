@@ -20,7 +20,7 @@ public class _12Lead extends ECGFile {
 	 *				 and a list of values across all leads.
 	 * @return 0 on success, anything else otherwise
 	 */
-	public int read(String fileName,
+	public int read(String fileName, double start, double length,
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) {
 
 		BufferedReader reader;
@@ -37,17 +37,19 @@ public class _12Lead extends ECGFile {
 		int count = 0;
 		try {
 			while((line = reader.readLine()) != null) {
-				String[] values = line.split(regex);
+				if(time >= start && time < start+length) {
+					String[] values = line.split(regex);
 
-				points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
-					time, new ArrayList<Double>()));
+					points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
+						time, new ArrayList<Double>()));
 
-				for(int i = 2; i < 14; i++) { //skip first
-					points.get(count).getValue().add(Double.parseDouble(values[i]));
+					for(int i = 2; i < 14; i++) { //skip first
+						points.get(count).getValue().add(Double.parseDouble(values[i]));
+					}
+					count++;
 				}
 
 				time += getSampleInterval();
-				count++;
 			}
 			
 		} catch (IOException e) {
