@@ -11,7 +11,7 @@ public class ECGFileTest {
 			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>>();
 		String filename = "data/CF091714/4917c43b.dat";
 		ECGFile file = e.getECGFile(filename);
-		file.read(filename, points);
+		file.read(filename, 0, Double.POSITIVE_INFINITY, points);
 		int lead = 64;
 		int leads[][] = file.getLayout();
 		System.out.println("Lead: " + lead + " (" + leads[lead+1][0] + "," + leads[lead+1][1] + ")");

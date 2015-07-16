@@ -24,7 +24,7 @@ public class CSVRead extends ECGFile {
 	 *				 and a list of values across all leads.
 	 * @return 0 on success, anything else otherwise
 	 */
-	public int read(String fileName,
+	public int read(String fileName, double start, double length,
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) {
 		BufferedReader reader;
 		try {
@@ -49,14 +49,18 @@ public class CSVRead extends ECGFile {
 				line.replaceAll("\\s+", ""); //remove whitespace
 				tokens = line.split(",");
 
-				points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
-					Double.parseDouble(tokens[0]), 
-					new ArrayList<Double>()));
-				for(int i = 1; i < tokens.length; i++) {
-					points.get(count).getValue().add(Double.parseDouble(tokens[i]));
-				}
+				double time = Double.parseDouble(tokens[0]);
 
-				count++;
+				if(time >= start && time < start+length) {
+					points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
+						time, 
+						new ArrayList<Double>()));
+					for(int i = 1; i < tokens.length; i++) {
+						points.get(count).getValue().add(Double.parseDouble(tokens[i]));
+					}
+
+					count++;
+				}
 			}
 			
 			reader.close();

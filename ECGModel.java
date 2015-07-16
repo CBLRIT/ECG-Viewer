@@ -384,7 +384,7 @@ public class ECGModel {
 	 *
 	 * @param filename the name of the file to read
 	 */
-	public void readData(String filename) 
+	public void readData(String filename, double start, double length) 
 			throws IOException, FileNotFoundException {
 		this.clear();
 
@@ -395,7 +395,7 @@ public class ECGModel {
 
 		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> raw
 			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>>();
-		int retval = file.read(filename, raw);
+		int retval = file.read(filename, start, length, raw);
 		if(retval != 0) {
 			return;
 		}
@@ -462,7 +462,7 @@ public class ECGModel {
 	 */
 	public void readSubsetData(String filename, double start, double end) 
 			throws IOException, FileNotFoundException {
-		readData(filename);
+		readData(filename, start, end-start);
 		for(int i = 0; i < points.length; i++) {
 			points[i] = points[i].subset(start, end);
 		}

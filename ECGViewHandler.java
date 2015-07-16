@@ -16,7 +16,7 @@ public class ECGViewHandler {
 
 	public void loadFile(String file) 
 			throws IOException {
-		model.readData(file);
+		model.readData(file, 0, Double.POSITIVE_INFINITY);
 	}
 
 	public void loadFileSubset(String file, double start, double end) 

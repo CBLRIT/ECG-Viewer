@@ -19,7 +19,7 @@ public class _64Lead extends ECGFile {
 	 *				 and a list of values across all leads.
 	 * @return 0 on success, anything else otherwise
 	 */
-	public int read(String fileName,
+	public int read(String fileName, double start, double length,
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) {
 		BufferedReader reader;
 		try {
@@ -35,19 +35,22 @@ public class _64Lead extends ECGFile {
 		int count = 0;
 		try {
 			while((line = reader.readLine()) != null) {
-				String[] values = line.split(regex);
+				if(time >= start && time < start+length) {
+					String[] values = line.split(regex);
 
-				points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
-					time, new ArrayList<Double>()));
+					points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
+						time, new ArrayList<Double>()));
 
-				double val = 0.0;
-				for(int i = 0; i < 64; i++) {
-					val = (((double)Integer.parseInt(values[i])) - 16384.0) * 10.0 / 32768.0;
-					points.get(count).getValue().add(val);
+					double val = 0.0;
+					for(int i = 0; i < 64; i++) {
+						val = (((double)Integer.parseInt(values[i])) - 16384.0) * 10.0 / 32768.0;
+						points.get(count).getValue().add(val);
+					}
+					
+					count++;
 				}
 
 				time += getSampleInterval();
-				count++;
 			}
 		} catch (IOException e) {
 			System.err.println("Something happened while reading "

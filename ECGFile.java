@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @author Dakota Williams
  */
 public abstract class ECGFile {
-	public abstract int read(String fileName,
+	public abstract int read(String fileName, double start, double length,
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points);
 					
 	public abstract double getSampleInterval();

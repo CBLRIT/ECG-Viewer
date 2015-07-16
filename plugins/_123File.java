@@ -76,7 +76,7 @@ public class _123File extends ECGFile {
 	* @param points (mutable) a place for data to be read into
 	* @return 0 on success, failure otherwise
 	*/
-	public int read(String fileName,
+	public int read(String fileName, double start, double length,
 			ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) {
 		int numLeads = 120;
 		BufferedReader reader;
@@ -105,18 +105,20 @@ public class _123File extends ECGFile {
 				String[] words = line.split(regex);
 				double time = (double)(Integer.parseInt(words[1])-1) * sint;
 
-				points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
-					time, new ArrayList<Double>()));
+				if(time >= start && time < length+start) {
+					points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
+						time, new ArrayList<Double>()));
 
-				for(int i = 0; i < 2; i++) {
-					points.get(count).getValue().add(0.0);
+					for(int i = 0; i < 2; i++) {
+						points.get(count).getValue().add(0.0);
+					}
+
+					for(int i = 2; i < words.length; i++) {
+						points.get(count).getValue().add(Double.parseDouble(words[i]));
+					}
+					count++;
 				}
 
-				for(int i = 2; i < words.length; i++) {
-					points.get(count).getValue().add(Double.parseDouble(words[i]));
-				}
-
-				count++;
 				line = reader.readLine();
 			}
 		} catch (IOException e) {
