@@ -18,7 +18,7 @@ import org.apache.commons.math3.transform.FastFourierTransformer;
 import org.apache.commons.math3.transform.TransformType;
 
 public class Filters {
-	public static void detrend(List<Double[]> set, int detrendPolynomial) {
+	public static void detrend(List<double[]> set, int detrendPolynomial) {
 		PolynomialCurveFitter p = PolynomialCurveFitter.create(detrendPolynomial);
 		WeightedObservedPoints wop = new WeightedObservedPoints();
 		for(int i = 0; i < set.size(); i++) {
@@ -31,11 +31,11 @@ public class Filters {
 			for(int i = detrendPolynomial; i >= 0; i--) {
 				off += coeff[i] * Math.pow(val, i);
 			}
-			set.set(h, new Double[]{set.get(h)[0], set.get(h)[1]-off});
+			set.set(h, new double[]{set.get(h)[0], set.get(h)[1]-off});
 		}
 	}
 
-	public static void harmonicDetrend(List<Double[]> set) {
+	public static void harmonicDetrend(List<double[]> set) {
 		HarmonicCurveFitter p = HarmonicCurveFitter.create();
 		WeightedObservedPoints wop = new WeightedObservedPoints();
 		for(int i = 0; i < set.size(); i++) {
@@ -45,11 +45,11 @@ public class Filters {
 		for(int h = 0; h < set.size(); h++) {
 			double val = set.get(h)[0];
 			double off = coeff[0] * Math.sin(2*Math.PI*coeff[1]*val + coeff[2]);
-			set.set(h, new Double[]{val, set.get(h)[1]-off});
+			set.set(h, new double[]{val, set.get(h)[1]-off});
 		}
 	}
 
-	public static void medianDetrend(List<Double[]> set) {
+	public static void medianDetrend(List<double[]> set) {
 		ArrayList<Double> values = new ArrayList<Double>();
 		for(int j = 0; j < set.size(); j++) {
 			values.add(new Double(set.get(j)[1]));
@@ -65,11 +65,11 @@ public class Filters {
 		}
 
 		for(int j = 0; j < set.size(); j++) {
-			set.set(j, new Double[]{set.get(j)[0], set.get(j)[1] - median});
+			set.set(j, new double[]{set.get(j)[0], set.get(j)[1] - median});
 		}
 	}
 
-	public static void sgolayfilt(List<Double[]> set, int left, int right, int degree) {
+	public static void sgolayfilt(List<double[]> set, int left, int right, int degree) {
 		double[][] data = Filters.toArray(set);
 		double[] coeffs = SGFilter.computeSGCoefficients(left, right, degree);
 	//	ContinuousPadder p = new ContinuousPadder();
@@ -77,11 +77,11 @@ public class Filters {
 	//	sgFilter.appendPreprocessor(p);
 		data[1] = sgFilter.smooth(data[1], coeffs);
 		for(int i = 0; i < set.size(); i++) {
-			set.set(i, new Double[]{set.get(i)[0], data[1][i]});
+			set.set(i, new double[]{set.get(i)[0], data[1][i]});
 		}
 	}
 
-	public static void lowpassfilt(List<Double[]> set, double freq) {
+	public static void lowpassfilt(List<double[]> set, double freq) {
 		Double RC = 1/(2*Math.PI)/freq;
 		Double dt = set.get(1)[0] - set.get(0)[0];
 		Double a = dt / (RC + dt);
@@ -91,11 +91,11 @@ public class Filters {
 			Double x = set.get(i)[1];
 
 			lasty = lasty + a * (x - lasty);
-			set.set(i, new Double[]{set.get(i)[0], lasty});
+			set.set(i, new double[]{set.get(i)[0], lasty});
 		}
 	}
 
-	public static void highpassfilt(List<Double[]> set, double freq) {
+	public static void highpassfilt(List<double[]> set, double freq) {
 		Double RC = 1/(2*Math.PI)/freq;
 		Double dt = set.get(1)[0] - set.get(0)[0];
 		Double a = RC / (RC + dt);
@@ -106,11 +106,11 @@ public class Filters {
 			Double lastx = set.get(i-1)[1];
 
 			lasty = a * (lasty + x - lastx);
-			set.set(i, new Double[]{set.get(i)[0], lasty});
+			set.set(i, new double[]{set.get(i)[0], lasty});
 		}
 	}
 
-	public static void highpassfftfilt(List<Double[]> set, double lowfreq, double highfreq) {
+	public static void highpassfftfilt(List<double[]> set, double lowfreq, double highfreq) {
 		/*
 		 * steps:
 		 * 1. pad data with 0s to get the number of samples to a power of 2
@@ -120,10 +120,10 @@ public class Filters {
 		 */
 
 		//step 1
-		ArrayList<Double[]> padded = new ArrayList<Double[]>(set);
+		ArrayList<double[]> padded = new ArrayList<double[]>(set);
 		int padTo = Filters.findNextLargestPower2(padded.size());
 		for(int i = padded.size(); i < padTo; i++) {
-			padded.add(new Double[]{0.0, 0.0});
+			padded.add(new double[]{0.0, 0.0});
 		}
 		double[][] arr = Filters.toArray(padded);
 
@@ -152,11 +152,11 @@ public class Filters {
 
 		//write changes
 		for(int i = 0; i < set.size(); i++) {
-			set.set(i, new Double[]{set.get(i)[0], out[i].getReal()});
+			set.set(i, new double[]{set.get(i)[0], out[i].getReal()});
 		}
 	} 
 
-	public static void waveletfilt(List<Double[]> set, double threshold, int wavelet, int levels) {
+	public static void waveletfilt(List<double[]> set, double threshold, int wavelet, int levels) {
 		try {
 			FastWaveletTransform waveTrans = new FastWaveletTransform(WaveletBuilder.create2arr()[wavelet]);
 			double[][] data = toPaddedArray(set, findNextLargestPower2(set.size()));
@@ -171,7 +171,7 @@ public class Filters {
 
 			double[] inverse = waveTrans.reverse(forward, levels);
 			for(int i = 0; i < set.size(); i++) {
-				set.set(i, new Double[]{data[0][i], inverse[i]});
+				set.set(i, new double[]{data[0][i], inverse[i]});
 			}
 		} catch (JWaveException e) {}
 	}
@@ -182,9 +182,9 @@ public class Filters {
 	 * @param set the dataset to augment
 	 * @param offset how much to offset the data
 	 */
-	public static void constofffilt(List<Double[]> set, double offset) {
+	public static void constofffilt(List<double[]> set, double offset) {
 		for(int i = 0; i < set.size(); i++) {
-			set.set(i, new Double[]{set.get(i)[0], set.get(i)[1] + offset});
+			set.set(i, new double[]{set.get(i)[0], set.get(i)[1] + offset});
 		}
 	}
 
@@ -197,7 +197,7 @@ public class Filters {
 	 * @param freq the cutoff frequency
 	 * @param n the order of the filter. Precondition: n is even
 	 */
-	public static void butterworthfilt(List<Double[]> set,
+	public static void butterworthfilt(List<double[]> set,
 									   int mode,
 									   double rate,
 									   double freq,
@@ -246,7 +246,7 @@ public class Filters {
 			x1 = x;
 			y2 = y1;
 			y1 = y;
-			set.set(i, new Double[]{set.get(i)[0], y});
+			set.set(i, new double[]{set.get(i)[0], y});
 		}
 	}
 
@@ -264,7 +264,7 @@ public class Filters {
 		return 1 << i;
 	}
 	
-	private static double[][] toArray(List<Double[]> set) {
+	private static double[][] toArray(List<double[]> set) {
 		double[][] ret = new double[2][set.size()];
 
 		for(int j = 0; j < set.size(); j++) {
@@ -275,7 +275,7 @@ public class Filters {
 		return ret;
 	}
 
-	private static double[][] toPaddedArray(List<Double[]> set, int size) {
+	private static double[][] toPaddedArray(List<double[]> set, int size) {
 		double[][] ret = new double[2][size];
 
 		for(int j = 0; j < size; j++) {

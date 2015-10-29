@@ -165,8 +165,8 @@ public class MainFrame extends JFrame {
 					"MATLAB matrix", "m");
 				FileNameExtensionFilter csv = new FileNameExtensionFilter(
 						"Comma Separated Values", "csv");
-				fc.addChoosableFileFilter(matlab);
 				fc.addChoosableFileFilter(csv);
+				fc.addChoosableFileFilter(matlab);
 				fc.setAcceptAllFileFilterUsed(false);
 				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
@@ -607,8 +607,8 @@ public class MainFrame extends JFrame {
 					"MATLAB matrix", "m");
 				FileNameExtensionFilter csv = new FileNameExtensionFilter(
 						"Comma Separated Values", "csv");
-				fc.addChoosableFileFilter(matlab);
 				fc.addChoosableFileFilter(csv);
+				fc.addChoosableFileFilter(matlab);
 				fc.setAcceptAllFileFilterUsed(false);
 				int ret = fc.showSaveDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {

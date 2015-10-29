@@ -557,10 +557,10 @@ public class ECGModel {
 	public void extractFeatures(int index) {
 		ECGDataSet lead = points[index];
 		final double range = 0.25; //50% of it's value north and south
-		java.util.PriorityQueue<Double[]> maxima = //ordered by >, of 2-tuples: time and value
-				new java.util.PriorityQueue<Double[]>(32, 
-			 		new java.util.Comparator<Double[]>() {
-			public int compare(Double[] o1, Double[] o2) { //compares values
+		java.util.PriorityQueue<double[]> maxima = //ordered by >, of 2-tuples: time and value
+				new java.util.PriorityQueue<double[]>(32, 
+			 		new java.util.Comparator<double[]>() {
+			public int compare(double[] o1, double[] o2) { //compares values
 				return -Double.compare(o1[1], o2[1]); //get the largest value
 			}
 			public boolean equals(Object obj) {
@@ -568,7 +568,7 @@ public class ECGModel {
 			}
 		});
 
-		maxima.add(new Double[]{0.0,0.0});
+		maxima.add(new double[]{0.0,0.0});
 		for(int i = 0; i < lead.size(); i++) {
 			if (lead.getAt(i)[1] > maxima.peek()[1] * (1+range)) {
 				maxima.clear();
@@ -586,7 +586,7 @@ public class ECGModel {
 			}
 		}
 
-		for(Double[] p : maxima) {
+		for(double[] p : maxima) {
 			this.annotations.add(new Annotation(2, p[0]));
 		}
 	}

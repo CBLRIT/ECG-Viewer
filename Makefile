@@ -10,7 +10,7 @@ default:
 	javac -g -cp $(LIBPATH) *.java
 
 run:
-	java -Xmx10g -cp $(LIBPATH) Main &
+	java -Xmx4g -cp $(LIBPATH) Main &
 
 debug:
 	jdb -classpath $(LIBPATH) Main

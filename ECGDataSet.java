@@ -9,14 +9,14 @@ import java.util.List;
  * @author Dakota Williams
  */
 public class ECGDataSet implements Undoable {
-	private List<Double[]> set;
+	private List<double[]> set;
 	private boolean bad;
 
 	/**
 	 * Constructor - initializes an ECGDataSet
 	 */
 	public ECGDataSet() {
-		set = new ArrayList<Double[]>();
+		set = new ArrayList<double[]>();
 	}
 
 	/**
@@ -40,16 +40,16 @@ public class ECGDataSet implements Undoable {
 	 * @param y the value of the sample
 	 */
 	public void addTuple(double x, double y) {
-		set.add(new Double[] {x, y});
+		set.add(new double[] {x, y});
 	}
 
 	/**
 	 * getAt - gets the nth sample
 	 * 
 	 * @return a 2-element array containing: [0] - the time
-	 *										 [1] - the value
+	 *					[1] - the value
 	 */
-	public Double[] getAt(int index) {
+	public double[] getAt(int index) {
 		return set.get(index);
 	}
 
@@ -69,9 +69,9 @@ public class ECGDataSet implements Undoable {
 	 */
 	public Object clone() {
 		ECGDataSet eds = new ECGDataSet();
-		eds.set = new ArrayList<Double[]>();
+		eds.set = new ArrayList<double[]>();
 		for(int i = 0; i < this.set.size(); i++) {
-			eds.set.add(new Double[] {(double)this.set.get(i)[0],
+			eds.set.add(new double[] {(double)this.set.get(i)[0],
 									  (double)this.set.get(i)[1]});
 		}
 		eds.bad = this.bad;
@@ -84,7 +84,7 @@ public class ECGDataSet implements Undoable {
 	 * @param e the thing to copy
 	 */
 	public void copyFrom(ECGDataSet e) {
-		this.set = new ArrayList<Double[]>(e.set);
+		this.set = new ArrayList<double[]>(e.set);
 		this.bad = e.bad;
 	}
 
@@ -135,11 +135,11 @@ public class ECGDataSet implements Undoable {
 
 		while(max >= min) {
 			int mid = (max + min)/2;
-			if((set.get(mid)[0].compareTo(time) != 1) && 
-			   (set.get(mid+1)[0].compareTo(time) == 1)) {
+			if((set.get(mid)[0] <= time) && 
+			   (set.get(mid+1)[0] == time)) {
 				return mid+1;
 			}
-			else if(set.get(mid)[0].compareTo(time) == -1) {
+			else if(set.get(mid)[0] < time) {
 				min = mid+1;
 			}
 			else {
