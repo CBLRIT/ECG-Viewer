@@ -154,6 +154,7 @@ public class DATFile extends ECGFile {
 		int tupleNum = 0;
 
 		int i;
+		double lastProgressUpdate = -.01;
 		for(int recordNum = ifnhdr+1; ; recordNum++) {
 			if(readBspmRecord(recordNum, samps) < 0) {
 				break;
@@ -180,6 +181,10 @@ public class DATFile extends ECGFile {
 				tupleNum++;
 				if(tupleNum*sint > numMSecs) {
 					break;
+				}
+				else if (tupleNum*sint/numMSecs >= .01 + lastProgressUpdate) {
+					lastProgressUpdate = tupleNum*sint/numMSecs;
+					System.out.printf("Opening file; Progress: ~%d %%\n", (int) Math.round(100*lastProgressUpdate));
 				}
 			}
 
