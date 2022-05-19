@@ -164,7 +164,7 @@ public class DATFile extends ECGFile {
 				//printing stuff here
 				//System.out.printf("%10d %10.3f ms:", tupleNum, (double)tupleNum*sint);
 				points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
-					(double)tupleNum*sint, new ArrayList<Double>()));
+						(double)tupleNum*sint, new ArrayList<Double>()));
 
 				for(int j = 0; j < numLeads; j++) {
 					if (j < 2) {
@@ -179,7 +179,7 @@ public class DATFile extends ECGFile {
 				//System.out.println("");
 
 				tupleNum++;
-				if(tupleNum*sint > numMSecs) {
+				if(tupleNum*sint > numMSecs || tupleNum*sint > start + length) {
 					break;
 				}
 				else if (tupleNum*sint/numMSecs >= .01 + lastProgressUpdate) {
