@@ -155,6 +155,7 @@ public class DATFile extends ECGFile {
 		// skip samples until we reach 'start', but keep track of how far into the file we are
 		int fileTupleNum = 0;
 
+		System.out.print("Opening file; Progress ~0%; Ms 0");
 		int i;
 		double lastProgressUpdate = -.01;
 		for(int recordNum = ifnhdr+1; ; recordNum++) {
@@ -170,7 +171,7 @@ public class DATFile extends ECGFile {
 						//printing stuff here
 						//System.out.printf("%10d %10.3f ms:", tupleNum, (double)tupleNum*sint);
 						points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
-								(double)tupleNum*sint, new ArrayList<Double>()));
+								(double)fileTupleNum*sint, new ArrayList<Double>()));
 
 						for(int j = 0; j < numLeads; j++) {
 							if (j < 2) {
@@ -190,10 +191,11 @@ public class DATFile extends ECGFile {
 						}
 						else if (tupleNum*sint/numMSecs >= .01 + lastProgressUpdate) {
 							lastProgressUpdate = tupleNum*sint/numMSecs;
+							System.out.print("\r");
 							if (numMSecs == length) {
-								System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f\n", (int) Math.round(100*lastProgressUpdate), fileTupleNum*sint);
+								System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", (int) Math.round(100*lastProgressUpdate), fileTupleNum*sint);
 							} else {
-								System.out.printf("Opening file; Progress: Ms %.1f\n", fileTupleNum*sint);
+								System.out.printf("Opening file; Progress: Ms %.1f", fileTupleNum*sint);
 							}
 						}
 					}
@@ -201,6 +203,8 @@ public class DATFile extends ECGFile {
 				}
 
 				if (i < tuplesPerRecord) {
+					System.out.print("\r");
+					System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", 100, fileTupleNum*sint);
 					break;
 				}
 			}
@@ -214,6 +218,8 @@ public class DATFile extends ECGFile {
 
 	//	System.out.println(Arrays.toString(header_badleads));
 
+		System.out.print("\r");
+		System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", 100, fileTupleNum*sint);
 		return 0;
 	}
 
