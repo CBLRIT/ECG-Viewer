@@ -461,7 +461,7 @@ public class ECGModel {
 	 * @param end the end time to read to
 	 */
 	public void readSubsetData(String filename, double start, double end) 
-			throws IOException, FileNotFoundException {
+			throws IOException, FileNotFoundException, NullPointerException {
 		readData(filename, start, end-start);
 		for(int i = 0; i < points.length; i++) {
 			points[i] = points[i].subset(start, end);
