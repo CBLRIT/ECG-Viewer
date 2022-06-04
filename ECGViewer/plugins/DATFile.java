@@ -193,6 +193,7 @@ public class DATFile extends ECGFile {
 							lastProgressUpdate = tupleNum*sint/numMSecs;
 							System.out.print("\r");
 							System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", (int) Math.round(100*lastProgressUpdate), fileTupleNum*sint);
+							Main.setProgressBar("openFile", (int) Math.round(100*lastProgressUpdate));
 						} else if (numMSecs != length && tupleNum*sint >= 200 + lastProgressUpdate) {
 							lastProgressUpdate = tupleNum*sint;
 							System.out.print("\r");
@@ -205,6 +206,7 @@ public class DATFile extends ECGFile {
 				if (i < tuplesPerRecord) {
 					System.out.print("\r");
 					System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", 100, fileTupleNum*sint);
+					Main.setProgressBar("openFile", 100);
 					break;
 				}
 			}

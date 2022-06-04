@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.event.MouseInputListener;
@@ -35,6 +36,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 import org.jfree.chart.plot.XYPlot;
 
@@ -52,6 +54,10 @@ public class MainFrame extends JFrame {
 		= new JFormattedTextField(NumberFormat.getIntegerInstance());
 
 	private MainFrame thisFrame = this;
+
+	private JFrame progressFrame;
+	private JPanel progressPanel;
+	private HashMap<String, JProgressBar> progressBars = new HashMap<>();
 
 	public MainFrame(final ECGViewHandler views) {
 		super("ECG Viewer");
@@ -751,6 +757,11 @@ public class MainFrame extends JFrame {
 		statusBar.add(lenLabel);
 		statusBar.add(lenText);
 
+		progressFrame = new JFrame("Progress");
+		progressPanel = new JPanel();
+		progressFrame.add(progressPanel);
+		progressFrame.setVisible(false);
+
 		this.add(statusBar, BorderLayout.SOUTH);
 
 		this.setVisible(true);
@@ -880,6 +891,35 @@ public class MainFrame extends JFrame {
 			if(centerx > p1.x && centerx < p2.x && centery > p1.y && centery < p2.y) {
 				graphs.get(i).setSelected(true);
 				graphs.get(i).setBackground(Settings.selected);
+			}
+		}
+	}
+
+	public void setProgressBar(String name, int val) {
+		if (!progressBars.containsKey(name)) {
+			JProgressBar progressBar = new JProgressBar(0, 100);
+			progressBar.setValue(0);
+			progressBar.setStringPainted(true);
+//			progressBar.setVisible(true);
+
+			progressPanel.add(progressBar);
+//			progressPanel.setVisible(true);
+			progressFrame.removeAll();
+			progressFrame.add(progressPanel);
+
+			progressFrame.setSize(500, 500);
+//			progressFrame.setVisible(true);
+
+			progressFrame.repaint();
+
+			progressBars.put(name, progressBar);
+		}
+		progressBars.get(name).setValue(val);
+		if (val == 100) {
+			progressPanel.remove(progressBars.get(name));
+			progressBars.remove(name);
+			if (progressBars.size() == 0) {
+				progressFrame.setVisible(false);
 			}
 		}
 	}
