@@ -2,6 +2,7 @@
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -87,7 +88,7 @@ public class ECGFileManager {
 		return classes.keySet().contains(extension);
 	}
 
-	public ECGFile getECGFile(String filename) {
+	public ECGFile getECGFile(String filename) throws IOException {
 		String[] splits = filename.split("\\.");
 		String extension = splits[splits.length-1];
 		
@@ -104,6 +105,8 @@ public class ECGFileManager {
 		} catch (IllegalAccessException e) {
 			JOptionPane.showMessageDialog(null, "Could not access type " + c.getName(), "Error", JOptionPane.ERROR_MESSAGE);
 			return null;
+		} catch (NullPointerException e) {
+			throw new IOException("File " + filename + " is an invalid file type");
 		}
 		return file;
 	}

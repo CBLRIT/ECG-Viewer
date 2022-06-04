@@ -397,7 +397,7 @@ public class ECGModel {
 			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>>();
 		int retval = file.read(filename, start, length, raw);
 		if(retval != 0) {
-			return;
+			throw new IOException("File " + filename + " is not compatible with this application.");
 		}
 		int tempLayout[][] = file.getLayout();
 		ArrayList<int[]> found = new ArrayList<int[]>();

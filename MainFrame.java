@@ -98,7 +98,7 @@ public class MainFrame extends JFrame {
 						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
-													  "Could not load file", 
+													  "Could not load file: " + ex.getMessage(),
 													  "Error",
 													  JOptionPane.ERROR_MESSAGE);
 						return;

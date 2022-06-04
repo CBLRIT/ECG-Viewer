@@ -1,9 +1,10 @@
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.io.IOException;
 
 public class ECGFileTest {
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 		ECGFileManager e = new ECGFileManager();
 		e.load();
 		System.out.println(e.getClassNames());
