@@ -577,12 +577,14 @@ public class ECGModel {
 									 && lead.getAt(i)[1] > maxima.peek()[1] * (1-range))) {
 				int entryVal = i;
 				int localMax = i;
-				for(; lead.getAt(i)[1] > lead.getAt(entryVal)[1] * (1-range); i++) {
+				for(; i < lead.size() && lead.getAt(i)[1] > lead.getAt(localMax)[1] * (1-range); i++) {
 					if(lead.getAt(i)[1] > lead.getAt(localMax)[1]) {
 						localMax = i;
 					}
 				}
-				maxima.add(lead.getAt(localMax));
+				if (i < lead.size()) {
+					maxima.add(lead.getAt(localMax));
+				}
 			}
 		}
 
