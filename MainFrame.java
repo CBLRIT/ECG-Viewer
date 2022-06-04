@@ -116,6 +116,13 @@ public class MainFrame extends JFrame {
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
+						if (fc.getLengthTime() == 0) {
+							JOptionPane.showMessageDialog(null,
+									"Length cannot be 0",
+									"Error",
+									JOptionPane.ERROR_MESSAGE);
+							return;
+						}
 						views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
 											 fc.getStartTime(),
 											 fc.getStartTime()+fc.getLengthTime());
@@ -125,6 +132,12 @@ public class MainFrame extends JFrame {
 													  "Could not load file",
 													  "Error",
 													  JOptionPane.ERROR_MESSAGE);
+						return;
+					} catch (NullPointerException ex) {
+						JOptionPane.showMessageDialog(null,
+								"No matching data was found",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 

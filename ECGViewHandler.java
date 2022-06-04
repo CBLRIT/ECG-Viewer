@@ -8,7 +8,7 @@ import java.util.Iterator;
 import javax.swing.SwingWorker;
 
 public class ECGViewHandler {
-	private final ECGModel model;	
+	private ECGModel model;
 
 	public ECGViewHandler(ECGModel model) {
 		this.model = model;
@@ -20,8 +20,13 @@ public class ECGViewHandler {
 	}
 
 	public void loadFileSubset(String file, double start, double end) 
-			throws IOException {
-		model.readSubsetData(file, start, end);
+			throws IOException, NullPointerException {
+		try {
+			model.readSubsetData(file, start, end);
+		} catch (NullPointerException ex) {
+			this.model = new ECGModel();
+			throw ex;
+		}
 	}
 
 	public void loadBadLeads(String file) {

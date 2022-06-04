@@ -130,7 +130,7 @@ public class DATFile extends ECGFile {
 
 		int numMSecs;
 		try {
-			numMSecs = (int)((double)fh.length()/(double)1024/1.115);
+			numMSecs = (int) Math.min(length, (double)fh.length()/(double)1024/1.115);
 			//System.out.println(fh.length());
 		} catch (IOException e) {
 			System.out.println("Length error\n" + e.getMessage());
@@ -152,39 +152,61 @@ public class DATFile extends ECGFile {
 
 		int[] samps = new int[frecsz-32];
 		int tupleNum = 0;
+		// skip samples until we reach 'start', but keep track of how far into the file we are
+		int fileTupleNum = 0;
 
+		System.out.print("Opening file; Progress ~0%; Ms 0");
 		int i;
+		double lastProgressUpdate = -.01;
 		for(int recordNum = ifnhdr+1; ; recordNum++) {
-			if(readBspmRecord(recordNum, samps) < 0) {
-				break;
-			}
-
-			for(i = 0; i < tuplesPerRecord; i++) {
-				//printing stuff here
-				//System.out.printf("%10d %10.3f ms:", tupleNum, (double)tupleNum*sint);
-				points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
-					(double)tupleNum*sint, new ArrayList<Double>()));
-
-				for(int j = 0; j < numLeads; j++) {
-					if (j < 2) {
-						//System.out.printf(" %8x", samps[8+i*nch+j]);
-						points.get(tupleNum).getValue().add(samps[8+i*nch+j]*0.125);
-					} else {
-						//System.out.printf(" %8d", samps[8+i*nch+j]>>8);
-						points.get(tupleNum).getValue().add((samps[8+i*nch+j]>>8)*0.125);
-					}
-				}
-
-				//System.out.println("");
-
-				tupleNum++;
-				if(tupleNum*sint > numMSecs) {
+			if ((fileTupleNum+tuplesPerRecord)*sint < start) {
+				fileTupleNum += tuplesPerRecord;
+			} else {
+				if(readBspmRecord(recordNum, samps) < 0) {
 					break;
 				}
-			}
 
-			if (i < tuplesPerRecord) {
-				break;
+				for(i = 0; i < tuplesPerRecord; i++) {
+					if (fileTupleNum*sint >= start) {
+						//printing stuff here
+						//System.out.printf("%10d %10.3f ms:", tupleNum, (double)tupleNum*sint);
+						points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
+								(double)fileTupleNum*sint, new ArrayList<Double>()));
+
+						for(int j = 0; j < numLeads; j++) {
+							if (j < 2) {
+								//System.out.printf(" %8x", samps[8+i*nch+j]);
+								points.get(tupleNum).getValue().add(samps[8+i*nch+j]*0.125);
+							} else {
+								//System.out.printf(" %8d", samps[8+i*nch+j]>>8);
+								points.get(tupleNum).getValue().add((samps[8+i*nch+j]>>8)*0.125);
+							}
+						}
+
+						//System.out.println("");
+
+						tupleNum++;
+						if(tupleNum*sint > numMSecs) {
+							break;
+						}
+						else if (tupleNum*sint/numMSecs >= .01 + lastProgressUpdate) {
+							lastProgressUpdate = tupleNum*sint/numMSecs;
+							System.out.print("\r");
+							if (numMSecs == length) {
+								System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", (int) Math.round(100*lastProgressUpdate), fileTupleNum*sint);
+							} else {
+								System.out.printf("Opening file; Progress: Ms %.1f", fileTupleNum*sint);
+							}
+						}
+					}
+					fileTupleNum++;
+				}
+
+				if (i < tuplesPerRecord) {
+					System.out.print("\r");
+					System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", 100, fileTupleNum*sint);
+					break;
+				}
 			}
 		}
 
@@ -196,6 +218,8 @@ public class DATFile extends ECGFile {
 
 	//	System.out.println(Arrays.toString(header_badleads));
 
+		System.out.print("\r");
+		System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", 100, fileTupleNum*sint);
 		return 0;
 	}
 
