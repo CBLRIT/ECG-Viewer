@@ -102,6 +102,12 @@ public class MainFrame extends JFrame {
 													  "Error",
 													  JOptionPane.ERROR_MESSAGE);
 						return;
+					} catch (OutOfMemoryError exo) {
+						JOptionPane.showMessageDialog(null,
+								"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
 					}
 
 					thisFrame.relink();
@@ -123,13 +129,26 @@ public class MainFrame extends JFrame {
 									JOptionPane.ERROR_MESSAGE);
 							return;
 						}
-						views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
-											 fc.getStartTime(),
-											 fc.getStartTime()+fc.getLengthTime());
-						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+						if (fc.getLengthTime() > 60000) {
+							int confirm = JOptionPane.showConfirmDialog(null,
+									fc.getLengthTime() + " is a large amount of time, and the application might run out of memory. It is recommended to use 60,000 or less. Would you like to continue anyway?");
+							if (confirm != 0) return;
+						}
+						try {
+							views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
+									fc.getStartTime(),
+									fc.getStartTime()+fc.getLengthTime());
+							thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+						} catch (OutOfMemoryError exo) {
+							JOptionPane.showMessageDialog(null,
+									"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+									"Error",
+									JOptionPane.ERROR_MESSAGE);
+							return;
+						}
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null,
-													  "Could not load file",
+													  "Could not load file" + ex.getMessage(),
 													  "Error",
 													  JOptionPane.ERROR_MESSAGE);
 						return;
@@ -600,9 +619,15 @@ public class MainFrame extends JFrame {
 						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
-													  "Could not load file", 
+													  "Could not load file" + ex.getMessage(),
 													  "Error",
 													  JOptionPane.ERROR_MESSAGE);
+						return;
+					} catch (OutOfMemoryError exo) {
+						JOptionPane.showMessageDialog(null,
+								"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 

@@ -158,61 +158,56 @@ public class DATFile extends ECGFile {
 		System.out.print("Opening file; Progress ~0%; Ms 0");
 		int i;
 		double lastProgressUpdate = -.01;
-		try {
-			for(int recordNum = ifnhdr+1; ; recordNum++) {
-				if ((fileTupleNum+tuplesPerRecord)*sint < start) {
-					fileTupleNum += tuplesPerRecord;
-				} else {
-					if(readBspmRecord(recordNum, samps) < 0) {
-						break;
-					}
+		for(int recordNum = ifnhdr+1; ; recordNum++) {
+			if ((fileTupleNum+tuplesPerRecord)*sint < start) {
+				fileTupleNum += tuplesPerRecord;
+			} else {
+				if(readBspmRecord(recordNum, samps) < 0) {
+					break;
+				}
 
-					for(i = 0; i < tuplesPerRecord; i++) {
-						if (fileTupleNum*sint >= start) {
-							//printing stuff here
-							//System.out.printf("%10d %10.3f ms:", tupleNum, (double)tupleNum*sint);
-							points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
-									(double)fileTupleNum*sint, new ArrayList<Double>()));
+				for(i = 0; i < tuplesPerRecord; i++) {
+					if (fileTupleNum*sint >= start) {
+						//printing stuff here
+						//System.out.printf("%10d %10.3f ms:", tupleNum, (double)tupleNum*sint);
+						points.add(new AbstractMap.SimpleEntry<Double, ArrayList<Double>>(
+								(double)fileTupleNum*sint, new ArrayList<Double>()));
 
-							for(int j = 0; j < numLeads; j++) {
-								if (j < 2) {
-									//System.out.printf(" %8x", samps[8+i*nch+j]);
-									points.get(tupleNum).getValue().add(samps[8+i*nch+j]*0.125);
-								} else {
-									//System.out.printf(" %8d", samps[8+i*nch+j]>>8);
-									points.get(tupleNum).getValue().add((samps[8+i*nch+j]>>8)*0.125);
-								}
-							}
-
-							//System.out.println("");
-
-							tupleNum++;
-							if(tupleNum*sint > numMSecs) {
-								break;
-							}
-							else if (numMSecs == length && tupleNum*sint/numMSecs >= .01 + lastProgressUpdate) {
-								lastProgressUpdate = tupleNum*sint/numMSecs;
-								System.out.print("\r");
-								System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", (int) Math.round(100*lastProgressUpdate), fileTupleNum*sint);
-							} else if (numMSecs != length && tupleNum*sint >= 200 + lastProgressUpdate) {
-								lastProgressUpdate = tupleNum*sint;
-								System.out.print("\r");
-								System.out.printf("Opening file; Progress: Ms %d", (int)Math.round(fileTupleNum*sint/200)*200);
+						for(int j = 0; j < numLeads; j++) {
+							if (j < 2) {
+								//System.out.printf(" %8x", samps[8+i*nch+j]);
+								points.get(tupleNum).getValue().add(samps[8+i*nch+j]*0.125);
+							} else {
+								//System.out.printf(" %8d", samps[8+i*nch+j]>>8);
+								points.get(tupleNum).getValue().add((samps[8+i*nch+j]>>8)*0.125);
 							}
 						}
-						fileTupleNum++;
-					}
 
-					if (i < tuplesPerRecord) {
-						System.out.print("\r");
-						System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", 100, fileTupleNum*sint);
-						break;
+						//System.out.println("");
+
+						tupleNum++;
+						if(tupleNum*sint > numMSecs) {
+							break;
+						}
+						else if (numMSecs == length && tupleNum*sint/numMSecs >= .01 + lastProgressUpdate) {
+							lastProgressUpdate = tupleNum*sint/numMSecs;
+							System.out.print("\r");
+							System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", (int) Math.round(100*lastProgressUpdate), fileTupleNum*sint);
+						} else if (numMSecs != length && tupleNum*sint >= 200 + lastProgressUpdate) {
+							lastProgressUpdate = tupleNum*sint;
+							System.out.print("\r");
+							System.out.printf("Opening file; Progress: Ms %d", (int)Math.round(fileTupleNum*sint/200)*200);
+						}
 					}
+					fileTupleNum++;
+				}
+
+				if (i < tuplesPerRecord) {
+					System.out.print("\r");
+					System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", 100, fileTupleNum*sint);
+					break;
 				}
 			}
-		} catch (OutOfMemoryError E) {
-			points.clear();
-			throw new IOException("Ran out of memory! Try using a smaller file, or a smaller subset of the file.");
 		}
 
 
