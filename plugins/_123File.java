@@ -70,6 +70,10 @@ public class _123File extends ECGFile {
 		};
 	}
 
+	public double getFileLength(String filename) throws IOException {
+		throw new IOException("Not implemented!");
+	}
+
 	/**
 	* read - opens a file and reads it
 	* @param fileName the file to open

@@ -29,6 +29,10 @@ public class ECGViewHandler {
 		}
 	}
 
+	public double getFileLength(String filename) throws IOException {
+		return model.getFileLength(filename);
+	}
+
 	public void loadBadLeads(String file) {
 		model.readBadLeads(file);
 	}

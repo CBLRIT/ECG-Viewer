@@ -466,6 +466,14 @@ public class ECGModel {
 		}
 	}
 
+	public double getFileLength(String filename) throws IOException {
+		file = filePlugins.getECGFile(filename);
+		if(file==null) {
+			throw new IOException("Not a supported file extension");
+		}
+		return file.getFileLength(filename);
+	}
+
 	/**
 	 * readSubsetData - reads a subset of raw data in from a file
 	 * @throws IOException

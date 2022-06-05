@@ -60,6 +60,10 @@ public class _64Lead extends ECGFile {
 
 		return 0;
 	}
+
+	public double getFileLength(String filename) throws IOException {
+		throw new IOException("Not implemented!");
+	}
 					
 	/**
 	 * getSampleInterval - returns the amount of time between samples in milliseconds

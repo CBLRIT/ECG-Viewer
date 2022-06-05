@@ -120,28 +120,26 @@ public class DATFile extends ECGFile {
 	public int read(String fileName, double start, double length,
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) throws IOException {
 		int numLeads = 154;
-		 
+
+		double fileLength = getFileLength(fileName);
+
 		try {
 			fh = new RandomAccessFile(fileName, "r");
 		} catch (FileNotFoundException e) {
 			System.err.println("Open error on " + fileName + "\n" + e.getMessage());
-			return -1;
+			throw new IOException("File not found.");
+//			return -1;
 		}
 
-		int numMSecs;
-		try {
-			numMSecs = (int) Math.min(length, (double)fh.length()/(double)1024/1.115);
-			//System.out.println(fh.length());
-		} catch (IOException e) {
-			System.out.println("Length error\n" + e.getMessage());
-			return -3;
-		}
+		int numMSecs = (int) Math.min(length, fileLength - start);
+
 		if(numMSecs < 0) {
 			numMSecs = 100;
 		}
 
 		if(readBspmHeaders() != 0) {
-			return -2;
+			throw new IOException("Invalid headers - file is not compatible with this application, or the file is already open in another application.");
+//			return -2;
 		}
 
 		if(numLeads > nch) {
@@ -189,15 +187,11 @@ public class DATFile extends ECGFile {
 						if(tupleNum*sint > numMSecs) {
 							break;
 						}
-						else if (numMSecs == length && tupleNum*sint/numMSecs >= .01 + lastProgressUpdate) {
+						else if (tupleNum*sint/numMSecs >= .01 + lastProgressUpdate) {
 							lastProgressUpdate = tupleNum*sint/numMSecs;
 							System.out.print("\r");
 							System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", (int) Math.round(100*lastProgressUpdate), fileTupleNum*sint);
 							Main.setProgressBar("test", (int) Math.round(100*lastProgressUpdate));
-						} else if (numMSecs != length && tupleNum*sint >= 200 + lastProgressUpdate) {
-							lastProgressUpdate = tupleNum*sint;
-							System.out.print("\r");
-							System.out.printf("Opening file; Progress: Ms %d", (int)Math.round(fileTupleNum*sint/200)*200);
 						}
 					}
 					fileTupleNum++;
@@ -225,6 +219,47 @@ public class DATFile extends ECGFile {
 		System.out.print("\r");
 		System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f\n", 100, fileTupleNum*sint);
 		return 0;
+	}
+
+	public double getFileLength(String fileName) throws IOException {
+		int numLeads = 154;
+
+		try {
+			fh = new RandomAccessFile(fileName, "r");
+		} catch (FileNotFoundException e) {
+			System.err.println("Open error on " + fileName + "\n" + e.getMessage());
+			throw new IOException("File not found.");
+//			return -1;
+		}
+
+		if(readBspmHeaders() != 0) {
+			throw new IOException("Invalid headers - file is not compatible with this application.");
+//			return -2;
+		}
+
+		if(numLeads > nch) {
+			numLeads = nch;
+		}
+
+		int tuplesPerRecord = nspcpr;
+
+		int tupleNum = 0;
+		for(int recordNum = ifnhdr+1; ; recordNum++) {
+			if(readBspmRecord(recordNum, null) < 0) {
+				break;
+			}
+			tupleNum += tuplesPerRecord;
+		}
+
+
+		try {
+			fh.close();
+		} catch (IOException e) {
+			System.err.println("Error on close");
+			throw new IOException("Error on close");
+		}
+
+		return tupleNum*sint;
 	}
 
 	public double getSampleInterval() {
@@ -409,8 +444,7 @@ public class DATFile extends ECGFile {
 
 	private int readBspmRecord(int recordNum, int[] samps) {
 		try {
-		//	System.out.println("("+ifnhdr+"+"+recordNum+"-1)*"+frecsz+"="
-		//						+(ifnhdr+recordNum-1)*frecsz);
+			if ((ifnhdr+recordNum-1)*frecsz >= fh.length()) return -1;
 			fh.seek((ifnhdr+recordNum-1)*frecsz);
 		} catch (IOException e) {
 			System.err.println("Seek error (readBspmRecord)\n" + e.getMessage());
@@ -419,7 +453,9 @@ public class DATFile extends ECGFile {
 
 		try {
 			for (int bytes = 0; bytes < frecsz / 4; bytes++) {
-				samps[bytes] = Integer.reverseBytes(fh.readInt());
+				if (samps != null) {
+					samps[bytes] = Integer.reverseBytes(fh.readInt());
+				}
 			}
 		} catch (EOFException e) {
 		//	System.err.println("EOF");

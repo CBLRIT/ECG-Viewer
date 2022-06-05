@@ -423,10 +423,42 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+		JMenuItem analyzeFileLength = new JMenuItem("File Length");
+		analyzeFileLength.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
+				int ret = fc.showOpenDialog(thisFrame);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try {
+						double x = views.getFileLength(fc.getSelectedFile().getAbsolutePath());
+						JOptionPane.showMessageDialog(null,
+								"File length of " + fc.getSelectedFile().getAbsolutePath() + " is " + x + " ms",
+								"File Length",
+								JOptionPane.INFORMATION_MESSAGE);
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null,
+								"Could not load file: " + ex.getMessage(),
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					} catch (OutOfMemoryError exo) {
+						JOptionPane.showMessageDialog(null,
+								"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					thisFrame.relink();
+				}
+			}
+		});
 
 		analyzeRWave.add(analyzeRWaveF);
 		analyzeRWave.add(analyzeRWaveI);
 		analyzeMenu.add(analyzeRWave);
+		analyzeMenu.add(analyzeFileLength);
 
 		JMenu analyzeSubsetRWave = new JMenu("R Wave");
 		JMenuItem analyzeSubsetRWaveF = new JMenuItem("Frequency");

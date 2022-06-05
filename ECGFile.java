@@ -16,6 +16,8 @@ import java.util.Arrays;
 public abstract class ECGFile {
 	public abstract int read(String fileName, double start, double length,
 					ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> points) throws IOException;
+
+	public abstract double getFileLength(String fileName) throws IOException;
 					
 	public abstract double getSampleInterval();
 
