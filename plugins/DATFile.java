@@ -155,7 +155,7 @@ public class DATFile extends ECGFile {
 		// skip samples until we reach 'start', but keep track of how far into the file we are
 		int fileTupleNum = 0;
 
-		System.out.print("Opening file; Progress ~0%; Ms 0");
+		System.out.print("Opening file;");
 		int i;
 		double lastProgressUpdate = -.01;
 		for(int recordNum = ifnhdr+1; ; recordNum++) {
