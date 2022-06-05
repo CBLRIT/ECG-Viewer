@@ -398,11 +398,17 @@ public class ECGModel {
 		int retval = -1;
 		if (mode.equals("ecg")) {
 			retval = file.read(filename, start, length, raw);
+			if (retval != 0) {
+				throw new IOException("File " + filename + " is not compatible with this application.");
+			}
+		} else if (mode.equals("r-frequency") || mode.equals("r-intensity")) {
+			retval = file.read(filename, start, length, raw);
+			if (retval != 0) {
+				throw new IOException("File " + filename + " is not compatible with this application.");
+			}
+			throw new IOException("Mode '" + mode + "' not yet implemented!");
 		} else {
 			throw new IOException("Mode '" + mode + "' not yet implemented!");
-		}
-		if(retval != 0) {
-			throw new IOException("File " + filename + " is not compatible with this application.");
 		}
 		int tempLayout[][] = file.getLayout();
 		ArrayList<int[]> found = new ArrayList<int[]>();
@@ -453,6 +459,10 @@ public class ECGModel {
 				}
 
 			}
+		}
+
+		if (mode.equals("r-frequency") || mode.equals("r-intensity")) {
+			this.extractFeatures(32);
 		}
 	}
 
