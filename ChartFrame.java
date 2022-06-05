@@ -9,6 +9,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.util.EmptyStackException;
 import javax.swing.ButtonGroup;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -31,6 +32,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.JOptionPane;
 import org.jfree.chart.plot.XYPlot;
 
 /**
@@ -363,7 +365,14 @@ public class ChartFrame extends JFrame {
 		JButton undoButton = makeToolbarButton("Undo24", "Undo");
 		undoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				handler.undo();
+				try {
+					handler.undo();
+				} catch (EmptyStackException ex) {
+					JOptionPane.showMessageDialog(null,
+							"Nothing to undo!",
+							"Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 				thisFrame.view.update();
 				thisFrame.view.redrawAnnotations();
 			}
