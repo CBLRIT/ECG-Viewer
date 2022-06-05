@@ -397,24 +397,31 @@ public class MainFrame extends JFrame {
 				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
-					try {
-						views.loadFile(fc.getSelectedFile().getAbsolutePath(), "r-frequency");
-						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
-					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(null,
-								"Could not load file: " + ex.getMessage(),
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					} catch (OutOfMemoryError exo) {
-						JOptionPane.showMessageDialog(null,
-								"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
+					class SW extends SwingWorker<String, Object> {
+						@Override
+						public String doInBackground() {
+							try {
+								views.loadFile(fc.getSelectedFile().getAbsolutePath(), "r-frequency");
+								thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+							} catch (IOException ex) {
+								JOptionPane.showMessageDialog(null,
+										"Could not load file: " + ex.getMessage(),
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return "";
+							} catch (OutOfMemoryError exo) {
+								JOptionPane.showMessageDialog(null,
+										"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return "";
+							}
 
-					thisFrame.relink();
+							thisFrame.relink();
+							return "";
+						}
+					};
+					(new SW()).execute();
 				}
 			}
 		});
@@ -425,24 +432,31 @@ public class MainFrame extends JFrame {
 				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
-					try {
-						views.loadFile(fc.getSelectedFile().getAbsolutePath(), "r-intensity");
-						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
-					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(null,
-								"Could not load file: " + ex.getMessage(),
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					} catch (OutOfMemoryError exo) {
-						JOptionPane.showMessageDialog(null,
-								"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
+					class SW extends SwingWorker<String, Object> {
+						@Override
+						public String doInBackground() {
+							try {
+								views.loadFile(fc.getSelectedFile().getAbsolutePath(), "r-intensity");
+								thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+							} catch (IOException ex) {
+								JOptionPane.showMessageDialog(null,
+										"Could not load file: " + ex.getMessage(),
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return "";
+							} catch (OutOfMemoryError exo) {
+								JOptionPane.showMessageDialog(null,
+										"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return "";
+							}
 
-					thisFrame.relink();
+							thisFrame.relink();
+							return "";
+						}
+					};
+					(new SW()).execute();
 				}
 			}
 		});
@@ -491,42 +505,49 @@ public class MainFrame extends JFrame {
 				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
-					try {
-						if (fc.getLengthTime() == 0) {
-							JOptionPane.showMessageDialog(null,
-									"Length cannot be 0",
-									"Error",
-									JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						try {
-							views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
-									fc.getStartTime(),
-									fc.getStartTime()+fc.getLengthTime(),
-									"r-frequency");
-							thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
-						} catch (OutOfMemoryError exo) {
-							JOptionPane.showMessageDialog(null,
-									"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
-									"Error",
-									JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(null,
-								"Could not load file" + ex.getMessage(),
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					} catch (NullPointerException ex) {
-						JOptionPane.showMessageDialog(null,
-								"No matching data was found",
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
+					class SW extends SwingWorker<String, Object> {
+						@Override
+						public String doInBackground() {
+							try {
+								if (fc.getLengthTime() == 0) {
+									JOptionPane.showMessageDialog(null,
+											"Length cannot be 0",
+											"Error",
+											JOptionPane.ERROR_MESSAGE);
+									return "";
+								}
+								try {
+									views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
+											fc.getStartTime(),
+											fc.getStartTime() + fc.getLengthTime(),
+											"r-frequency");
+									thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+								} catch (OutOfMemoryError exo) {
+									JOptionPane.showMessageDialog(null,
+											"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+											"Error",
+											JOptionPane.ERROR_MESSAGE);
+									return "";
+								}
+							} catch (IOException ex) {
+								JOptionPane.showMessageDialog(null,
+										"Could not load file" + ex.getMessage(),
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return "";
+							} catch (NullPointerException ex) {
+								JOptionPane.showMessageDialog(null,
+										"No matching data was found",
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return "";
+							}
 
-					thisFrame.relink();
+							thisFrame.relink();
+							return "";
+						}
+					};
+					(new SW()).execute();
 				}
 			}
 		});
@@ -537,42 +558,49 @@ public class MainFrame extends JFrame {
 				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
-					try {
-						if (fc.getLengthTime() == 0) {
-							JOptionPane.showMessageDialog(null,
-									"Length cannot be 0",
-									"Error",
-									JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						try {
-							views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
-									fc.getStartTime(),
-									fc.getStartTime()+fc.getLengthTime(),
-									"r-intensity");
-							thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
-						} catch (OutOfMemoryError exo) {
-							JOptionPane.showMessageDialog(null,
-									"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
-									"Error",
-									JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(null,
-								"Could not load file" + ex.getMessage(),
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					} catch (NullPointerException ex) {
-						JOptionPane.showMessageDialog(null,
-								"No matching data was found",
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
+					class SW extends SwingWorker<String, Object> {
+						@Override
+						public String doInBackground() {
+							try {
+								if (fc.getLengthTime() == 0) {
+									JOptionPane.showMessageDialog(null,
+											"Length cannot be 0",
+											"Error",
+											JOptionPane.ERROR_MESSAGE);
+									return "";
+								}
+								try {
+									views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
+											fc.getStartTime(),
+											fc.getStartTime() + fc.getLengthTime(),
+											"r-intensity");
+									thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+								} catch (OutOfMemoryError exo) {
+									JOptionPane.showMessageDialog(null,
+											"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+											"Error",
+											JOptionPane.ERROR_MESSAGE);
+									return "";
+								}
+							} catch (IOException ex) {
+								JOptionPane.showMessageDialog(null,
+										"Could not load file" + ex.getMessage(),
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return "";
+							} catch (NullPointerException ex) {
+								JOptionPane.showMessageDialog(null,
+										"No matching data was found",
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return "";
+							}
 
-					thisFrame.relink();
+							thisFrame.relink();
+							return "";
+						}
+					};
+					(new SW()).execute();
 				}
 			}
 		});
@@ -1160,7 +1188,7 @@ public class MainFrame extends JFrame {
 			progressBars.get(name).setValue(val);
 			progressBars.get(name).setString(name + ": " + val + "%;"
 					+ (timeRemaining == -1 ? "" : " " + (int)(timeRemaining/3600f) + ":"
-					+ (int)((timeRemaining/3600f)%60f) + ":" + (int)timeRemaining%3600));
+					+ (int)((timeRemaining/60f)%60f) + ":" + (int)timeRemaining%60));
 			progressBars.get(name).setBounds(0,0,400,30);
 		}
 		if (val == 100) {

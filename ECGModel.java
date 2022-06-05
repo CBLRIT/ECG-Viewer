@@ -393,77 +393,100 @@ public class ECGModel {
 			throw new IOException("Not a supported file extension");
 		}
 
-		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> raw
-			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>>();
-		int retval = -1;
-		if (mode.equals("ecg")) {
-			retval = file.read(filename, start, length, raw);
+		if (length == Double.POSITIVE_INFINITY) {
+			length = file.getFileLength(filename);
+		}
+
+		int batchSize = 1000;
+
+		double loadStart = start;
+		double loadLength = (mode.equals("ecg") ? length : batchSize + 10);
+
+		int retval;
+		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> raw;
+
+		if (mode != "ecg" && mode != "r-frequency" && mode != "r-intensity")
+			throw new IOException("Mode '" + mode + "' not yet implemented!");
+
+		Main.setProgressBar("Locate R Waves", 0);
+		long startTime = System.currentTimeMillis()/1000L;
+
+		while (true) {
+			raw = new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>>();
+
+			retval = file.read(filename, loadStart, loadLength, raw);
 			if (retval != 0) {
 				throw new IOException("File " + filename + " is not compatible with this application.");
 			}
-		} else if (mode.equals("r-frequency") || mode.equals("r-intensity")) {
-			retval = file.read(filename, start, length, raw);
-			if (retval != 0) {
-				throw new IOException("File " + filename + " is not compatible with this application.");
-			}
-			throw new IOException("Mode '" + mode + "' not yet implemented!");
-		} else {
-			throw new IOException("Mode '" + mode + "' not yet implemented!");
-		}
-		int tempLayout[][] = file.getLayout();
-		ArrayList<int[]> found = new ArrayList<int[]>();
-		int numGoodLeads = 0;
-		int numIgnoreLeads = 0;
-		boolean stop = false;
-		for(int i = 0; i < tempLayout.length; i++) {
-			if(tempLayout[i][0] < 0 || tempLayout[i][1] < 0) {
-				numIgnoreLeads++;
-				if(!stop) {
-					dataOffset++;
-				}
-				continue;
-			}
-			numGoodLeads++;
-			found.add(tempLayout[i]);
-		}
 
-		layout = new int[found.size()][2];
-		for(int i = 0; i < found.size(); i++) {
-			layout[i] = new int[]{found.get(i)[0], found.get(i)[1]};
-		}
-		titles = file.getTitles();
-		ignoredLeads = new ECGDataSet[numIgnoreLeads];
-		points = new ECGDataSet[numGoodLeads];
-
-		actualSize = tempLayout.length;
-		sampleFreq = file.getSampleInterval();
-
-		for(int i = 0; i < raw.size(); i++) {
-			int igoff = 0;
-			int normoff = 0;
-			for(int j = 0; j < actualSize; j++) {
-				if(tempLayout[j][0] < 0 || tempLayout[j][1] < 0) {
-					normoff++;
-					if(i == 0) {
-						ignoredLeads[j-igoff] = new ECGDataSet();
+			int tempLayout[][] = file.getLayout();
+			ArrayList<int[]> found = new ArrayList<int[]>();
+			int numGoodLeads = 0;
+			int numIgnoreLeads = 0;
+			boolean stop = false;
+			for(int i = 0; i < tempLayout.length; i++) {
+				if(tempLayout[i][0] < 0 || tempLayout[i][1] < 0) {
+					numIgnoreLeads++;
+					if(!stop) {
+						dataOffset++;
 					}
-					ignoredLeads[j-igoff].addTuple(raw.get(i).getKey(), 
-										   (double)raw.get(i).getValue().get(j));
-				} else {
-					igoff++;
-					if(i == 0) {
-						points[j-normoff] = new ECGDataSet();
-					}
-					points[j-normoff].addTuple(raw.get(i).getKey(), 
-										   (double)raw.get(i).getValue().get(j));
+					continue;
 				}
+				numGoodLeads++;
+				found.add(tempLayout[i]);
+			}
 
+			layout = new int[found.size()][2];
+			for(int i = 0; i < found.size(); i++) {
+				layout[i] = new int[]{found.get(i)[0], found.get(i)[1]};
+			}
+			titles = file.getTitles();
+			ignoredLeads = new ECGDataSet[numIgnoreLeads];
+			points = new ECGDataSet[numGoodLeads];
+
+			actualSize = tempLayout.length;
+			sampleFreq = file.getSampleInterval();
+
+			for(int i = 0; i < raw.size(); i++) {
+				int igoff = 0;
+				int normoff = 0;
+				for(int j = 0; j < actualSize; j++) {
+					if(tempLayout[j][0] < 0 || tempLayout[j][1] < 0) {
+						normoff++;
+						if(i == 0) {
+							ignoredLeads[j-igoff] = new ECGDataSet();
+						}
+						ignoredLeads[j-igoff].addTuple(raw.get(i).getKey(),
+								(double)raw.get(i).getValue().get(j));
+					} else {
+						igoff++;
+						if(i == 0) {
+							points[j-normoff] = new ECGDataSet();
+						}
+						points[j-normoff].addTuple(raw.get(i).getKey(),
+								(double)raw.get(i).getValue().get(j));
+					}
+
+				}
+			}
+
+			if (mode.equals("ecg")) return;
+
+			if (mode.equals("r-frequency") || mode.equals("r-intensity")) {
+				double progress = (loadStart+loadLength)/(length-start);
+				long now = System.currentTimeMillis()/1000L;
+				float timeRemaining = (float)((now-startTime)*(1f/progress)-(now-startTime));
+				Main.setProgressBar("Locate R Waves", (int)(100*progress), timeRemaining);
+
+				this.extractFeatures(32);
+				loadStart += batchSize;
+				loadLength = Math.min(batchSize + 10, length - loadStart);
+				if (loadLength <= 0) break;
 			}
 		}
 
-		if (mode.equals("r-frequency") || mode.equals("r-intensity")) {
-			this.extractFeatures(32);
-		}
+		// annotations represent R-waves
+		return;
 	}
 
 	public double getFileLength(String filename) throws IOException {

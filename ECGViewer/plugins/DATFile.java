@@ -153,7 +153,6 @@ public class DATFile extends ECGFile {
 		// skip samples until we reach 'start', but keep track of how far into the file we are
 		int fileTupleNum = 0;
 
-		System.out.print("Opening file;");
 		long startTime = System.currentTimeMillis() / 1000L;
 		int i;
 		double lastProgressUpdate = -.01;
@@ -192,10 +191,6 @@ public class DATFile extends ECGFile {
 							lastProgressUpdate = tupleNum*sint/numMSecs;
 							long now = System.currentTimeMillis()/1000L;
 							float timeRemaining = (float)((now-startTime)*(1f/lastProgressUpdate)-(now-startTime));
-							System.out.print("\r");
-							System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f; %d:%d:%.3f remaining",
-									(int) Math.round(100*lastProgressUpdate), fileTupleNum*sint,
-									(int)(timeRemaining/3600f), (int)((timeRemaining/3600f)%60f), timeRemaining%3600);
 							Main.setProgressBar("Read File", (int) Math.round(100*lastProgressUpdate), timeRemaining);
 						}
 					}
@@ -203,8 +198,6 @@ public class DATFile extends ECGFile {
 				}
 
 				if (i < tuplesPerRecord) {
-					System.out.print("\r");
-					System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", 100, fileTupleNum*sint);
 					Main.setProgressBar("Read File", 100);
 					break;
 				}
@@ -220,9 +213,6 @@ public class DATFile extends ECGFile {
 		}
 
 	//	System.out.println(Arrays.toString(header_badleads));
-
-		System.out.print("\r");
-		System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f\n", 100, fileTupleNum*sint);
 		return 0;
 	}
 
