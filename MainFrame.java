@@ -91,6 +91,15 @@ public class MainFrame extends JFrame {
 			public void windowOpened(WindowEvent e) {}
 		});
 
+		ActionListener notImplemented = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null,
+						"Not yet implemented!",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		};
+
 		JMenuBar menubar = new JMenuBar();
 		JMenu menu = new JMenu("File");
 		JMenuItem open = new JMenuItem("Open...");
@@ -195,6 +204,9 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+
+		JMenu exportMenu = new JMenu("Export...");
+
 		JMenuItem export = new JMenuItem("Export...");
 		export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -349,6 +361,30 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+
+		JMenu analyzeMenu = new JMenu("Analyze...");
+		JMenu analyzeSubset = new JMenu("Analyze subset...");
+
+		JMenu analyzeRWave = new JMenu("R Wave");
+		JMenuItem analyzeRWaveF = new JMenuItem("Frequency");
+		analyzeRWaveF.addActionListener(notImplemented);
+		JMenuItem analyzeRWaveI = new JMenuItem("Intensity");
+		analyzeRWaveI.addActionListener(notImplemented);
+
+		analyzeRWave.add(analyzeRWaveF);
+		analyzeRWave.add(analyzeRWaveI);
+		analyzeMenu.add(analyzeRWave);
+
+		JMenu analyzeSubsetRWave = new JMenu("R Wave");
+		JMenuItem analyzeSubsetRWaveF = new JMenuItem("Frequency");
+		analyzeSubsetRWaveF.addActionListener(notImplemented);
+		JMenuItem analyzeSubsetRWaveI = new JMenuItem("Intensity");
+		analyzeSubsetRWaveI.addActionListener(notImplemented);
+
+		analyzeSubsetRWave.add(analyzeSubsetRWaveF);
+		analyzeSubsetRWave.add(analyzeSubsetRWaveI);
+		analyzeSubset.add(analyzeSubsetRWave);
+
 		JMenuItem convert_12 = new JMenuItem("Convert to 12 Lead...");
 		convert_12.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -408,10 +444,16 @@ public class MainFrame extends JFrame {
 		menu.add(open_subset);
 		menu.add(load_annos);
 		menu.add(load_bad);
-		menu.add(export);
-		menu.add(export_subset);
-		menu.add(export_annos);
-		menu.add(export_badleads);
+
+		exportMenu.add(export);
+		exportMenu.add(export_subset);
+		exportMenu.add(export_annos);
+		exportMenu.add(export_badleads);
+
+		menu.add(exportMenu);
+		menu.add(analyzeMenu);
+		menu.add(analyzeSubset);
+
 		menu.addSeparator();
 		menu.add(convert_12);
 		menu.addSeparator();
