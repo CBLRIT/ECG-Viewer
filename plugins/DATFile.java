@@ -154,6 +154,7 @@ public class DATFile extends ECGFile {
 		int fileTupleNum = 0;
 
 		System.out.print("Opening file;");
+		long startTime = System.currentTimeMillis() / 1000L;
 		int i;
 		double lastProgressUpdate = -.01;
 		for(int recordNum = ifnhdr+1; ; recordNum++) {
@@ -189,8 +190,12 @@ public class DATFile extends ECGFile {
 						}
 						else if (tupleNum*sint/numMSecs >= .01 + lastProgressUpdate) {
 							lastProgressUpdate = tupleNum*sint/numMSecs;
+							long now = System.currentTimeMillis()/1000L;
+							float timeRemaining = (float)((now-startTime)*(1f/lastProgressUpdate)-(now-startTime));
 							System.out.print("\r");
-							System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f", (int) Math.round(100*lastProgressUpdate), fileTupleNum*sint);
+							System.out.printf("Opening file; Progress: ~%d %%; Ms %.1f; %d:%d:%.3f remaining",
+									(int) Math.round(100*lastProgressUpdate), fileTupleNum*sint,
+									(int)(timeRemaining/3600f), (int)((timeRemaining/3600f)%60f), timeRemaining%3600);
 							Main.setProgressBar("test", (int) Math.round(100*lastProgressUpdate));
 						}
 					}
