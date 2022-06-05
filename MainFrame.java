@@ -38,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.JProgressBar;
 import javax.swing.UIManager;
+import javax.swing.SwingUtilities;
 import org.jfree.chart.plot.XYPlot;
 
 public class MainFrame extends JFrame {
@@ -759,8 +760,6 @@ public class MainFrame extends JFrame {
 
 		progressFrame = new JFrame("Progress");
 		progressPanel = new JPanel();
-		progressFrame.add(progressPanel);
-		progressFrame.setVisible(false);
 
 		this.add(statusBar, BorderLayout.SOUTH);
 
@@ -897,31 +896,46 @@ public class MainFrame extends JFrame {
 
 	public void setProgressBar(String name, int val) {
 		if (!progressBars.containsKey(name)) {
-			JProgressBar progressBar = new JProgressBar(0, 100);
+
+			JProgressBar progressBar = new JProgressBar();
 			progressBar.setValue(0);
 			progressBar.setStringPainted(true);
-//			progressBar.setVisible(true);
+			progressBar.setVisible(true);
+			progressBar.setBounds(0,0,200,30);
 
 			progressPanel.add(progressBar);
-//			progressPanel.setVisible(true);
-			progressFrame.removeAll();
 			progressFrame.add(progressPanel);
 
-			progressFrame.setSize(500, 500);
+			progressFrame.setSize(200, 500);
 //			progressFrame.setVisible(true);
-
-			progressFrame.repaint();
 
 			progressBars.put(name, progressBar);
 		}
-		progressBars.get(name).setValue(val);
+		progressBars.get("test").setValue(val);
+		progressBars.get("test").revalidate();
+		progressBars.get("test").repaint();
 		if (val == 100) {
+			progressBars.get(name).setVisible(false);
 			progressPanel.remove(progressBars.get(name));
 			progressBars.remove(name);
 			if (progressBars.size() == 0) {
 				progressFrame.setVisible(false);
 			}
+			progressPanel.revalidate();
+			progressPanel.repaint();
+
+			progressFrame.revalidate();
+			progressFrame.repaint();
+			thisFrame.revalidate();
+			thisFrame.repaint();
+			this.revalidate();
+			this.repaint();
 		}
+		progressPanel.revalidate();
+		progressPanel.repaint();
+
+		progressFrame.revalidate();
+		progressFrame.repaint();
 	}
 }
 
