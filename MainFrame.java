@@ -17,7 +17,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.event.MouseInputListener;
@@ -39,6 +40,7 @@ import javax.swing.JToolBar;
 import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import org.jfree.chart.plot.XYPlot;
 
 public class MainFrame extends JFrame {
@@ -58,7 +60,7 @@ public class MainFrame extends JFrame {
 
 	private JFrame progressFrame;
 	private JPanel progressPanel;
-	private HashMap<String, JProgressBar> progressBars = new HashMap<>();
+	private LinkedHashMap<String, JProgressBar> progressBars = new LinkedHashMap<>();
 
 	public MainFrame(final ECGViewHandler views) {
 		super("ECG Viewer");
@@ -105,28 +107,38 @@ public class MainFrame extends JFrame {
 		JMenuItem open = new JMenuItem("Open...");
 		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
+				final JFileChooser fc = new JFileChooser();
 				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
-					try {
-						views.loadFile(fc.getSelectedFile().getAbsolutePath(), "ecg");
-						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
-					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(null, 
-													  "Could not load file: " + ex.getMessage(),
-													  "Error",
-													  JOptionPane.ERROR_MESSAGE);
-						return;
-					} catch (OutOfMemoryError exo) {
-						JOptionPane.showMessageDialog(null,
-								"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
+					class SW extends SwingWorker<String, Object>{
+						@Override
+						public String doInBackground() {
+							try {
+								Main.setProgressBar("Load File", -1);
+								views.loadFile(fc.getSelectedFile().getAbsolutePath(), "ecg");
+								Main.setProgressBar("Load File", 75);
+								thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+							} catch (IOException ex) {
+								JOptionPane.showMessageDialog(null,
+										"Could not load file: " + ex.getMessage(),
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return null;
+							} catch (OutOfMemoryError exo) {
+								JOptionPane.showMessageDialog(null,
+										"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return null;
+							}
 
-					thisFrame.relink();
+							thisFrame.relink();
+							Main.setProgressBar("Load File", 100);
+							return null;
+						}
+					};
+					(new SW()).execute();
 				}
 			}
 		});
@@ -137,47 +149,58 @@ public class MainFrame extends JFrame {
 				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
-					try {
-						if (fc.getLengthTime() == 0) {
-							JOptionPane.showMessageDialog(null,
-									"Length cannot be 0",
-									"Error",
-									JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						if (fc.getLengthTime() > 60000) {
-							int confirm = JOptionPane.showConfirmDialog(null,
-									fc.getLengthTime() + " is a large amount of time, and the application might run out of memory. It is recommended to use 60,000 or less. Would you like to continue anyway?");
-							if (confirm != 0) return;
-						}
-						try {
-							views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
-									fc.getStartTime(),
-									fc.getStartTime()+fc.getLengthTime(),
-									"ecg");
-							thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
-						} catch (OutOfMemoryError exo) {
-							JOptionPane.showMessageDialog(null,
-									"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
-									"Error",
-									JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(null,
-													  "Could not load file" + ex.getMessage(),
-													  "Error",
-													  JOptionPane.ERROR_MESSAGE);
-						return;
-					} catch (NullPointerException ex) {
-						JOptionPane.showMessageDialog(null,
-								"No matching data was found",
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
+					class SW extends SwingWorker<String, Object> {
+						@Override
+						public String doInBackground() {
+							try {
+								if (fc.getLengthTime() == 0) {
+									JOptionPane.showMessageDialog(null,
+											"Length cannot be 0",
+											"Error",
+											JOptionPane.ERROR_MESSAGE);
+									return null;
+								}
+								if (fc.getLengthTime() > 60000) {
+									int confirm = JOptionPane.showConfirmDialog(null,
+											fc.getLengthTime() + " is a large amount of time, and the application might run out of memory. It is recommended to use 60,000 or less. Would you like to continue anyway?");
+									if (confirm != 0) return null;
+								}
+								try {
+									Main.setProgressBar("Load File Subset", -1);
+									views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
+											fc.getStartTime(),
+											fc.getStartTime() + fc.getLengthTime(),
+											"ecg");
+									Main.setProgressBar("Load File Subset", 75);
+									thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+								} catch (OutOfMemoryError exo) {
+									JOptionPane.showMessageDialog(null,
+											"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+											"Error",
+											JOptionPane.ERROR_MESSAGE);
+									return null;
+								}
+							} catch (IOException ex) {
+								JOptionPane.showMessageDialog(null,
+										"Could not load file" + ex.getMessage(),
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return null;
+							} catch (NullPointerException ex) {
+								System.out.println(ex);
+								JOptionPane.showMessageDialog(null,
+										"No matching data was found",
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+								return null;
+							}
 
-					thisFrame.relink();
+							thisFrame.relink();
+							Main.setProgressBar("Load File Subset", 100);
+							return null;
+						}
+					};
+					(new SW()).execute();
 				}
 			}
 		});
@@ -995,6 +1018,7 @@ public class MainFrame extends JFrame {
 			subPanels[i].repaint();
 		}
 		for(int i = 0; i < views.size(); i++) {
+			Main.setProgressBar("Add Graphs", (int)(100*i/views.size()));
 			int index = views.getLayout()[i][0]*xnum + views.getLayout()[i][1];
 			final ECGView graph = views.getView(i, false);
 
@@ -1043,6 +1067,7 @@ public class MainFrame extends JFrame {
 			subPanels[index].revalidate();
 			subPanels[index].repaint();
 		}
+		Main.setProgressBar("Add Graphs", 100);
 
 		if(views.size() == 12) {
 			final ECGView graph = views.getCompositeView(false);
@@ -1109,26 +1134,35 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	public void setProgressBar(String name, int val) {
+	public void setProgressBar(String name, int val, float timeRemaining) {
 		if (!progressBars.containsKey(name)) {
 
 			JProgressBar progressBar = new JProgressBar();
+			progressBar.setString(name);
 			progressBar.setValue(0);
 			progressBar.setStringPainted(true);
-			progressBar.setVisible(true);
-			progressBar.setBounds(0,0,200,30);
+			progressBar.setBounds(0,0,400,30);
 
 			progressPanel.add(progressBar);
 			progressFrame.add(progressPanel);
 
-			progressFrame.setSize(200, 500);
-//			progressFrame.setVisible(true);
+			progressFrame.setSize(400, 500);
+			progressFrame.setVisible(true);
 
 			progressBars.put(name, progressBar);
 		}
-		progressBars.get("test").setValue(val);
-		progressBars.get("test").revalidate();
-		progressBars.get("test").repaint();
+		if (val == -1) {
+			progressBars.get(name).setIndeterminate(true);
+			progressBars.get(name).setString(name);
+			progressBars.get(name).setBounds(0,0,400,30);
+		} else {
+			progressBars.get(name).setIndeterminate(false);
+			progressBars.get(name).setValue(val);
+			progressBars.get(name).setString(name + ": " + val + "%;"
+					+ (timeRemaining == -1 ? "" : " " + (int)(timeRemaining/3600f) + ":"
+					+ (int)((timeRemaining/3600f)%60f) + ":" + (int)timeRemaining%3600));
+			progressBars.get(name).setBounds(0,0,400,30);
+		}
 		if (val == 100) {
 			progressBars.get(name).setVisible(false);
 			progressPanel.remove(progressBars.get(name));
@@ -1136,21 +1170,11 @@ public class MainFrame extends JFrame {
 			if (progressBars.size() == 0) {
 				progressFrame.setVisible(false);
 			}
-			progressPanel.revalidate();
-			progressPanel.repaint();
-
-			progressFrame.revalidate();
-			progressFrame.repaint();
-			thisFrame.revalidate();
-			thisFrame.repaint();
-			this.revalidate();
-			this.repaint();
 		}
-		progressPanel.revalidate();
-		progressPanel.repaint();
-
-		progressFrame.revalidate();
-		progressFrame.repaint();
+		int i = 0;
+		for (Map.Entry<String, JProgressBar> set : progressBars.entrySet()) {
+			set.getValue().setBounds(0,(i++)*30,400,30);
+		}
 	}
 }
 

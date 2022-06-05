@@ -8,7 +8,11 @@ public class Main {
 	}
 
 	public static void setProgressBar(String name, int val) {
-		mainframe.setProgressBar(name, val);
+		mainframe.setProgressBar(name, val, -1);
+	}
+
+	public static void setProgressBar(String name, int val, float timeRemaining) {
+		mainframe.setProgressBar(name, val, timeRemaining);
 	}
 }
 
