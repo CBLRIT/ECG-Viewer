@@ -110,7 +110,7 @@ public class MainFrame extends JFrame {
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
-						views.loadFile(fc.getSelectedFile().getAbsolutePath());
+						views.loadFile(fc.getSelectedFile().getAbsolutePath(), "ecg");
 						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 
@@ -153,7 +153,8 @@ public class MainFrame extends JFrame {
 						try {
 							views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
 									fc.getStartTime(),
-									fc.getStartTime()+fc.getLengthTime());
+									fc.getStartTime()+fc.getLengthTime(),
+									"ecg");
 							thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 						} catch (OutOfMemoryError exo) {
 							JOptionPane.showMessageDialog(null,
@@ -367,9 +368,61 @@ public class MainFrame extends JFrame {
 
 		JMenu analyzeRWave = new JMenu("R Wave");
 		JMenuItem analyzeRWaveF = new JMenuItem("Frequency");
-		analyzeRWaveF.addActionListener(notImplemented);
+		analyzeRWaveF.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
+				int ret = fc.showOpenDialog(thisFrame);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try {
+						views.loadFile(fc.getSelectedFile().getAbsolutePath(), "r-frequency");
+						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null,
+								"Could not load file: " + ex.getMessage(),
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					} catch (OutOfMemoryError exo) {
+						JOptionPane.showMessageDialog(null,
+								"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					thisFrame.relink();
+				}
+			}
+		});
 		JMenuItem analyzeRWaveI = new JMenuItem("Intensity");
-		analyzeRWaveI.addActionListener(notImplemented);
+		analyzeRWaveI.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
+				int ret = fc.showOpenDialog(thisFrame);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try {
+						views.loadFile(fc.getSelectedFile().getAbsolutePath(), "r-intensity");
+						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null,
+								"Could not load file: " + ex.getMessage(),
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					} catch (OutOfMemoryError exo) {
+						JOptionPane.showMessageDialog(null,
+								"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					thisFrame.relink();
+				}
+			}
+		});
 
 		analyzeRWave.add(analyzeRWaveF);
 		analyzeRWave.add(analyzeRWaveI);
@@ -377,9 +430,97 @@ public class MainFrame extends JFrame {
 
 		JMenu analyzeSubsetRWave = new JMenu("R Wave");
 		JMenuItem analyzeSubsetRWaveF = new JMenuItem("Frequency");
-		analyzeSubsetRWaveF.addActionListener(notImplemented);
+		analyzeSubsetRWaveF.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SubsetFileChooser fc = new SubsetFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
+				int ret = fc.showOpenDialog(thisFrame);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try {
+						if (fc.getLengthTime() == 0) {
+							JOptionPane.showMessageDialog(null,
+									"Length cannot be 0",
+									"Error",
+									JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						try {
+							views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
+									fc.getStartTime(),
+									fc.getStartTime()+fc.getLengthTime(),
+									"r-frequency");
+							thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+						} catch (OutOfMemoryError exo) {
+							JOptionPane.showMessageDialog(null,
+									"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+									"Error",
+									JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null,
+								"Could not load file" + ex.getMessage(),
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					} catch (NullPointerException ex) {
+						JOptionPane.showMessageDialog(null,
+								"No matching data was found",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					thisFrame.relink();
+				}
+			}
+		});
 		JMenuItem analyzeSubsetRWaveI = new JMenuItem("Intensity");
-		analyzeSubsetRWaveI.addActionListener(notImplemented);
+		analyzeSubsetRWaveI.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SubsetFileChooser fc = new SubsetFileChooser();
+				fc.setCurrentDirectory(new File(Settings.getDefaultDirectory()));
+				int ret = fc.showOpenDialog(thisFrame);
+				if(ret == JFileChooser.APPROVE_OPTION) {
+					try {
+						if (fc.getLengthTime() == 0) {
+							JOptionPane.showMessageDialog(null,
+									"Length cannot be 0",
+									"Error",
+									JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						try {
+							views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
+									fc.getStartTime(),
+									fc.getStartTime()+fc.getLengthTime(),
+									"r-intensity");
+							thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
+						} catch (OutOfMemoryError exo) {
+							JOptionPane.showMessageDialog(null,
+									"Ran out of memory! Try using a smaller file, or a smaller subset of the file, or restarting the application.",
+									"Error",
+									JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(null,
+								"Could not load file" + ex.getMessage(),
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					} catch (NullPointerException ex) {
+						JOptionPane.showMessageDialog(null,
+								"No matching data was found",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					thisFrame.relink();
+				}
+			}
+		});
 
 		analyzeSubsetRWave.add(analyzeSubsetRWaveF);
 		analyzeSubsetRWave.add(analyzeSubsetRWaveI);
@@ -664,7 +805,7 @@ public class MainFrame extends JFrame {
 				int ret = fc.showOpenDialog(thisFrame);
 				if(ret == JFileChooser.APPROVE_OPTION) {
 					try {
-						views.loadFile(fc.getSelectedFile().getAbsolutePath());
+						views.loadFile(fc.getSelectedFile().getAbsolutePath(), "ecg");
 						thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(null, 

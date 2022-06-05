@@ -384,7 +384,7 @@ public class ECGModel {
 	 *
 	 * @param filename the name of the file to read
 	 */
-	public void readData(String filename, double start, double length) 
+	public void readData(String filename, double start, double length, String mode)
 			throws IOException, FileNotFoundException {
 		this.clear();
 
@@ -395,7 +395,12 @@ public class ECGModel {
 
 		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> raw
 			= new ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>>();
-		int retval = file.read(filename, start, length, raw);
+		int retval = -1;
+		if (mode.equals("ecg")) {
+			retval = file.read(filename, start, length, raw);
+		} else {
+			throw new IOException("Mode '" + mode + "' not yet implemented!");
+		}
 		if(retval != 0) {
 			throw new IOException("File " + filename + " is not compatible with this application.");
 		}
@@ -460,9 +465,9 @@ public class ECGModel {
 	 * @param start the start time to read from
 	 * @param end the end time to read to
 	 */
-	public void readSubsetData(String filename, double start, double end) 
+	public void readSubsetData(String filename, double start, double end, String mode)
 			throws IOException, FileNotFoundException, NullPointerException {
-		readData(filename, start, end-start);
+		readData(filename, start, end-start, mode);
 		for(int i = 0; i < points.length; i++) {
 			points[i] = points[i].subset(start, end);
 		}

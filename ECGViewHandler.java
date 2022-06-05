@@ -14,15 +14,15 @@ public class ECGViewHandler {
 		this.model = model;
 	}
 
-	public void loadFile(String file) 
+	public void loadFile(String file, String mode)
 			throws IOException {
-		model.readData(file, 0, Double.POSITIVE_INFINITY);
+		model.readData(file, 0, Double.POSITIVE_INFINITY, mode);
 	}
 
-	public void loadFileSubset(String file, double start, double end) 
+	public void loadFileSubset(String file, double start, double end, String mode)
 			throws IOException, NullPointerException {
 		try {
-			model.readSubsetData(file, start, end);
+			model.readSubsetData(file, start, end, mode);
 		} catch (NullPointerException ex) {
 			this.model = new ECGModel();
 			throw ex;
