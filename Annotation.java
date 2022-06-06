@@ -4,7 +4,7 @@
  *
  * @author Dakota Williams
  */
-public class Annotation implements Undoable {
+public class Annotation implements Undoable, Comparable {
 	private int type;
 	private double location;
 
@@ -54,6 +54,10 @@ public class Annotation implements Undoable {
 	 */
 	public String toString() {
 		return (double)type + " " + location;
+	}
+
+	public int compareTo(Object other) {
+		return Double.compare(location, ((Annotation)other).location);
 	}
 }
 

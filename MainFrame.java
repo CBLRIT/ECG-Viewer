@@ -401,6 +401,7 @@ public class MainFrame extends JFrame {
 						@Override
 						public String doInBackground() {
 							try {
+								Main.setProgressBar("Analyze R Wave Frequency", -1);
 								views.loadFile(fc.getSelectedFile().getAbsolutePath(), "r-frequency");
 								thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 							} catch (IOException ex) {
@@ -418,6 +419,7 @@ public class MainFrame extends JFrame {
 							}
 
 							thisFrame.relink();
+							Main.setProgressBar("Analyze R Wave Frequency", 100);
 							return "";
 						}
 					};
@@ -436,6 +438,7 @@ public class MainFrame extends JFrame {
 						@Override
 						public String doInBackground() {
 							try {
+								Main.setProgressBar("Analyze R Wave Intensity", -1);
 								views.loadFile(fc.getSelectedFile().getAbsolutePath(), "r-intensity");
 								thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 							} catch (IOException ex) {
@@ -453,6 +456,7 @@ public class MainFrame extends JFrame {
 							}
 
 							thisFrame.relink();
+							Main.setProgressBar("Analyze R Wave Intensity", 100);
 							return "";
 						}
 					};
@@ -517,6 +521,7 @@ public class MainFrame extends JFrame {
 									return "";
 								}
 								try {
+									Main.setProgressBar("Analyze R Wave Frequency", -1);
 									views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
 											fc.getStartTime(),
 											fc.getStartTime() + fc.getLengthTime(),
@@ -544,6 +549,7 @@ public class MainFrame extends JFrame {
 							}
 
 							thisFrame.relink();
+							Main.setProgressBar("Analyze R Wave Frequency", 100);
 							return "";
 						}
 					};
@@ -570,6 +576,7 @@ public class MainFrame extends JFrame {
 									return "";
 								}
 								try {
+									Main.setProgressBar("Analyze R Wave Intensity", -1);
 									views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
 											fc.getStartTime(),
 											fc.getStartTime() + fc.getLengthTime(),
@@ -589,6 +596,8 @@ public class MainFrame extends JFrame {
 										JOptionPane.ERROR_MESSAGE);
 								return "";
 							} catch (NullPointerException ex) {
+								System.out.println(ex);
+								ex.printStackTrace();
 								JOptionPane.showMessageDialog(null,
 										"No matching data was found",
 										"Error",
@@ -597,6 +606,7 @@ public class MainFrame extends JFrame {
 							}
 
 							thisFrame.relink();
+							Main.setProgressBar("Analyze R Wave Intensity", 100);
 							return "";
 						}
 					};
@@ -1026,6 +1036,7 @@ public class MainFrame extends JFrame {
 
 		progressFrame = new JFrame("Progress");
 		progressPanel = new JPanel();
+		progressFrame.add(progressPanel);
 
 		this.add(statusBar, BorderLayout.SOUTH);
 
@@ -1172,24 +1183,21 @@ public class MainFrame extends JFrame {
 			progressBar.setBounds(0,0,400,30);
 
 			progressPanel.add(progressBar);
-			progressFrame.add(progressPanel);
 
 			progressFrame.setSize(400, 500);
-			progressFrame.setVisible(true);
+			if (progressBars.size() == 0) progressFrame.setVisible(true);
 
 			progressBars.put(name, progressBar);
 		}
 		if (val == -1) {
 			progressBars.get(name).setIndeterminate(true);
 			progressBars.get(name).setString(name);
-			progressBars.get(name).setBounds(0,0,400,30);
 		} else {
 			progressBars.get(name).setIndeterminate(false);
 			progressBars.get(name).setValue(val);
 			progressBars.get(name).setString(name + ": " + val + "%;"
 					+ (timeRemaining == -1 ? "" : " " + (int)(timeRemaining/3600f) + ":"
 					+ (int)((timeRemaining/60f)%60f) + ":" + (int)timeRemaining%60));
-			progressBars.get(name).setBounds(0,0,400,30);
 		}
 		if (val == 100) {
 			progressBars.get(name).setVisible(false);

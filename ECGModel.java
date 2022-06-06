@@ -404,6 +404,7 @@ public class ECGModel {
 
 		int retval;
 		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> raw;
+		ECGDataSet[] results = null;
 
 		if (mode != "ecg" && mode != "r-frequency" && mode != "r-intensity")
 			throw new IOException("Mode '" + mode + "' not yet implemented!");
@@ -479,13 +480,44 @@ public class ECGModel {
 				Main.setProgressBar("Locate R Waves", (int)(100*progress), timeRemaining);
 
 				this.extractFeatures(32);
+				Collections.sort(annotations);
+				if (results == null) {
+					results = new ECGDataSet[points.length];
+					for (int i = 0; i < points.length; i++) results[i] = new ECGDataSet();
+				}
+				for (int a = 0; a < annotations.size(); a++) {
+					for (int i = 0; i < points.length; i++) {
+						ECGDataSet subset = points[i].subset(annotations.get(a).getLoc(), annotations.get(a).getLoc() + 1);
+						ECGDataSet results_subset = results[i].subset(annotations.get(a).getLoc(), annotations.get(a).getLoc() + 1);
+						if (subset.size() != 0 && results_subset.size() == 0) {
+							if (mode.equals("r-intensity")) {
+								results[i].addTuple(annotations.get(a).getLoc(), subset.getAt(0)[1]);
+							} else {
+								results[i].addTuple(results[i].size(), subset.getAt(0)[0]);
+							}
+						}
+					}
+				}
+
 				loadStart += batchSize;
 				loadLength = Math.min(batchSize + 10, length - loadStart);
 				if (loadLength <= 0) break;
 			}
 		}
 
-		// annotations represent R-waves
+		if (mode.equals("r-frequency")) {
+			clearAnnotations();
+			for (int i = 0; i < results.length; i++) {
+				for (int j = results[i].size() - 1; j > 0; j--) {
+					results[i].getAt(j)[1] -= results[i].getAt(j-1)[1];
+				}
+			}
+		}
+
+		if (mode.equals("r-frequency") || mode.equals("r-intensity")) {
+			points = results;
+		}
+
 		return;
 	}
 
