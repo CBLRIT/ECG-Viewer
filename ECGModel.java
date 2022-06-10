@@ -406,10 +406,13 @@ public class ECGModel {
 		ArrayList<AbstractMap.SimpleEntry<Double, ArrayList<Double>>> raw;
 		ECGDataSet[] results = null;
 
-		if (mode != "ecg" && mode != "r-frequency" && mode != "r-intensity")
+		if (!(mode.equals("ecg") || mode.equals("r-frequency") || mode.equals("r-intensity")))
 			throw new IOException("Mode '" + mode + "' not yet implemented!");
 
-		Main.setProgressBar("Locate R Waves", 0);
+		if (mode.equals("r-frequency") || mode.equals("r-intensity")) {
+			Main.setProgressBar("Locate R Waves", 0);
+		}
+
 		long startTime = System.currentTimeMillis()/1000L;
 
 		while (true) {
@@ -493,7 +496,7 @@ public class ECGModel {
 							if (mode.equals("r-intensity")) {
 								results[i].addTuple(annotations.get(a).getLoc(), subset.getAt(0)[1]);
 							} else {
-								results[i].addTuple(results[i].size(), subset.getAt(0)[0]);
+								results[i].addTuple(annotations.get(a).getLoc(), subset.getAt(0)[0]);
 							}
 						}
 					}

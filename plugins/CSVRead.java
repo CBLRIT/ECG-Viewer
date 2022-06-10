@@ -72,7 +72,35 @@ public class CSVRead extends ECGFile {
 	}
 
 	public double getFileLength(String filename) throws IOException {
-		throw new IOException("Not implemented!");
+		BufferedReader reader;
+		int count = 0;
+		try {
+			reader = new BufferedReader(new FileReader(filename));
+		} catch (FileNotFoundException e) {
+			throw new IOException("Could not find file \"" + filename + "\"");
+//			return -1;
+		}
+
+		try {
+			Pattern metadata = Pattern.compile("^(\\d+) leads sampled @(\\d+\\.\\d+)ms,.*");
+			String line = reader.readLine();
+			Matcher metaMatch = metadata.matcher(line);
+			if(metaMatch.find()) {
+				numLeads = Integer.parseInt(metaMatch.group(1));
+				samp = Double.parseDouble(metaMatch.group(2));
+			}
+
+			count = 0;
+			while((line = reader.readLine()) != null) {
+				count++;
+			}
+
+			reader.close();
+		} catch (IOException e) {
+			throw new IOException("Error reading file \"" + filename + "\"");
+//			return -2;
+		}
+		return count;
 	}
 					
 	/**
