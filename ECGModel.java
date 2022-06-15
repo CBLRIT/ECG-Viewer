@@ -397,7 +397,7 @@ public class ECGModel {
 			length = file.getFileLength(filename);
 		}
 
-		int batchSize = 1000;
+		int batchSize = 5000;
 
 		double loadStart = start;
 		double loadLength = (mode.equals("ecg") ? length : batchSize + 10);
@@ -480,9 +480,9 @@ public class ECGModel {
 				double progress = (loadStart+loadLength)/(length-start);
 				long now = System.currentTimeMillis()/1000L;
 				float timeRemaining = (float)((now-startTime)*(1f/progress)-(now-startTime));
-				Main.setProgressBar("Locate R Waves", (int)(100*progress), timeRemaining);
+				Main.setProgressBar("Locate R Waves", Math.min(100, (int)(100*progress)), timeRemaining);
 
-				this.extractFeatures(32);
+				this.extractFeatures(38);
 				Collections.sort(annotations);
 				if (results == null) {
 					results = new ECGDataSet[points.length];
@@ -636,36 +636,62 @@ public class ECGModel {
 	 * @param index the index of the lead to use
 	 */
 	public void extractFeatures(int index) {
-		ECGDataSet lead = points[index];
-		final double range = 0.25; //50% of it's value north and south
-		java.util.PriorityQueue<double[]> maxima = //ordered by >, of 2-tuples: time and value
-				new java.util.PriorityQueue<double[]>(32, 
-			 		new java.util.Comparator<double[]>() {
-			public int compare(double[] o1, double[] o2) { //compares values
-				return -Double.compare(o1[1], o2[1]); //get the largest value
-			}
-			public boolean equals(Object obj) {
-				return super.equals(obj);
-			}
-		});
 
-		maxima.add(new double[]{0.0,0.0});
-		for(int i = 0; i < lead.size(); i++) {
-			if (lead.getAt(i)[1] > maxima.peek()[1] * (1+range)) {
-				maxima.clear();
+		HashMap<Integer, Undoable> changes = new HashMap<Integer, Undoable>();
+		changes.put(
+				index,
+				(ECGDataSet)this.getDataset(index).clone());
+		this.pushChange(new Change<HashMap<Integer, Undoable>, String>(
+				changes,
+				"Apply filter to lead " + this.getTitles()[index]));
+
+		// apply denoising filter
+		this.applyFilter(index, 5, new Number[] {150.0, 31, 8});
+
+		ECGDataSet lead = points[index];
+		final double range = 50;
+		ArrayList<double[]> maxima = new ArrayList<>(); // time and value
+
+		if (lead.size() < 3) return;
+
+		double last = lead.getAt(0)[1];
+		double current = lead.getAt(1)[1];
+		double next;
+		for(int i = 1; i < lead.size() - 1; i++) {
+			next = lead.getAt(i+1)[1];
+			if ((last < current && next < current) || (last > current && next > current)) {
+				maxima.add(lead.getAt(i));
 			}
-			if(maxima.size() == 0 || (lead.getAt(i)[1] < maxima.peek()[1] * (1+range)
-									 && lead.getAt(i)[1] > maxima.peek()[1] * (1-range))) {
-				int entryVal = i;
-				int localMax = i;
-				for(; i < lead.size() && lead.getAt(i)[1] > lead.getAt(localMax)[1] * (1-range); i++) {
-					if(lead.getAt(i)[1] > lead.getAt(localMax)[1]) {
-						localMax = i;
-					}
-				}
-				if (i < lead.size()) {
-					maxima.add(lead.getAt(localMax));
-				}
+			last = current;
+			current = next;
+		}
+
+		// undo filter
+		this.undo();
+
+		// remove any max's and min's that are within 'range' time, to ignore pacing machine and extra details
+		for (int i = 0; i < maxima.size() - 1; i++) {
+			if (maxima.get(i+1)[0] - maxima.get(i)[0] < range || Math.abs(maxima.get(i+1)[1] - maxima.get(i)[1]) < range) {
+				maxima.remove(i);
+				maxima.remove(i);
+				i--;
+			}
+		}
+
+		// determine whether we usually get min then max, or max then min
+		double a = 0;
+		double b = 0;
+		for (int i = 0; i < maxima.size() - 2; i += 2) {
+			a += maxima.get(i+1)[0] - maxima.get(i)[0];
+			b += maxima.get(i+2)[0] - maxima.get(i+1)[0];
+		}
+		if (a > b) {
+			for (int i = 0; i < maxima.size(); i++) {
+				maxima.remove(i);
+			}
+		} else {
+			for (int i = 1; i < maxima.size(); i++) {
+				maxima.remove(i);
 			}
 		}
 
