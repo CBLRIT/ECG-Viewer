@@ -10,6 +10,8 @@ import javax.swing.SwingWorker;
 public class ECGViewHandler {
 	private ECGModel model;
 
+	private String xAxisLabel = "Time (msec)", yAxisLabel = "Potential (mV)";
+
 	public ECGViewHandler(ECGModel model) {
 		this.model = model;
 	}
@@ -309,6 +311,22 @@ public class ECGViewHandler {
 
 	public boolean canRedo() {
 		return model.canRedo();
+	}
+
+	public String getxAxisLabel() {
+		return xAxisLabel;
+	}
+
+	public String getyAxisLabel() {
+		return yAxisLabel;
+	}
+
+	public void setxAxisLabel(String xAxisLabel) {
+		this.xAxisLabel = xAxisLabel;
+	}
+
+	public void setyAxisLabel(String yAxisLabel) {
+		this.yAxisLabel = yAxisLabel;
 	}
 }
 

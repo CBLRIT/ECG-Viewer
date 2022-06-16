@@ -75,11 +75,11 @@ public class ECGView {
 		dataset = new DefaultXYDataset();
 		dataset.addSeries(1, data.toArray());
 		
-		this.xaxis = new NumberAxis("Time (msec)");
+		this.xaxis = new NumberAxis(handler.getxAxisLabel());
 		if(!withLabels) {
 			this.xaxis.setVisible(false);
 		}
-		this.yaxis = new NumberAxis("Potential (mV)");
+		this.yaxis = new NumberAxis(handler.getyAxisLabel());
 		if(!withLabels) {
 			this.yaxis.setVisible(false);
 		}

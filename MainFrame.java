@@ -116,6 +116,8 @@ public class MainFrame extends JFrame {
 						public String doInBackground() {
 							try {
 								Main.setProgressBar("Load File", -1);
+								views.setxAxisLabel("Time (msec)");
+								views.setyAxisLabel("Potential (mV)");
 								views.loadFile(fc.getSelectedFile().getAbsolutePath(), "ecg");
 								Main.setProgressBar("Load File", 75);
 								thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
@@ -167,6 +169,8 @@ public class MainFrame extends JFrame {
 								}
 								try {
 									Main.setProgressBar("Load File Subset", -1);
+									views.setxAxisLabel("Time (msec)");
+									views.setyAxisLabel("Potential (mV)");
 									views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
 											fc.getStartTime(),
 											fc.getStartTime() + fc.getLengthTime(),
@@ -402,6 +406,8 @@ public class MainFrame extends JFrame {
 						public String doInBackground() {
 							try {
 								Main.setProgressBar("Analyze R Wave Frequency", -1);
+								views.setxAxisLabel("Time (msec)");
+								views.setyAxisLabel("Time since last beat (msec)");
 								views.loadFile(fc.getSelectedFile().getAbsolutePath(), "r-frequency");
 								thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 							} catch (IOException ex) {
@@ -439,6 +445,8 @@ public class MainFrame extends JFrame {
 						public String doInBackground() {
 							try {
 								Main.setProgressBar("Analyze R Wave Intensity", -1);
+								views.setxAxisLabel("Time (msec)");
+								views.setyAxisLabel("Potential (mV)");
 								views.loadFile(fc.getSelectedFile().getAbsolutePath(), "r-intensity");
 								thisFrame.setTitle(fc.getSelectedFile().getName() + " - ECG Viewer");
 							} catch (IOException ex) {
@@ -522,6 +530,8 @@ public class MainFrame extends JFrame {
 								}
 								try {
 									Main.setProgressBar("Analyze R Wave Frequency", -1);
+									views.setxAxisLabel("Time (msec)");
+									views.setyAxisLabel("Time since last beat (msec)");
 									views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
 											fc.getStartTime(),
 											fc.getStartTime() + fc.getLengthTime(),
@@ -577,6 +587,8 @@ public class MainFrame extends JFrame {
 								}
 								try {
 									Main.setProgressBar("Analyze R Wave Intensity", -1);
+									views.setxAxisLabel("Time (msec)");
+									views.setyAxisLabel("Potential (mV)");
 									views.loadFileSubset(fc.getSelectedFile().getAbsolutePath(),
 											fc.getStartTime(),
 											fc.getStartTime() + fc.getLengthTime(),
