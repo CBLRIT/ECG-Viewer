@@ -477,13 +477,25 @@ public class ECGModel {
 			if (mode.equals("ecg")) return;
 
 			if (mode.equals("r-frequency") || mode.equals("r-intensity")) {
-				double progress = (loadStart+loadLength)/(length-start);
+				double progress = (loadStart+loadLength-start)/length;
 				long now = System.currentTimeMillis()/1000L;
 				float timeRemaining = (float)((now-startTime)*(1f/progress)-(now-startTime));
 				Main.setProgressBar("Locate R Waves", Math.min(100, (int)(100*progress)), timeRemaining);
 
 				this.extractFeatures(38);
 				Collections.sort(annotations);
+
+				int lastAnnotationIndex = 0;
+				double lastTime = annotations.get(0).getLoc();
+				for (int i = 0; i < annotations.size(); i++) {
+					Annotation annotation = annotations.get(i);
+					if (annotation.getLoc() > lastTime) {
+						lastTime = annotation.getLoc();
+						lastAnnotationIndex = i;
+					}
+				}
+				annotations.remove(lastAnnotationIndex);
+
 				if (results == null) {
 					results = new ECGDataSet[points.length];
 					for (int i = 0; i < points.length; i++) results[i] = new ECGDataSet();
@@ -491,7 +503,7 @@ public class ECGModel {
 				for (int a = 0; a < annotations.size(); a++) {
 					for (int i = 0; i < points.length; i++) {
 						ECGDataSet subset = points[i].subset(annotations.get(a).getLoc(), annotations.get(a).getLoc() + 1);
-						ECGDataSet results_subset = results[i].subset(annotations.get(a).getLoc(), annotations.get(a).getLoc() + 1);
+						ECGDataSet results_subset = results[i].subset(annotations.get(a).getLoc() - 10, annotations.get(a).getLoc() + 10);
 						if (subset.size() != 0 && results_subset.size() == 0) {
 							if (mode.equals("r-intensity")) {
 								results[i].addTuple(annotations.get(a).getLoc(), subset.getAt(0)[1]);
@@ -502,8 +514,16 @@ public class ECGModel {
 					}
 				}
 
-				loadStart += batchSize;
-				loadLength = Math.min(batchSize + 10, length - loadStart);
+				lastTime = annotations.get(0).getLoc();
+				for (int i = 0; i < annotations.size(); i++) {
+					Annotation annotation = annotations.get(i);
+					if (annotation.getLoc() > lastTime) {
+						lastTime = annotation.getLoc();
+					}
+				}
+				if (loadStart + loadLength < start + length) loadStart = lastTime;
+				else break;
+				loadLength = Math.min(batchSize + 10, (start+length) - loadStart);
 				if (loadLength <= 0) break;
 			}
 		}
@@ -514,6 +534,7 @@ public class ECGModel {
 				for (int j = results[i].size() - 1; j > 0; j--) {
 					results[i].getAt(j)[1] -= results[i].getAt(j-1)[1];
 				}
+				results[i].getAt(0)[1] -= start;
 			}
 		}
 
@@ -649,7 +670,7 @@ public class ECGModel {
 		this.applyFilter(index, 5, new Number[] {150.0, 31, 8});
 
 		ECGDataSet lead = points[index];
-		final double range = 50;
+		final double range = 50, verticalRange = 1000;
 		ArrayList<double[]> maxima = new ArrayList<>(); // time and value
 
 		if (lead.size() < 3) return;
@@ -670,12 +691,21 @@ public class ECGModel {
 		this.undo();
 
 		// remove any max's and min's that are within 'range' time, to ignore pacing machine and extra details
-		for (int i = 0; i < maxima.size() - 1; i++) {
-			if (maxima.get(i+1)[0] - maxima.get(i)[0] < range || Math.abs(maxima.get(i+1)[1] - maxima.get(i)[1]) < range) {
-				maxima.remove(i);
-				maxima.remove(i);
-				i--;
+		while (true) {
+			// find the two that are the closest together
+			int indexOfFirst = -1;
+			double distance = -1;
+			for (int i = 0; i < maxima.size() - 1; i++) {
+				if (maxima.get(i+1)[0] - maxima.get(i)[0] < range || Math.abs(maxima.get(i+1)[1] - maxima.get(i)[1]) < verticalRange) {
+					if (distance == -1 || maxima.get(i+1)[0] - maxima.get(i)[0] < distance) {
+						indexOfFirst = i;
+						distance = maxima.get(i+1)[0] - maxima.get(i)[0];
+					}
+				}
 			}
+			if (indexOfFirst == -1) break;
+			maxima.remove(indexOfFirst);
+			maxima.remove(indexOfFirst);
 		}
 
 		// determine whether we usually get min then max, or max then min
