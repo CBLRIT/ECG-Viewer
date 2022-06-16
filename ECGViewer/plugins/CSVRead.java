@@ -73,7 +73,7 @@ public class CSVRead extends ECGFile {
 
 	public double getFileLength(String filename) throws IOException {
 		BufferedReader reader;
-		int count = 0;
+		double length = 0;
 		try {
 			reader = new BufferedReader(new FileReader(filename));
 		} catch (FileNotFoundException e) {
@@ -90,9 +90,11 @@ public class CSVRead extends ECGFile {
 				samp = Double.parseDouble(metaMatch.group(2));
 			}
 
-			count = 0;
+			length = 0;
+			String[] tokens;
 			while((line = reader.readLine()) != null) {
-				count++;
+				tokens = line.split(",");
+				length = Double.parseDouble(tokens[0]);
 			}
 
 			reader.close();
@@ -100,7 +102,7 @@ public class CSVRead extends ECGFile {
 			throw new IOException("Error reading file \"" + filename + "\"");
 //			return -2;
 		}
-		return count;
+		return length;
 	}
 					
 	/**
