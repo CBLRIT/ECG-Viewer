@@ -670,7 +670,7 @@ public class ECGModel {
 		this.applyFilter(index, 5, new Number[] {150.0, 31, 8});
 
 		ECGDataSet lead = points[index];
-		final double range = 50, verticalRange = 1000;
+		final double range = 50, verticalRange = 200, verticalTimeRange = 300;
 		ArrayList<double[]> maxima = new ArrayList<>(); // time and value
 
 		if (lead.size() < 3) return;
@@ -690,21 +690,39 @@ public class ECGModel {
 		// undo filter
 		this.undo();
 
+		// find the average value for the dataset
+		double avg = 0;
+		int count = 0;
+		for(int i = 0; i < lead.size(); i++) {
+			avg += lead.getAt(i)[1];
+			count++;
+		}
+		avg /= count;
+		System.out.println(avg);
+
 		// remove any max's and min's that are within 'range' time, to ignore pacing machine and extra details
+		// prioritize removing those that are close to the average
 		while (true) {
-			// find the two that are the closest together
 			int indexOfFirst = -1;
+			int indexOfSecond = -1;
 			double distance = -1;
-			for (int i = 0; i < maxima.size() - 1; i++) {
-				if (maxima.get(i+1)[0] - maxima.get(i)[0] < range || Math.abs(maxima.get(i+1)[1] - maxima.get(i)[1]) < verticalRange) {
-					if (distance == -1 || maxima.get(i+1)[0] - maxima.get(i)[0] < distance) {
-						indexOfFirst = i;
-						distance = maxima.get(i+1)[0] - maxima.get(i)[0];
+			for (int i = 0; i < maxima.size(); i++) {
+				for (int j = i + 1; j < maxima.size(); j++) {
+					if (Math.abs(maxima.get(j)[0] - maxima.get(i)[0]) < range || (Math.abs(maxima.get(j)[0] - maxima.get(i)[0]) < verticalTimeRange
+							&& Math.abs(maxima.get(j)[1] - maxima.get(i)[1]) < verticalRange)) {
+						double metric = Math.abs(maxima.get(j)[1] - avg) + Math.abs(maxima.get(i)[1] - avg);
+						if (distance == -1 || metric < distance || Math.abs(maxima.get(j)[0] - maxima.get(i)[0]) < 5) {
+							indexOfFirst = i;
+							indexOfSecond = j;
+							distance = metric;
+						}
 					}
 				}
 			}
 			if (indexOfFirst == -1) break;
-			maxima.remove(indexOfFirst);
+			System.out.println(maxima.get(indexOfFirst)[0] + ", " + maxima.get(indexOfFirst)[1] + "; "
+					+ maxima.get(indexOfSecond)[0] + ", " + maxima.get(indexOfSecond)[1]);
+			maxima.remove(indexOfSecond);
 			maxima.remove(indexOfFirst);
 		}
 
@@ -715,15 +733,15 @@ public class ECGModel {
 			a += maxima.get(i+1)[0] - maxima.get(i)[0];
 			b += maxima.get(i+2)[0] - maxima.get(i+1)[0];
 		}
-		if (a > b) {
-			for (int i = 0; i < maxima.size(); i++) {
-				maxima.remove(i);
-			}
-		} else {
-			for (int i = 1; i < maxima.size(); i++) {
-				maxima.remove(i);
-			}
-		}
+//		if (a > b) {
+//			for (int i = 0; i < maxima.size(); i++) {
+//				maxima.remove(i);
+//			}
+//		} else {
+//			for (int i = 1; i < maxima.size(); i++) {
+//				maxima.remove(i);
+//			}
+//		}
 
 		for(double[] p : maxima) {
 			this.annotations.add(new Annotation(2, p[0]));

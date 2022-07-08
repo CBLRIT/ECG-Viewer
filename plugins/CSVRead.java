@@ -60,8 +60,12 @@ public class CSVRead extends ECGFile {
 					}
 
 					count++;
+
+					Main.setProgressBar("Read File", (int) Math.round(100*(count/length)));
 				}
 			}
+
+			Main.setProgressBar("Read File", (int) Math.round(100));
 			
 			reader.close();
 		} catch (IOException e) {
@@ -172,6 +176,19 @@ public class CSVRead extends ECGFile {
 					{0, 1},	{0, 2},	{0, 3},	{0, 4},	{0, 5},
 					{1, 0},	{1, 1},	{1, 2},	{1, 3},	{1, 4},	{1, 5},	{1, 6}
 				};
+			case 10:
+				return new int[][]{
+						{0, 0},
+						{0, 1},
+						{0, 2},
+						{2, 1},
+						{1, 1},
+						{2, 0},
+						{2, 3},
+						{1, 3},
+						{2, 2},
+						{1, 2}
+				};
 			default:
 				return null;
 		}
@@ -224,6 +241,13 @@ public class CSVRead extends ECGFile {
 				return new String[] {
 					"I", "II", "III", "AVR", "AVL",
 					"AVF", "V1", "V2", "V3", "V4", "V5", "V6"
+				};
+			case 10:
+				return new String[] {
+						"ecg",
+						"ppg_ir", "ppg_red",
+						"weight_br", "weight_fr", "weight_bl",
+						"bcg_br", "bcg_fr", "bcg_bl", "bcg_fl"
 				};
 			default:
 				return null;
